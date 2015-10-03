@@ -2,7 +2,7 @@
 layout:     post
 title:      Archiving websites to a directory with Heritrix
 date:       2014-08-12
-categories: heritrix archive
+tags: heritrix archive
 ---
 
 So I one day I found myself in the market for a good web archiver.
