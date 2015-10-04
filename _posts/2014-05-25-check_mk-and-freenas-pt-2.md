@@ -1,10 +1,10 @@
 ---
 layout: post
-title: check_mk and FreeNAS pt. 2
+title: check_mk and FreeNAS, pt. 2
 tags: FreeNAS check_mk
 ---
 
-A continuation of check\_mk-and-freenas
+A continuation of [check_mk and FreeNAS]({% post_url 2014-02-23-check_mk-and-freenas %})
 
 So I've got my check\_mk on set up on my NAS, and it's monitoring stuff
 beautifully. However, it's not monitoring something very near and dear
