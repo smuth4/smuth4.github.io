@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  
+  <meta charset="UTF-8">
+  <title>
+     | cat /dev/null &gt; /proc/mind
+  </title>
+
+
+  
+  <meta name="viewport" content="width=device-width,user-scalable=no,maximum-scale=1,initial-scale=1">
+
+  
+  <link rel="canonical" href="https://smuth.me/post/check_mk-and-freenas/"/>
+
+  
+  <link rel="stylesheet" href="/css/sanitize.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/highlight_monokai.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/custom.css">
+  
+  
+  <link href="https://smuth.me/index.xml" rel="alternate" type="application/rss+xml" title="cat /dev/null &gt; /proc/mind" />
+  <link href="https://smuth.me/index.xml" rel="feed" type="application/rss+xml" title="cat /dev/null &gt; /proc/mind" />
+
+  
+  
+
+
+</head>
+
+
+
+<body>
+<div class="container">
+
+  
+  <header role="banner">
+    <div class="row gutters">
+      <div id="site-title" class="col span_6">
+        <h1><a href="https://smuth.me/">cat /dev/null &gt; /proc/mind</a></h1>
+        
+      </div>
+      <div id="social" class="col span_6">
+        <ul>
+          
+          
+          
+          
+        </ul>
+      </div>
+    </div>
+  </header>
+
+
+  
+  <main id="single" role="main">
+    <div class="article-header">
+      <h1></h1>
+      <div class="meta">
+        Jan 1, 0001 &nbsp;
+        
+      </div>
+    </div>
+    <article>
+      <div class="document">
+
+
+<!-- title: Check_mk and FreeNAS -->
+<!-- slug: check_mk-and-freenas -->
+<!-- date: 2014/02/23 15:56:35 -->
+<!-- tags: FreeNAS, python, check_mk -->
+<!-- link: -->
+<!-- description: -->
+<!-- type: text -->
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p>Software involved:</p>
+<ul class="last simple">
+<li>FreeNAS 9.2.0</li>
+<li>OMD 1.10 (check_mk 1.2.2p3)</li>
+</ul>
+</div>
+<p>FreeNAS is great, and the web interface makes it easy and simple to understand my NAS's overall structure. However, my favored method of monitoring in my homelab is OMD with Check_mk, while FreeNAS prefers a self-contained collectd solution. We're in luck however, in that FreeNAS is heavily based on FreeBSD, which check_mk happens to have a plugin for, so it shouldn't be too hard to set things up the way I like them. There are two possible ways to do this:</p>
+<ul class="simple">
+<li>Enable inetd and point it to the check_mk_agent</li>
+<li>Call check_mk_agent over ssh through as shown in the <a class="reference external" href="http://mathias-kettner.com/checkmk_datasource_programs.html">datasource programs</a> documentation</li>
+</ul>
+<p>I decided to go the second way, as I prefer to avoid making manual changes to FreeNAS if I can avoid it.</p>
+<p>If you do decided to go the inetd route, <a class="reference external" href="http://forums.freenas.org/index.php?threads/activation-of-inetd-server.3926/">this thread</a> may come in useful.</p>
+<div class="section" id="agent-setup">
+<h1>Agent Setup</h1>
+<p>The first thing we need to do is set up a user with a home directory where we can store the check_mk_agent program. If you already have a non-root user set up for yourself (which is good practice), that will work perfectly fine (they may need root access to collect certain data points). If you want to be more secure, you can set up a check_mk-only user, and limit it to just the agent command, which I will explain below.</p>
+<p>Once the user is set up with a writeable home directory, it's as simple as copying check_mk_agent.freebsd into the home directory. Run it once or twice to make sure it's collecting data correctly.</p>
+</div>
+<div class="section" id="check-mk-setup">
+<h1>Check_mk setup</h1>
+<p>From here it's basically following the instructions on the <a class="reference external" href="http://mathias-kettner.com/checkmk_datasource_programs.html">datasource programs</a> documentation link. Here's a quick overview of the steps involved:</p>
+<ol class="arabic">
+<li><p class="first">Add datasource programs configuration entry to main.mk. It will looks something like this:</p>
+<pre class="code python literal-block">
+<span class="name">datasource_programs</span> <span class="operator">=</span> <span class="punctuation">[</span>
+  <span class="punctuation">(</span> <span class="literal string double">&quot;ssh -l omd_user &lt;IP&gt; check_mk_agent&quot;</span><span class="punctuation">,</span> <span class="punctuation">[</span><span class="literal string single">'ssh'</span><span class="punctuation">],</span> <span class="name">ALL_HOSTS</span> <span class="punctuation">),</span>
+<span class="punctuation">]</span>
+</pre>
+</li>
+<li><p class="first">Set up password-less key authentication ssh access for omd_user to FreeNAS</p>
+</li>
+<li><p class="first">(Optional) Limit omd_user to onyl check_mk_agent command by placing command=&quot;check_mk_agent&quot;</p>
+</li>
+<li><p class="first">Add ssh tag to FreeNAS host, through WATO or configuration files</p>
+</li>
+<li><p class="first">Enjoy the pretty graphs and trends!</p>
+</li>
+</ol>
+</div>
+<div class="section" id="tweaks">
+<h1>Tweaks</h1>
+<p>So we've got everything set up, but not everything is perfect.</p>
+<div class="section" id="network">
+<h2>Network</h2>
+<p>The first thing that I noticed was missing was a network interface counter. check_mk_agent was outputting a 'netctr' section, which seemed to have all the necessary information, but it wasn't being recognized in check-mk inventory, as it's been superseeded by lnx_if. It's possible to re-enable netctr, but not on a per-host basis.</p>
+</div>
+</div>
+</div>
+      
+      
+      
+    </article>
+    
+
+
+<script type="text/javascript">
+     
+    var disqus_shortname = '';
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+  </main>
+  
+  <nav class="pagination-single">
+    
+      <span class="previous">&larr; <a href="https://smuth.me/post/flashing-lsi-sas-9211-8i-with-efi/" rel="prev"></a></span>
+    
+    
+      <span class="next"><a href="https://smuth.me/post/check_mk-and-freenas-pt-3/" rel="next"></a> &rarr;</span>
+    
+  </nav>
+
+
+  
+  <footer role="contentinfo">
+    <div style="text-align:center;">
+      
+      
+    </div>
+  </footer>
+
+
+</div>
+
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+</body>
+</html>
+

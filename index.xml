@@ -77,11 +77,11 @@
     </item>
     
     <item>
-      <title></title>
-      <link>https://smuth.me/basic-php-optimization/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <title>Fun with Basic PHP Optimization</title>
+      <link>https://smuth.me/post/basic-php-optimization/</link>
+      <pubDate>Thu, 09 Jan 2014 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/basic-php-optimization/</guid>
+      <guid>https://smuth.me/post/basic-php-optimization/</guid>
       <description>&lt;div class=&#34;document&#34;&gt;
 
 
@@ -131,10 +131,10 @@
     
     <item>
       <title></title>
-      <link>https://smuth.me/centos-logstash-forwarder-init-script/</link>
+      <link>https://smuth.me/post/centos-logstash-forwarder-init-script/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/centos-logstash-forwarder-init-script/</guid>
+      <guid>https://smuth.me/post/centos-logstash-forwarder-init-script/</guid>
       <description>&lt;div class=&#34;document&#34;&gt;
 
 
@@ -164,10 +164,10 @@
     
     <item>
       <title></title>
-      <link>https://smuth.me/check_mk-and-freenas-pt-2/</link>
+      <link>https://smuth.me/post/check_mk-and-freenas-pt-2/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/check_mk-and-freenas-pt-2/</guid>
+      <guid>https://smuth.me/post/check_mk-and-freenas-pt-2/</guid>
       <description>&lt;div class=&#34;document&#34;&gt;
 
 
@@ -200,10 +200,10 @@ Unknown interpreted text role &amp;quot;doc&amp;quot;.&lt;/div&gt;
     
     <item>
       <title></title>
-      <link>https://smuth.me/check_mk-and-freenas-pt-3/</link>
+      <link>https://smuth.me/post/check_mk-and-freenas-pt-3/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/check_mk-and-freenas-pt-3/</guid>
+      <guid>https://smuth.me/post/check_mk-and-freenas-pt-3/</guid>
       <description>&lt;div class=&#34;document&#34;&gt;
 
 
@@ -248,10 +248,10 @@ Unknown interpreted text role &amp;quot;doc&amp;quot;.&lt;/div&gt;
     
     <item>
       <title></title>
-      <link>https://smuth.me/check_mk-and-freenas/</link>
+      <link>https://smuth.me/post/check_mk-and-freenas/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/check_mk-and-freenas/</guid>
+      <guid>https://smuth.me/post/check_mk-and-freenas/</guid>
       <description>&lt;div class=&#34;document&#34;&gt;
 
 
@@ -316,10 +316,10 @@ Unknown interpreted text role &amp;quot;doc&amp;quot;.&lt;/div&gt;
     
     <item>
       <title></title>
-      <link>https://smuth.me/flashing-lsi-sas-9211-8i-with-efi/</link>
+      <link>https://smuth.me/post/flashing-lsi-sas-9211-8i-with-efi/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/flashing-lsi-sas-9211-8i-with-efi/</guid>
+      <guid>https://smuth.me/post/flashing-lsi-sas-9211-8i-with-efi/</guid>
       <description>&lt;div class=&#34;document&#34;&gt;
 
 
@@ -373,10 +373,10 @@ sas2flash.efi -o -f 2118it.bin -b mptsas2.rom
     
     <item>
       <title></title>
-      <link>https://smuth.me/help-my-php-code-isnt-showing-in-nikola/</link>
+      <link>https://smuth.me/post/help-my-php-code-isnt-showing-in-nikola/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/help-my-php-code-isnt-showing-in-nikola/</guid>
+      <guid>https://smuth.me/post/help-my-php-code-isnt-showing-in-nikola/</guid>
       <description>&lt;div class=&#34;document&#34;&gt;
 
 
@@ -392,10 +392,10 @@ sas2flash.efi -o -f 2118it.bin -b mptsas2.rom
     
     <item>
       <title></title>
-      <link>https://smuth.me/tuning-nfs-in-the-real-world/</link>
+      <link>https://smuth.me/post/tuning-nfs-in-the-real-world/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/tuning-nfs-in-the-real-world/</guid>
+      <guid>https://smuth.me/post/tuning-nfs-in-the-real-world/</guid>
       <description>&lt;div class=&#34;document&#34;&gt;
 
 
@@ -420,10 +420,10 @@ However, testing the the network (using iperf), it turned out that the max netwo
     
     <item>
       <title></title>
-      <link>https://smuth.me/using-heretrix-to-archive-sites-to-a-directory-structure/</link>
+      <link>https://smuth.me/post/using-heretrix-to-archive-sites-to-a-directory-structure/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/using-heretrix-to-archive-sites-to-a-directory-structure/</guid>
+      <guid>https://smuth.me/post/using-heretrix-to-archive-sites-to-a-directory-structure/</guid>
       <description>&lt;div class=&#34;document&#34;&gt;
 
 
@@ -461,10 +461,10 @@ However, testing the the network (using iperf), it turned out that the max netwo
     
     <item>
       <title></title>
-      <link>https://smuth.me/using-shush-as-a-crontab-wrapper/</link>
+      <link>https://smuth.me/post/using-shush-as-a-crontab-wrapper/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/using-shush-as-a-crontab-wrapper/</guid>
+      <guid>https://smuth.me/post/using-shush-as-a-crontab-wrapper/</guid>
       <description>&lt;div class=&#34;document&#34;&gt;
 
 
@@ -525,10 +525,10 @@ format=rich
     
     <item>
       <title></title>
-      <link>https://smuth.me/welcome-to-my-blog/</link>
+      <link>https://smuth.me/post/welcome-to-my-blog/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/welcome-to-my-blog/</guid>
+      <guid>https://smuth.me/post/welcome-to-my-blog/</guid>
       <description>&lt;div class=&#34;document&#34;&gt;
 
 

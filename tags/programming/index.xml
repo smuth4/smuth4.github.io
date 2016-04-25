@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Programming on cat /dev/null &gt; /proc/mind</title>
+    <link>https://smuth.me/tags/programming/</link>
+    <description>Recent content in Programming on cat /dev/null &gt; /proc/mind</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 09 Jan 2014 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://smuth.me/tags/programming/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Fun with Basic PHP Optimization</title>
+      <link>https://smuth.me/post/basic-php-optimization/</link>
+      <pubDate>Thu, 09 Jan 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/post/basic-php-optimization/</guid>
+      <description>&lt;div class=&#34;document&#34;&gt;
+
+
+&lt;!-- link: --&gt;
+&lt;!-- description: --&gt;
+&lt;!-- tags: php, programming --&gt;
+&lt;!-- date: 2014/01/09 12:27:35 --&gt;
+&lt;!-- title: Fun with Basic PHP Optimization --&gt;
+&lt;!-- slug: basic-php-optimization --&gt;
+&lt;p&gt;A while ago I came across a nice peice of php software for controlling a daemon (I&#39;m specifically avoid the software&#39;s name for privacy reasons). It worked well with a small data set, but quickly became laggy with a dataset numbering in the thousands. Admittedly, it really wasn&#39;t built for that kind of load, so I removed it and controlled the daemon manually, which wasn&#39;t a big deal.&lt;/p&gt;
+&lt;p&gt;Then a while later, I came across a post by someone who managed to mitigate the problem by shifting a particularly array-intensive operation to an external python program. Obviously, this was not exactly the most elegant solution, so I decided to take a look at the problematic section of code.&lt;/p&gt;
+&lt;!-- TEASER_END --&gt;
+&lt;p&gt;It looked something like this:&lt;/p&gt;
+&lt;pre class=&#34;code php literal-block&#34;&gt;
+&lt;span class=&#34;ln&#34;&gt;1 &lt;/span&gt;&lt;span class=&#34;comment preproc&#34;&gt;&amp;lt;?php&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;2 &lt;/span&gt;&lt;span class=&#34;keyword&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;punctuation&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;name variable&#34;&gt;$i&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;literal number integer&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;name variable&#34;&gt;$i&lt;/span&gt;&lt;span class=&#34;operator&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;name builtin&#34;&gt;count&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;name variable&#34;&gt;$req&lt;/span&gt;&lt;span class=&#34;operator&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&#34;name attribute&#34;&gt;val&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;);&lt;/span&gt; &lt;span class=&#34;name variable&#34;&gt;$i&lt;/span&gt;&lt;span class=&#34;operator&#34;&gt;+=&lt;/span&gt;&lt;span class=&#34;name variable&#34;&gt;$cnt&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;punctuation&#34;&gt;{&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;3 &lt;/span&gt;  &lt;span class=&#34;name variable&#34;&gt;$output&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;name variable&#34;&gt;$req&lt;/span&gt;&lt;span class=&#34;operator&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&#34;name attribute&#34;&gt;val&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;name variable&#34;&gt;$i&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;]]&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;name builtin&#34;&gt;array_slice&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;name variable&#34;&gt;$req&lt;/span&gt;&lt;span class=&#34;operator&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&#34;name attribute&#34;&gt;val&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;name variable&#34;&gt;$i&lt;/span&gt;&lt;span class=&#34;operator&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;literal number integer&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;name variable&#34;&gt;$cnt&lt;/span&gt;&lt;span class=&#34;operator&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;literal number integer&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;4 &lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;5 &lt;/span&gt;&lt;span class=&#34;comment preproc&#34;&gt;?&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Looks pretty basic, right? It cycles through an array ($req) and splits it into a new dictionary ($output) based on a fixed length ($cnt). However, if we turn this into a generic big O structure, with the values borrowed from &lt;a class=&#34;reference external&#34; href=&#34;http://stackoverflow.com/a/2484455&#34;&gt;this serverfault post&lt;/a&gt;, the problem quickly becomes apparent.&lt;/p&gt;
+&lt;pre class=&#34;code php literal-block&#34;&gt;
+&lt;span class=&#34;ln&#34;&gt;1 &lt;/span&gt;&lt;span class=&#34;comment preproc&#34;&gt;&amp;lt;?php&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;2 &lt;/span&gt;&lt;span class=&#34;keyword&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;punctuation&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;name variable&#34;&gt;$i&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;literal number integer&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;name variable&#34;&gt;$i&lt;/span&gt;&lt;span class=&#34;operator&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;name other&#34;&gt;O&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;name other&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;);&lt;/span&gt; &lt;span class=&#34;name variable&#34;&gt;$i&lt;/span&gt;&lt;span class=&#34;operator&#34;&gt;+=&lt;/span&gt;&lt;span class=&#34;name variable&#34;&gt;$cnt&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;3 &lt;/span&gt;  &lt;span class=&#34;name variable&#34;&gt;$output&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;name variable&#34;&gt;$req&lt;/span&gt;&lt;span class=&#34;operator&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&#34;name attribute&#34;&gt;val&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;name variable&#34;&gt;$i&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;]]&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;name other&#34;&gt;O&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;name other&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;4 &lt;/span&gt;&lt;span class=&#34;comment preproc&#34;&gt;?&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Taking into account the for loop, this would appear to mean that the operation is O(2n&lt;sup&gt;2&lt;/sup&gt;), in contrast to the very similar &lt;a class=&#34;reference external&#34; href=&#34;http://www.php.net/manual/en/function.array-chunk.php&#34;&gt;array_chunk&lt;/a&gt; O(n) function. So how do we optimize this? The most important thing to do is make it so php can complete this in one loop over the array. Everything else will be a nice improvement, but when scaling, the big O is king.&lt;/p&gt;
+&lt;p&gt;Here&#39;s the new code:&lt;/p&gt;
+&lt;pre class=&#34;code php literal-block&#34;&gt;
+&lt;span class=&#34;ln&#34;&gt; 1 &lt;/span&gt;&lt;span class=&#34;comment preproc&#34;&gt;&amp;lt;?php&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 2 &lt;/span&gt;&lt;span class=&#34;keyword&#34;&gt;foreach&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;name variable&#34;&gt;$req&lt;/span&gt;&lt;span class=&#34;operator&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&#34;name attribute&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;as&lt;/span&gt; &lt;span class=&#34;name variable&#34;&gt;$index&lt;/span&gt;&lt;span class=&#34;operator&#34;&gt;=&amp;gt;&lt;/span&gt;&lt;span class=&#34;name variable&#34;&gt;$value&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 3 &lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;{&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 4 &lt;/span&gt;  &lt;span class=&#34;keyword&#34;&gt;if&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;name variable&#34;&gt;$index&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;%&lt;/span&gt; &lt;span class=&#34;name variable&#34;&gt;$cnt&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;literal number integer&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 5 &lt;/span&gt;  &lt;span class=&#34;punctuation&#34;&gt;{&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 6 &lt;/span&gt;    &lt;span class=&#34;name variable&#34;&gt;$current_index&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;name variable&#34;&gt;$value&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 7 &lt;/span&gt;    &lt;span class=&#34;name variable&#34;&gt;$output&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;name variable&#34;&gt;$current_index&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;keyword&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;();&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 8 &lt;/span&gt;  &lt;span class=&#34;punctuation&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 9 &lt;/span&gt;  &lt;span class=&#34;keyword&#34;&gt;else&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;10 &lt;/span&gt;    &lt;span class=&#34;name variable&#34;&gt;$output&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;name variable&#34;&gt;$current_index&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;][]&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;name variable&#34;&gt;$value&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;11 &lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;12 &lt;/span&gt;&lt;span class=&#34;comment preproc&#34;&gt;?&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;We&#39;ve dropped the for/count() loop in favor of foreach, and eliminated slicing in favor of appending to newly created elements. In a real world test, this cut down the response time of the module from 12s to 4s on average. A pretty big improvement for a pretty small change...&lt;/p&gt;
+&lt;/div&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
