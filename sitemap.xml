@@ -2,13 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://smuth.me/</loc>
+    <loc>https://smuth.me/</loc>
     <lastmod>2016-04-24T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://smuth.me/post/blog/</loc>
+    <loc>https://smuth.me/post/blog/</loc>
     <lastmod>2016-04-24T00:00:00+00:00</lastmod>
   </url>
   

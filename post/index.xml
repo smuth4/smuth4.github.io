@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on cat /dev/null &gt; /proc/mind</title>
-    <link>http://smuth.me/post/</link>
+    <link>https://smuth.me/post/</link>
     <description>Recent content in Posts on cat /dev/null &gt; /proc/mind</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 24 Apr 2016 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://smuth.me/post/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://smuth.me/post/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Picking a blogging platform.</title>
-      <link>http://smuth.me/post/blog/</link>
+      <link>https://smuth.me/post/blog/</link>
       <pubDate>Sun, 24 Apr 2016 00:00:00 +0000</pubDate>
       
-      <guid>http://smuth.me/post/blog/</guid>
+      <guid>https://smuth.me/post/blog/</guid>
       <description>
 
 &lt;p&gt;I&amp;rsquo;ve been bouncing around between picking a blog platform, and realized I should really settle down and stick with one. This is mostly a page to track my decision-making, and isn&amp;rsquo;t meant to be an objective comparison of different platforms. The one thing I&amp;rdquo;ll be limiting myself to is static site generators. They&amp;rsquo;re light, easy to write to, and I can keep my blog in source control.&lt;/p&gt;
