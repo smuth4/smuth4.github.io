@@ -71,51 +71,54 @@
       </div>
     </div>
     <article>
-      <div class="document">
+      <p>.. link:
+.. description:
+.. tags: php, programming
+.. date: 2014/01/09 12:27:35
+.. title: Fun with Basic PHP Optimization
+.. slug: basic-php-optimization</p>
 
+<p>A while ago I came across a nice peice of php software for controlling a daemon. It worked well with a small data set, but quickly became laggy with a dataset numbering in the thousands. Admittedly, it really wasn&rsquo;t built for that kind of load, so I removed it and controlled the daemon manually, which wasn&rsquo;t a big deal.</p>
 
-<!-- link: -->
-<!-- description: -->
-<!-- tags: php, programming -->
-<!-- date: 2014/01/09 12:27:35 -->
-<!-- title: Fun with Basic PHP Optimization -->
-<!-- slug: basic-php-optimization -->
-<p>A while ago I came across a nice peice of php software for controlling a daemon (I'm specifically avoid the software's name for privacy reasons). It worked well with a small data set, but quickly became laggy with a dataset numbering in the thousands. Admittedly, it really wasn't built for that kind of load, so I removed it and controlled the daemon manually, which wasn't a big deal.</p>
-<p>Then a while later, I came across a post by someone who managed to mitigate the problem by shifting a particularly array-intensive operation to an external python program. Obviously, this was not exactly the most elegant solution, so I decided to take a look at the problematic section of code.</p>
-<!-- TEASER_END -->
+<p>Then a while later, I came across a post by someone who managed to mitigate the problem by shifting a particularly expensive operation to an external python program. Obviously, this was not exactly the most elegant solution, so I decided to take a look at the problematic section of code.</p>
+
 <p>It looked something like this:</p>
-<pre class="code php literal-block">
-<span class="ln">1 </span><span class="comment preproc">&lt;?php</span>
-<span class="ln">2 </span><span class="keyword">for</span> <span class="punctuation">(</span><span class="name variable">$i</span> <span class="operator">=</span> <span class="literal number integer">0</span><span class="punctuation">;</span> <span class="name variable">$i</span><span class="operator">&lt;</span><span class="name builtin">count</span><span class="punctuation">(</span><span class="name variable">$req</span><span class="operator">-&gt;</span><span class="name attribute">val</span><span class="punctuation">);</span> <span class="name variable">$i</span><span class="operator">+=</span><span class="name variable">$cnt</span><span class="punctuation">)</span> <span class="punctuation">{</span>
-<span class="ln">3 </span>  <span class="name variable">$output</span><span class="punctuation">[</span><span class="name variable">$req</span><span class="operator">-&gt;</span><span class="name attribute">val</span><span class="punctuation">[</span><span class="name variable">$i</span><span class="punctuation">]]</span> <span class="operator">=</span> <span class="name builtin">array_slice</span><span class="punctuation">(</span><span class="name variable">$req</span><span class="operator">-&gt;</span><span class="name attribute">val</span><span class="punctuation">,</span> <span class="name variable">$i</span><span class="operator">+</span><span class="literal number integer">1</span><span class="punctuation">,</span> <span class="name variable">$cnt</span><span class="operator">-</span><span class="literal number integer">1</span><span class="punctuation">);</span>
-<span class="ln">4 </span><span class="punctuation">}</span>
-<span class="ln">5 </span><span class="comment preproc">?&gt;</span>
-</pre>
-<p>Looks pretty basic, right? It cycles through an array ($req) and splits it into a new dictionary ($output) based on a fixed length ($cnt). However, if we turn this into a generic big O structure, with the values borrowed from <a class="reference external" href="http://stackoverflow.com/a/2484455">this serverfault post</a>, the problem quickly becomes apparent.</p>
-<pre class="code php literal-block">
-<span class="ln">1 </span><span class="comment preproc">&lt;?php</span>
-<span class="ln">2 </span><span class="keyword">for</span> <span class="punctuation">(</span><span class="name variable">$i</span> <span class="operator">=</span> <span class="literal number integer">0</span><span class="punctuation">;</span> <span class="name variable">$i</span><span class="operator">&lt;</span><span class="name other">O</span><span class="punctuation">(</span><span class="name other">n</span><span class="punctuation">);</span> <span class="name variable">$i</span><span class="operator">+=</span><span class="name variable">$cnt</span><span class="punctuation">)</span>
-<span class="ln">3 </span>  <span class="name variable">$output</span><span class="punctuation">[</span><span class="name variable">$req</span><span class="operator">-&gt;</span><span class="name attribute">val</span><span class="punctuation">[</span><span class="name variable">$i</span><span class="punctuation">]]</span> <span class="operator">=</span> <span class="name other">O</span><span class="punctuation">(</span><span class="name other">n</span><span class="punctuation">)</span>
-<span class="ln">4 </span><span class="comment preproc">?&gt;</span>
-</pre>
-<p>Taking into account the for loop, this would appear to mean that the operation is O(2n<sup>2</sup>), in contrast to the very similar <a class="reference external" href="http://www.php.net/manual/en/function.array-chunk.php">array_chunk</a> O(n) function. So how do we optimize this? The most important thing to do is make it so php can complete this in one loop over the array. Everything else will be a nice improvement, but when scaling, the big O is king.</p>
-<p>Here's the new code:</p>
-<pre class="code php literal-block">
-<span class="ln"> 1 </span><span class="comment preproc">&lt;?php</span>
-<span class="ln"> 2 </span><span class="keyword">foreach</span><span class="punctuation">(</span><span class="name variable">$req</span><span class="operator">-&gt;</span><span class="name attribute">val</span> <span class="keyword">as</span> <span class="name variable">$index</span><span class="operator">=&gt;</span><span class="name variable">$value</span><span class="punctuation">)</span>
-<span class="ln"> 3 </span><span class="punctuation">{</span>
-<span class="ln"> 4 </span>  <span class="keyword">if</span><span class="punctuation">(</span><span class="name variable">$index</span> <span class="operator">%</span> <span class="name variable">$cnt</span> <span class="operator">==</span> <span class="literal number integer">0</span><span class="punctuation">)</span>
-<span class="ln"> 5 </span>  <span class="punctuation">{</span>
-<span class="ln"> 6 </span>    <span class="name variable">$current_index</span> <span class="operator">=</span> <span class="name variable">$value</span><span class="punctuation">;</span>
-<span class="ln"> 7 </span>    <span class="name variable">$output</span><span class="punctuation">[</span><span class="name variable">$current_index</span><span class="punctuation">]</span> <span class="operator">=</span> <span class="keyword">array</span><span class="punctuation">();</span>
-<span class="ln"> 8 </span>  <span class="punctuation">}</span>
-<span class="ln"> 9 </span>  <span class="keyword">else</span>
-<span class="ln">10 </span>    <span class="name variable">$output</span><span class="punctuation">[</span><span class="name variable">$current_index</span><span class="punctuation">][]</span> <span class="operator">=</span> <span class="name variable">$value</span><span class="punctuation">;</span>
-<span class="ln">11 </span><span class="punctuation">}</span>
-<span class="ln">12 </span><span class="comment preproc">?&gt;</span>
-</pre>
-<p>We've dropped the for/count() loop in favor of foreach, and eliminated slicing in favor of appending to newly created elements. In a real world test, this cut down the response time of the module from 12s to 4s on average. A pretty big improvement for a pretty small change...</p>
-</div>
+
+<pre><code class="language-php">&lt;?php
+for ($i = 0; $i&lt;count($req-&gt;val); $i+=$cnt) {
+  $output[$req-&gt;val[$i]] = array_slice($req-&gt;val, $i+1, $cnt-1);
+}
+?&gt;
+</code></pre>
+
+<p>Looks pretty basic, right? It cycles through an array ($req) and splits it into a new dictionary ($output) based on a fixed length ($cnt). However, if we turn this into a generic big O structure, with the values borrowed from <a href="http://stackoverflow.com/a/2484455">this serverfault post</a>, the problem quickly becomes apparent.</p>
+
+<pre><code class="language-php">&lt;?php
+for ($i = 0; $i&lt;O(n); $i+=$cnt)
+  $output[$req-&gt;val[$i]] = O(n)
+?&gt;
+</code></pre>
+
+<p>Taking into account the for loop, this would appear to mean that the operation is O(2n<sup>2</sup>), in contrast to the very similar <a href="http://www.php.net/manual/en/function.array-chunk.php">array_chunk</a> O(n) function. So how do we optimize this? The most important thing to do is make it so php can complete this in one loop over the array. Everything else will be a nice improvement, but when scaling, the big O is king.</p>
+
+<p>Here&rsquo;s the new code:</p>
+
+<pre><code class="language-php">&lt;?php
+foreach($req-&gt;val as $index=&gt;$value)
+{
+  if($index % $cnt == 0)
+  {
+    $current_index = $value;
+    $output[$current_index] = array();
+  }
+  else
+    $output[$current_index][] = $value;
+}
+?&gt;
+</code></pre>
+
+<p>We&rsquo;ve dropped the for/count() loop in favor of foreach, and eliminated slicing in favor of appending to newly created elements. In a real world test, this cut down the response time of the module from 12s to 4s on average. A pretty big improvement for a pretty small change!</p>
+
       
       
       
