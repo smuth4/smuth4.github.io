@@ -53,5 +53,28 @@
 </description>
     </item>
     
+    <item>
+      <title>BASH Documentation</title>
+      <link>https://smuth.me/post/bash-documentation/</link>
+      <pubDate>Mon, 13 Jan 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/post/bash-documentation/</guid>
+      <description>&lt;p&gt;One of the things that always bothers me is lack of proper documentation. Now, I&amp;rsquo;m lazy just like everyone else, but if I&amp;rsquo;m going to document something, I prefer to do it properly and keep it up to date. I&amp;rsquo;ve inhierited a nice suite of bash scripts, which aren&amp;rsquo;t really complicated, but they all have the same copy &amp;amp; pasted header that&amp;rsquo;s dated from 2003. Not exactly helpful.&lt;/p&gt;
+
+&lt;p&gt;So while I have a wiki that explains how some of the processes work on a higher level, it would be nice to have clean documentation in my bash scripts. Ideally, it would be embeddable, exportable and human readable. Basically, I shouldn&amp;rsquo;t have to maintain two files, I should be able to paste it somewhere else if need be, and I should be able to maintain it without any external tools whatsoever, if I wanted to.&lt;/p&gt;
+
+&lt;p&gt;Here are a list of options I found while browsing around:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The old-fashioned embedded comments&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://launchpad.net/bashdoc&#34;&gt;bashdoc&lt;/a&gt; (awk + ReST structure via python&amp;rsquo;s docutils)&lt;/li&gt;
+&lt;li&gt;embedded Perl POD (via a &lt;a href=&#34;http://bahut.alma.ch/2007/08/embedding-documentation-in-shell-script_16.html&#34;&gt;heredoc hack&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://rfsber.home.xs4all.nl/Robo/robodoc.html&#34;&gt;ROBODoc&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Of these choices, POD seems a bit bloated to be inside a script, and ROBODoc looks way overblown for my simple needs, so I&amp;rsquo;ve decided to go with bashdoc. I&amp;rsquo;m already working with ReST, via this blog, and it fits pretty much all the criteria. Plus, it has few dependencies (awk, bash and python&amp;rsquo;s docutils) and doesn&amp;rsquo;t require a package for itself, so I wouldn&amp;rsquo;t feel bad about setting this up on production servers (although I should really set it up as a git hook in the script repo or something). However, documentation for bashdoc is quite limited (irony at it&amp;rsquo;s finest). The best way to figure out what is going on is to read lib/basic.awk, and the docutils source code, which isn&amp;rsquo;t exactly everyone&amp;rsquo;s cup of tea. That said, it shouldn&amp;rsquo;t be too difficult to build a small template I can copy and paste everywhere, which will hoepfully be more useful than the current header.&lt;/p&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

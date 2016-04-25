@@ -1,0 +1,160 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  
+  <meta charset="UTF-8">
+  <title>
+     | cat /dev/null &gt; /proc/mind
+  </title>
+
+
+  
+  <meta name="viewport" content="width=device-width,user-scalable=no,maximum-scale=1,initial-scale=1">
+
+  
+  <link rel="canonical" href="https://smuth.me/check_mk-and-freenas-pt-3/"/>
+
+  
+  <link rel="stylesheet" href="/css/sanitize.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/highlight_monokai.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/custom.css">
+  
+  
+  <link href="https://smuth.me/index.xml" rel="alternate" type="application/rss+xml" title="cat /dev/null &gt; /proc/mind" />
+  <link href="https://smuth.me/index.xml" rel="feed" type="application/rss+xml" title="cat /dev/null &gt; /proc/mind" />
+
+  
+  
+
+
+</head>
+
+
+
+<body>
+<div class="container">
+
+  
+  <header role="banner">
+    <div class="row gutters">
+      <div id="site-title" class="col span_6">
+        <h1><a href="https://smuth.me/">cat /dev/null &gt; /proc/mind</a></h1>
+        
+      </div>
+      <div id="social" class="col span_6">
+        <ul>
+          
+          
+          
+          
+        </ul>
+      </div>
+    </div>
+  </header>
+
+
+  
+  <main id="single" role="main">
+    <div class="article-header">
+      <h1></h1>
+      <div class="meta">
+        Jan 1, 0001 &nbsp;
+        
+      </div>
+    </div>
+    <article>
+      <div class="document">
+
+
+<!-- title: Check_mk and FreeNAS, Pt. 3 -->
+<!-- slug: check_mk-and-freenas-pt-3 -->
+<!-- date: 2014-07-10 11:44:19 UTC-04:00 -->
+<!-- tags: check_mk,FreeNAS,monitoring -->
+<!-- link: -->
+<!-- description: -->
+<!-- type: text -->
+<p>A continuation of <a href="#id1"><span class="problematic" id="id2">:doc:`check_mk-and-freenas-pt-2`</span></a></p>
+<div class="system-message" id="id1">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">&lt;stdin&gt;</tt>, line 9); <em><a href="#id2">backlink</a></em></p>
+Unknown interpreted text role &quot;doc&quot;.</div>
+<p>Now that we have all our smart data nicely set up, let's see if we can't get some stats on I/O speed. I'm pretty sure FreeNAS is supposed to have a I/O section in its &quot;Reports&quot; section, but for whatever reason, it's not in my install, and I'd like to have the data in Nagios in any case.</p>
+<p>Just like with the SMART data, we're going to write a small script that the check_mk agent can use. Unlike the SMART script, getting IO stats is incredibly easy.</p>
+<div class="system-message">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">&lt;stdin&gt;</tt>, line 15)</p>
+<p>Unknown directive type &quot;listing&quot;.</p>
+<pre class="literal-block">
+.. listing:: iostat bash
+
+</pre>
+</div>
+<p>Yep, that's all it is. We're only really interesting in the drives being used in ZFS, but you could open it up to all drives if you wanted to.</p>
+<p>Next up is to let check_mk be able to recognize the agent's output. The check script that I use can be found <a class="reference external" href="/check_mk_freenas_iostat/iostat">here</a>. It should be placed in the &quot;checks/&quot; directory of your check_mk install.</p>
+<p>I also created a quick template for pnp4nagios, found <a class="reference external" href="/check_mk_freenas_iostat/check_mk-iostat.php">here</a>, which should be placed in the &quot;templates/&quot; directory.</p>
+<p>After all this, we've finally got a solid set up for tracking disks in FreeNAS. For each disk, there will be three associated services: SMART data, temperature (taken from the SMART data), and iostat data. See below for a small <a class="reference external" href="/galleries/check_mk/">gallery</a> of what it looks like in my setup.</p>
+<div class="system-message">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">&lt;stdin&gt;</tt>, line 25)</p>
+<p>Unknown directive type &quot;slides&quot;.</p>
+<pre class="literal-block">
+.. slides::
+
+   /galleries/check_mk/iostat_disks.png
+   /galleries/check_mk/pnp4nagios_disks.png
+
+</pre>
+</div>
+</div>
+      
+      
+      
+    </article>
+    
+
+
+<script type="text/javascript">
+     
+    var disqus_shortname = '';
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+  </main>
+  
+  <nav class="pagination-single">
+    
+      <span class="previous">&larr; <a href="https://smuth.me/check_mk-and-freenas/" rel="prev"></a></span>
+    
+    
+      <span class="next"><a href="https://smuth.me/check_mk-and-freenas-pt-2/" rel="next"></a> &rarr;</span>
+    
+  </nav>
+
+
+  
+  <footer role="contentinfo">
+    <div style="text-align:center;">
+      
+      
+    </div>
+  </footer>
+
+
+</div>
+
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+</body>
+</html>
+

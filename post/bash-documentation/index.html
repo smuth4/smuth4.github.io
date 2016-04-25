@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  
+  <meta charset="UTF-8">
+  <title>
+    BASH Documentation | cat /dev/null &gt; /proc/mind
+  </title>
+
+
+  
+  <meta name="viewport" content="width=device-width,user-scalable=no,maximum-scale=1,initial-scale=1">
+
+  
+  <link rel="canonical" href="https://smuth.me/post/bash-documentation/"/>
+
+  
+  <link rel="stylesheet" href="/css/sanitize.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/highlight_monokai.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/custom.css">
+  
+  
+  <link href="https://smuth.me/index.xml" rel="alternate" type="application/rss+xml" title="cat /dev/null &gt; /proc/mind" />
+  <link href="https://smuth.me/index.xml" rel="feed" type="application/rss+xml" title="cat /dev/null &gt; /proc/mind" />
+
+  
+  
+
+
+</head>
+
+
+
+<body>
+<div class="container">
+
+  
+  <header role="banner">
+    <div class="row gutters">
+      <div id="site-title" class="col span_6">
+        <h1><a href="https://smuth.me/">cat /dev/null &gt; /proc/mind</a></h1>
+        
+      </div>
+      <div id="social" class="col span_6">
+        <ul>
+          
+          
+          
+          
+        </ul>
+      </div>
+    </div>
+  </header>
+
+
+  
+  <main id="single" role="main">
+    <div class="article-header">
+      <h1>BASH Documentation</h1>
+      <div class="meta">
+        Jan 13, 2014 &nbsp;
+        
+          #<a href="/tags/bash">bash</a>&nbsp;
+        
+      </div>
+    </div>
+    <article>
+      <p>One of the things that always bothers me is lack of proper documentation. Now, I&rsquo;m lazy just like everyone else, but if I&rsquo;m going to document something, I prefer to do it properly and keep it up to date. I&rsquo;ve inhierited a nice suite of bash scripts, which aren&rsquo;t really complicated, but they all have the same copy &amp; pasted header that&rsquo;s dated from 2003. Not exactly helpful.</p>
+
+<p>So while I have a wiki that explains how some of the processes work on a higher level, it would be nice to have clean documentation in my bash scripts. Ideally, it would be embeddable, exportable and human readable. Basically, I shouldn&rsquo;t have to maintain two files, I should be able to paste it somewhere else if need be, and I should be able to maintain it without any external tools whatsoever, if I wanted to.</p>
+
+<p>Here are a list of options I found while browsing around:</p>
+
+<ul>
+<li>The old-fashioned embedded comments</li>
+<li><a href="https://launchpad.net/bashdoc">bashdoc</a> (awk + ReST structure via python&rsquo;s docutils)</li>
+<li>embedded Perl POD (via a <a href="http://bahut.alma.ch/2007/08/embedding-documentation-in-shell-script_16.html">heredoc hack</a>)</li>
+<li><a href="http://rfsber.home.xs4all.nl/Robo/robodoc.html">ROBODoc</a></li>
+</ul>
+
+<p>Of these choices, POD seems a bit bloated to be inside a script, and ROBODoc looks way overblown for my simple needs, so I&rsquo;ve decided to go with bashdoc. I&rsquo;m already working with ReST, via this blog, and it fits pretty much all the criteria. Plus, it has few dependencies (awk, bash and python&rsquo;s docutils) and doesn&rsquo;t require a package for itself, so I wouldn&rsquo;t feel bad about setting this up on production servers (although I should really set it up as a git hook in the script repo or something). However, documentation for bashdoc is quite limited (irony at it&rsquo;s finest). The best way to figure out what is going on is to read lib/basic.awk, and the docutils source code, which isn&rsquo;t exactly everyone&rsquo;s cup of tea. That said, it shouldn&rsquo;t be too difficult to build a small template I can copy and paste everywhere, which will hoepfully be more useful than the current header.</p>
+
+      
+      
+      
+    </article>
+    
+
+
+<script type="text/javascript">
+     
+    var disqus_shortname = '';
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+  </main>
+  
+  <nav class="pagination-single">
+    
+      <span class="previous">&larr; <a href="https://smuth.me/basic-php-optimization/" rel="prev"></a></span>
+    
+    
+      <span class="next"><a href="https://smuth.me/post/blog/" rel="next">Picking a blogging platform.</a> &rarr;</span>
+    
+  </nav>
+
+
+  
+  <footer role="contentinfo">
+    <div style="text-align:center;">
+      
+      
+    </div>
+  </footer>
+
+
+</div>
+
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+</body>
+</html>
+
