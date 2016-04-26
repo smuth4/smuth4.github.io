@@ -54,121 +54,206 @@
     </item>
     
     <item>
-      <title>BASH Documentation</title>
-      <link>https://smuth.me/post/bash-documentation/</link>
-      <pubDate>Mon, 13 Jan 2014 00:00:00 +0000</pubDate>
+      <title>Using shush as a crontab wrapper</title>
+      <link>https://smuth.me/post/using-shush-as-a-crontab-wrapper/</link>
+      <pubDate>Sat, 11 Apr 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/bash-documentation/</guid>
-      <description>&lt;p&gt;One of the things that always bothers me is lack of proper documentation. Now, I&amp;rsquo;m lazy just like everyone else, but if I&amp;rsquo;m going to document something, I prefer to do it properly and keep it up to date. I&amp;rsquo;ve inhierited a nice suite of bash scripts, which aren&amp;rsquo;t really complicated, but they all have the same copy &amp;amp; pasted header that&amp;rsquo;s dated from 2003. Not exactly helpful.&lt;/p&gt;
-
-&lt;p&gt;So while I have a wiki that explains how some of the processes work on a higher level, it would be nice to have clean documentation in my bash scripts. Ideally, it would be embeddable, exportable and human readable. Basically, I shouldn&amp;rsquo;t have to maintain two files, I should be able to paste it somewhere else if need be, and I should be able to maintain it without any external tools whatsoever, if I wanted to.&lt;/p&gt;
-
-&lt;p&gt;Here are a list of options I found while browsing around:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;The old-fashioned embedded comments&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://launchpad.net/bashdoc&#34;&gt;bashdoc&lt;/a&gt; (awk + ReST structure via python&amp;rsquo;s docutils)&lt;/li&gt;
-&lt;li&gt;embedded Perl POD (via a &lt;a href=&#34;http://bahut.alma.ch/2007/08/embedding-documentation-in-shell-script_16.html&#34;&gt;heredoc hack&lt;/a&gt;)&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://rfsber.home.xs4all.nl/Robo/robodoc.html&#34;&gt;ROBODoc&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Of these choices, POD seems a bit bloated to be inside a script, and ROBODoc looks way overblown for my simple needs, so I&amp;rsquo;ve decided to go with bashdoc. I&amp;rsquo;m already working with ReST, via this blog, and it fits pretty much all the criteria. Plus, it has few dependencies (awk, bash and python&amp;rsquo;s docutils) and doesn&amp;rsquo;t require a package for itself, so I wouldn&amp;rsquo;t feel bad about setting this up on production servers (although I should really set it up as a git hook in the script repo or something). However, documentation for bashdoc is quite limited (irony at it&amp;rsquo;s finest). The best way to figure out what is going on is to read lib/basic.awk, and the docutils source code, which isn&amp;rsquo;t exactly everyone&amp;rsquo;s cup of tea. That said, it shouldn&amp;rsquo;t be too difficult to build a small template I can copy and paste everywhere, which will hoepfully be more useful than the current header.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Fun with Basic PHP Optimization</title>
-      <link>https://smuth.me/post/basic-php-optimization/</link>
-      <pubDate>Thu, 09 Jan 2014 00:00:00 +0000</pubDate>
-      
-      <guid>https://smuth.me/post/basic-php-optimization/</guid>
-      <description>&lt;p&gt;.. link:
-.. description:
-.. tags: php, programming
-.. date: 2014/01/09 12:27:35
-.. title: Fun with Basic PHP Optimization
-.. slug: basic-php-optimization&lt;/p&gt;
-
-&lt;p&gt;A while ago I came across a nice peice of php software for controlling a daemon. It worked well with a small data set, but quickly became laggy with a dataset numbering in the thousands. Admittedly, it really wasn&amp;rsquo;t built for that kind of load, so I removed it and controlled the daemon manually, which wasn&amp;rsquo;t a big deal.&lt;/p&gt;
-
-&lt;p&gt;Then a while later, I came across a post by someone who managed to mitigate the problem by shifting a particularly expensive operation to an external python program. Obviously, this was not exactly the most elegant solution, so I decided to take a look at the problematic section of code.&lt;/p&gt;
-
-&lt;p&gt;It looked something like this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
-for ($i = 0; $i&amp;lt;count($req-&amp;gt;val); $i+=$cnt) {
-  $output[$req-&amp;gt;val[$i]] = array_slice($req-&amp;gt;val, $i+1, $cnt-1);
-}
-?&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Looks pretty basic, right? It cycles through an array ($req) and splits it into a new dictionary ($output) based on a fixed length ($cnt). However, if we turn this into a generic big O structure, with the values borrowed from &lt;a href=&#34;http://stackoverflow.com/a/2484455&#34;&gt;this serverfault post&lt;/a&gt;, the problem quickly becomes apparent.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
-for ($i = 0; $i&amp;lt;O(n); $i+=$cnt)
-  $output[$req-&amp;gt;val[$i]] = O(n)
-?&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Taking into account the for loop, this would appear to mean that the operation is O(2n&lt;sup&gt;2&lt;/sup&gt;), in contrast to the very similar &lt;a href=&#34;http://www.php.net/manual/en/function.array-chunk.php&#34;&gt;array_chunk&lt;/a&gt; O(n) function. So how do we optimize this? The most important thing to do is make it so php can complete this in one loop over the array. Everything else will be a nice improvement, but when scaling, the big O is king.&lt;/p&gt;
-
-&lt;p&gt;Here&amp;rsquo;s the new code:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
-foreach($req-&amp;gt;val as $index=&amp;gt;$value)
-{
-  if($index % $cnt == 0)
-  {
-    $current_index = $value;
-    $output[$current_index] = array();
-  }
-  else
-    $output[$current_index][] = $value;
-}
-?&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We&amp;rsquo;ve dropped the for/count() loop in favor of foreach, and eliminated slicing in favor of appending to newly created elements. In a real world test, this cut down the response time of the module from 12s to 4s on average. A pretty big improvement for a pretty small change!&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://smuth.me/post/centos-logstash-forwarder-init-script/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://smuth.me/post/centos-logstash-forwarder-init-script/</guid>
+      <guid>https://smuth.me/post/using-shush-as-a-crontab-wrapper/</guid>
       <description>&lt;div class=&#34;document&#34;&gt;
 
 
-&lt;!-- title: CentOS 6 logstash-forwarder init script --&gt;
-&lt;!-- slug: centos-6-logstash-forwarder-init-script --&gt;
-&lt;!-- date: 2014-07-11 14:52:51 UTC-04:00 --&gt;
-&lt;!-- tags: logging,CentOS6 --&gt;
+&lt;!-- title: Using shush as a crontab wrapper --&gt;
+&lt;!-- slug: using-shush-as-a-crontab-wrapper --&gt;
+&lt;!-- date: 2015-04-11 15:24:09 UTC-04:00 --&gt;
+&lt;!-- tags: cron --&gt;
+&lt;!-- category: --&gt;
 &lt;!-- link: --&gt;
 &lt;!-- description: --&gt;
 &lt;!-- type: text --&gt;
-&lt;p&gt;I&#39;ve been trying to set up an &lt;a class=&#34;reference external&#34; href=&#34;http://www.elasticsearch.org/overview/&#34;&gt;ELK&lt;/a&gt; stack for a while, and while logstash-forwarder looks like a great program, the default init script is not exactly made for CentOS 6. So I wrote my own simple one, based on the example init script in /usr/share/doc/initscripts-*/sysvinitfiles. The code is below, or you can download it &lt;a class=&#34;reference external&#34; href=&#34;https://smuth.me/listings/logstash-forwarder/logstash-forwarder.init&#34;&gt;here&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;reference external&#34; href=&#34;http://linux.die.net/man/1/crontab&#34;&gt;Cron&lt;/a&gt; is a great tool for linux servers, but it&#39;s a very limited in it&#39;s capabilities (since it follows the Unix philosophy), so when I started to run up against those limits, I began doing all sorts of bash trickery to accomplish what I needed to happen, but that swiftly started giving me even more problem. At work, I use the &lt;a class=&#34;reference external&#34; href=&#34;https://jenkins-ci.org/&#34;&gt;Jenkins CI&lt;/a&gt; tool as a cron replacement (great tool, allows for distributed runs, queueing tasks, emails on failure, etc), but it seemed rather heavy weight for a homelab. Thankfully, there are a lot of cron wrappers/replacements out there, but I settled on &lt;a class=&#34;reference external&#34; href=&#34;http://web.taranis.org/shush/&#34;&gt;shush&lt;/a&gt;, a neat little wrapper around script for cron.&lt;/p&gt;
 &lt;!-- TEASER_END --&gt;
-&lt;div class=&#34;system-message&#34;&gt;
-&lt;p class=&#34;system-message-title&#34;&gt;System Message: ERROR/3 (&lt;tt class=&#34;docutils&#34;&gt;&amp;lt;stdin&amp;gt;&lt;/tt&gt;, line 13)&lt;/p&gt;
-&lt;p&gt;Unknown directive type &amp;quot;listing&amp;quot;.&lt;/p&gt;
-&lt;pre class=&#34;literal-block&#34;&gt;
-.. listing:: logstash-forwarder/logstash-forwarder.init bash
-
+&lt;p&gt;There are a couple reasons I like it:&lt;/p&gt;
+&lt;ul class=&#34;simple&#34;&gt;
+&lt;li&gt;The ability to manually run scripts under shush before adding them to cron&lt;/li&gt;
+&lt;li&gt;Automatic crontab management&lt;/li&gt;
+&lt;li&gt;Simple C binary, very few dependencies&lt;/li&gt;
+&lt;li&gt;Text based config file&lt;/li&gt;
+&lt;li&gt;Locking and timeout handling&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Basically how it works is that there&#39;s a designated directory that holds all the shush configuration files. These files can be named anything, although I usually have them be extensionless for simplicity. You can then run any of these files with &lt;tt class=&#34;docutils literal&#34;&gt;shush &lt;span class=&#34;pre&#34;&gt;-c&lt;/span&gt; &amp;lt;directory&amp;gt; &amp;lt;config_file_name&amp;gt;&lt;/tt&gt;. If you use the default directory of &lt;tt class=&#34;docutils literal&#34;&gt;&lt;span class=&#34;pre&#34;&gt;$HOME/.shush/&lt;/span&gt;&lt;/tt&gt;, you can just run &lt;tt class=&#34;docutils literal&#34;&gt;shush &amp;lt;config_file_name&amp;gt;&lt;/tt&gt;. However, in order to have the config file run regularly, you need to set the &lt;tt class=&#34;docutils literal&#34;&gt;schedule&lt;/tt&gt; setting, and run &lt;tt class=&#34;docutils literal&#34;&gt;shush &lt;span class=&#34;pre&#34;&gt;-c&lt;/span&gt; &amp;lt;directory&amp;gt; &lt;span class=&#34;pre&#34;&gt;-u&lt;/span&gt;&lt;/tt&gt; to update the crontab file.&lt;/p&gt;
+&lt;p&gt;The &lt;a class=&#34;reference external&#34; href=&#34;http://web.taranis.org/shush/shush.1.html&#34;&gt;man page&lt;/a&gt; has some more documentation, but I&#39;ll at least break down the example config file make it more understandable.&lt;/p&gt;
+&lt;p&gt;Set the command &lt;tt class=&#34;docutils literal&#34;&gt;shush &lt;span class=&#34;pre&#34;&gt;-c&lt;/span&gt; /etc/shush &lt;span class=&#34;pre&#34;&gt;-u&lt;/span&gt;&lt;/tt&gt; to run every day at 9 PM:&lt;/p&gt;
+&lt;pre class=&#34;code literal-block&#34;&gt;
+command=shush -c /etc/shush -u
+schedule=0 9 * * *
 &lt;/pre&gt;
+&lt;p&gt;Use a lockfile. If a lockfile already exists, send an email to root and root-logs, then abort the job:&lt;/p&gt;
+&lt;pre class=&#34;code literal-block&#34;&gt;
+lock=notify=root root-logs,abort
+&lt;/pre&gt;
+&lt;p&gt;Send out an email notification if the script is still running after 5 minutes, but keep the script alive:&lt;/p&gt;
+&lt;pre class=&#34;code literal-block&#34;&gt;
+timeout=5m,notify=root root-logs
+&lt;/pre&gt;
+&lt;p&gt;Print stderr output first, use the &lt;tt class=&#34;docutils literal&#34;&gt;text&lt;/tt&gt; format, and set the email subject:&lt;/p&gt;
+&lt;pre class=&#34;code literal-block&#34;&gt;
+stderr=first
+format=text
+Subject=Crontab Daily Update
+&lt;/pre&gt;
+&lt;p&gt;Always send an email to root-logs:&lt;/p&gt;
+&lt;pre class=&#34;code literal-block&#34;&gt;
+[logs]
+to=root-logs
+&lt;/pre&gt;
+&lt;p&gt;If one of the various failure conditions applies, send an email to root:&lt;/p&gt;
+&lt;pre class=&#34;code literal-block&#34;&gt;
+[readers]
+if=$exit != 0 || $outlines != 1 || $errsize &amp;gt; 0 || U
+to=root
+format=rich
+&lt;/pre&gt;
+&lt;p&gt;Shush is a very powerful tool, and I&#39;m very happy with the ways that I&#39;ve been able to implement it in my homelab. However, it can be a bit confusing for a beginner, and the regex matching features leave much to be desired. With the intention of fixing things up, I&#39;ve create a repositoty at &lt;a class=&#34;reference external&#34; href=&#34;https://github.com/smuth4/shush&#34;&gt;https://github.com/smuth4/shush&lt;/a&gt;, which I can hopefully use to clean up things, and get the project active again. Feel free to compile, try out and mayb even contribute to this neat little tool!&lt;/p&gt;
+&lt;/div&gt;</description>
+    </item>
+    
+    <item>
+      <title>Flashing LSI SAS 9211-8i with EFI</title>
+      <link>https://smuth.me/post/flashing-lsi-sas-9211-8i-with-efi/</link>
+      <pubDate>Sun, 08 Feb 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/post/flashing-lsi-sas-9211-8i-with-efi/</guid>
+      <description>&lt;div class=&#34;document&#34;&gt;
+
+
+&lt;!-- title: Flashing LSI SAS 9211-8i with EFI --&gt;
+&lt;!-- slug: flashing-lsi-sas-9211-8i-with-efi --&gt;
+&lt;!-- date: 2015-02-08 15:00:17 UTC-05:00 --&gt;
+&lt;!-- tags: storage,firmare --&gt;
+&lt;!-- category: --&gt;
+&lt;!-- link: --&gt;
+&lt;!-- description: --&gt;
+&lt;!-- type: text --&gt;
+&lt;p&gt;I recently went on an upgrade crusade to my homelab, and as part of that, upgraded FreeNAS to 9.3. When I did, there was a non-urgent alert about a driver mismatch for my LSI HBA (FreeNAS expected 16, LSI had 12). Thus, I decided to upgrade the firmware.&lt;/p&gt;
+&lt;div class=&#34;section&#34; id=&#34;directions&#34;&gt;
+&lt;h1&gt;Directions&lt;/h1&gt;
+&lt;p&gt;This assumes that your server can boot directly into an EFI shell. It might require a Shell.efi for some motherboards, but I can&#39;t tell you much more than that, as it boots straight to EFI on mine. I&#39;m going to be flashing mine to IT mode (so it passes the disks through directly to ZFS), but the steps to upgrading the firmware in IR mode is very similar.&lt;/p&gt;
+&lt;p&gt;To do this, you&#39;re going to need a USB drive (formatted with something like &lt;a class=&#34;reference external&#34; href=&#34;http://rufus.akeo.ie/&#34;&gt;Rufus&lt;/a&gt;) and 3 files:&lt;/p&gt;
+&lt;ul class=&#34;simple&#34;&gt;
+&lt;li&gt;sas2flash.efi - The executable that will be doing the flashing&lt;/li&gt;
+&lt;li&gt;mptsas2.rom - The BIOS ROM&lt;/li&gt;
+&lt;li&gt;2118it.bin/2118ir.bin - The firmware binary&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;All three of these files can be found on &lt;a class=&#34;reference external&#34; href=&#34;http://www.lsi.com&#34;&gt;LSI&#39;s website&lt;/a&gt;. The two downloads you need are Installer_PXX_for_UEFI and 9211-8i_Package_PXX_IR_IT_Firmware_BIOS_for_MSDOS_Windows, where XX is the version you want. If you need an older version like I did, you can find them through the &lt;a class=&#34;reference external&#34; href=&#34;http://www.lsi.com/support/pages/download-search.aspx&#34;&gt;download search page&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Now open up Installer_PXX_for_UEFI.zip, find sas2flash_efi_ebc_rel/sas2flash.efi, and put that on the USB drive. Similarly, open up 9211-8i_Package_PXX_IR_IT_Firmware_BIOS_for_MSDOS_Windows.zip, extract Firmware/HBA_9211_8i_IT/2118it.bin and sasbios_rel/mptsas2.rom, and put those on the USB drive as well.&lt;/p&gt;
+&lt;p&gt;Alright, now that we have our files, we can boot into the EFI shell.&lt;/p&gt;
+&lt;p&gt;Verify you&#39;re in the USB root directory with &lt;tt class=&#34;docutils literal&#34;&gt;ls&lt;/tt&gt;. If not, try &lt;tt class=&#34;docutils literal&#34;&gt;map&lt;/tt&gt; to list the devices, &lt;tt class=&#34;docutils literal&#34;&gt;mount &amp;lt;device&amp;gt;&lt;/tt&gt; and then &lt;tt class=&#34;docutils literal&#34;&gt;&amp;lt;device&amp;gt;:&lt;/tt&gt; to mount and enter the USB.&lt;/p&gt;
+&lt;div class=&#34;note&#34;&gt;
+&lt;p class=&#34;first admonition-title&#34;&gt;Note&lt;/p&gt;
+&lt;p class=&#34;last&#34;&gt;For this next step, apparenlty it&#39;s possible to upgrade multiple cards at once. I prefer the slow but safe way, since there&#39;s a (slim) chance of bricking a card, and flashed each card one at a time, manually pulling them in and out.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div class=&#34;important&#34;&gt;
-&lt;p class=&#34;first admonition-title&#34;&gt;Important&lt;/p&gt;
-&lt;p class=&#34;last&#34;&gt;This script appears to work on CentOS 7 without modification due to backwards-compatibility scripts, but a proper systemd script should really be used instead.&lt;/p&gt;
+&lt;p&gt;Verify we can see the hardware, and that it&#39;s a version we want to update:&lt;/p&gt;
+&lt;pre class=&#34;literal-block&#34;&gt;
+sas2flash.efi -listall
+&lt;/pre&gt;
+&lt;p&gt;First we erase the old firmware:&lt;/p&gt;
+&lt;pre class=&#34;literal-block&#34;&gt;
+sas2flash.efi -o -e 6
+&lt;/pre&gt;
+&lt;p&gt;Then we install the new one:&lt;/p&gt;
+&lt;pre class=&#34;literal-block&#34;&gt;
+sas2flash.efi -o -f 2118it.bin -b mptsas2.rom
+&lt;/pre&gt;
+&lt;p&gt;And Bob&#39;s your uncle! Enjoy your new and exciting passthrough disk I/O.&lt;/p&gt;
+&lt;p&gt;Useful links:&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;reference external&#34; href=&#34;http://digitalcardboard.com/blog/2014/07/09/flashing-it-firmware-to-the-lsi-sas-9211-8i-hba-2014-efi-recipe/&#34;&gt;http://digitalcardboard.com/blog/2014/07/09/flashing-it-firmware-to-the-lsi-sas-9211-8i-hba-2014-efi-recipe/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;reference external&#34; href=&#34;http://brycv.com/blog/2012/flashing-it-firmware-to-lsi-sas9211-8i/&#34;&gt;http://brycv.com/blog/2012/flashing-it-firmware-to-lsi-sas9211-8i/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;reference external&#34; href=&#34;http://linustechtips.com/main/topic/104425-flashing-an-lsi-9211-8i-raid-card-to-it-mode-for-zfssoftware-raid-tutorial/&#34;&gt;http://linustechtips.com/main/topic/104425-flashing-an-lsi-9211-8i-raid-card-to-it-mode-for-zfssoftware-raid-tutorial/&lt;/a&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;</description>
     </item>
     
     <item>
-      <title></title>
+      <title>Using Heritrix to archive sites to a directory structure</title>
+      <link>https://smuth.me/post/using-heretrix-to-archive-sites-to-a-directory-structure/</link>
+      <pubDate>Tue, 12 Aug 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/post/using-heretrix-to-archive-sites-to-a-directory-structure/</guid>
+      <description>&lt;div class=&#34;document&#34;&gt;
+
+
+&lt;!-- title: Using Heritrix to archive sites to a directory structure --&gt;
+&lt;!-- slug: using-heritrix-to-archive-sites-to-a-directory-structure --&gt;
+&lt;!-- date: 2014-08-12 11:47:27 UTC-04:00 --&gt;
+&lt;!-- tags: heritrix archive --&gt;
+&lt;!-- link: --&gt;
+&lt;!-- description: --&gt;
+&lt;!-- type: text --&gt;
+&lt;p&gt;So I one day I found myself in the market for a good web archiver. Specifically, there were some interesting open directories I wanted to mirror. My ideal solution would be a web front end around &lt;a class=&#34;reference external&#34; href=&#34;http://www.gnu.org/software/wget/manual/wget.html&#34;&gt;wget&lt;/a&gt;, but a little bit of research and testing showed that such an architecture would be too simplistic for the level of detail I wanted. There were a couple spider frameworks I tried out, like &lt;a class=&#34;reference external&#34; href=&#34;http://scrapy.org/&#34;&gt;scrapy&lt;/a&gt;, but I wasn&#39;t enthusiastic about the prospect of trying to roll my own solution, when I knew sites like the &lt;a class=&#34;reference external&#34; href=&#34;http://archive.org&#34;&gt;Internet Archive&lt;/a&gt; had the exact kind of thing I had in mind, and they use the &lt;a class=&#34;reference external&#34; href=&#34;https://webarchive.jira.com/wiki/display/Heritrix/Heritrix&#34;&gt;Heritrix&lt;/a&gt; engine archive their material. The &lt;a class=&#34;reference external&#34; href=&#34;http://en.wikipedia.org/wiki/Heritrix&#34;&gt;Heritrix Wikipedia page&lt;/a&gt; mentions that it can output in the same directory format as wget (perfect!), but there&#39;s no citation for that, and the Heretrix documentation is unorganized, to say the least.&lt;/p&gt;
+&lt;div class=&#34;section&#34; id=&#34;setting-it-up&#34;&gt;
+&lt;h1&gt;Setting it up&lt;/h1&gt;
+&lt;div class=&#34;section&#34; id=&#34;software&#34;&gt;
+&lt;h2&gt;Software&lt;/h2&gt;
+&lt;p&gt;I used Heritrix 3.2.0, the most recent stable version, for this project.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section&#34; id=&#34;steps&#34;&gt;
+&lt;h2&gt;Steps&lt;/h2&gt;
+&lt;p&gt;This is not going to be a full tutorial on how to use Heritrix. Be sure to read the &lt;a class=&#34;reference external&#34; href=&#34;https://webarchive.jira.com/wiki/display/Heritrix/Heritrix#Heritrix-Documentation&#34;&gt;documentation&lt;/a&gt;, and to read the default job configuration file before starting a large job.&lt;/p&gt;
+&lt;p&gt;Install Heritrix as per the instructions and get it started. Navigate to the web interface and create a new job with the standard configuration.&lt;/p&gt;
+&lt;p&gt;Next we want to edit the disposition chain, which starts at line 335 in my default configuration. The first bean defined should be the &lt;tt class=&#34;docutils literal&#34;&gt;warcWriter&lt;/tt&gt;, which, obviously, writes out scraped content to WARC files. WARC files are perfect for preserving websites exactly how they were accessed, but are a little too clumsy to be convenient.&lt;/p&gt;
+&lt;p&gt;After the WARC bean, add the follow code:&lt;/p&gt;
+&lt;pre class=&#34;code xml literal-block&#34;&gt;
+&lt;span class=&#34;name tag&#34;&gt;&amp;lt;bean&lt;/span&gt; &lt;span class=&#34;name attribute&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;literal string&#34;&gt;&amp;quot;mirrorWriter&amp;quot;&lt;/span&gt; &lt;span class=&#34;name attribute&#34;&gt;class=&lt;/span&gt;&lt;span class=&#34;literal string&#34;&gt;&amp;quot;org.archive.modules.writer.MirrorWriterProcessor&amp;quot;&lt;/span&gt;&lt;span class=&#34;name tag&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;name tag&#34;&gt;&amp;lt;/bean&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Then, in the &lt;tt class=&#34;docutils literal&#34;&gt;dispositionProcessors&lt;/tt&gt; bean, remove the line &lt;tt class=&#34;docutils literal&#34;&gt;&amp;lt;ref &lt;span class=&#34;pre&#34;&gt;bean=&amp;quot;warcWriter&amp;quot;/&amp;gt;&lt;/span&gt;&lt;/tt&gt; from the the &lt;tt class=&#34;docutils literal&#34;&gt;processors&lt;/tt&gt; list, and add &lt;tt class=&#34;docutils literal&#34;&gt;&amp;lt;ref &lt;span class=&#34;pre&#34;&gt;bean=&amp;quot;mirrorWriter&amp;quot;/&amp;gt;&lt;/span&gt;&lt;/tt&gt;.&lt;/p&gt;
+&lt;p&gt;That&#39;s pretty much all that&#39;s needed to get started. There are more parameters that can be tweaked, which can be found in the &lt;a class=&#34;reference external&#34; href=&#34;http://builds.archive.org/javadoc/heritrix-3.2.0/org/archive/modules/writer/MirrorWriterProcessor.html&#34;&gt;3.2.0 Javadoc&lt;/a&gt;, but the defaults are not anything surprising.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description>
+    </item>
+    
+    <item>
+      <title>Check_mk and FreeNAS, Pt. 3</title>
+      <link>https://smuth.me/post/check_mk-and-freenas-pt-3/</link>
+      <pubDate>Thu, 10 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/post/check_mk-and-freenas-pt-3/</guid>
+      <description>&lt;div class=&#34;document&#34;&gt;
+
+
+&lt;!-- title: Check_mk and FreeNAS, Pt. 3 --&gt;
+&lt;!-- slug: check_mk-and-freenas-pt-3 --&gt;
+&lt;!-- date: 2014-07-10 11:44:19 UTC-04:00 --&gt;
+&lt;!-- tags: check_mk,FreeNAS,monitoring --&gt;
+&lt;!-- link: --&gt;
+&lt;!-- description: --&gt;
+&lt;!-- type: text --&gt;
+&lt;p&gt;A continuation of &lt;a href=&#34;#id1&#34;&gt;&lt;span class=&#34;problematic&#34; id=&#34;id2&#34;&gt;:doc:`check_mk-and-freenas-pt-2`&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;system-message&#34; id=&#34;id1&#34;&gt;
+&lt;p class=&#34;system-message-title&#34;&gt;System Message: ERROR/3 (&lt;tt class=&#34;docutils&#34;&gt;&amp;lt;stdin&amp;gt;&lt;/tt&gt;, line 9); &lt;em&gt;&lt;a href=&#34;#id2&#34;&gt;backlink&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+Unknown interpreted text role &amp;quot;doc&amp;quot;.&lt;/div&gt;
+&lt;p&gt;Now that we have all our smart data nicely set up, let&#39;s see if we can&#39;t get some stats on I/O speed. I&#39;m pretty sure FreeNAS is supposed to have a I/O section in its &amp;quot;Reports&amp;quot; section, but for whatever reason, it&#39;s not in my install, and I&#39;d like to have the data in Nagios in any case.&lt;/p&gt;
+&lt;p&gt;Just like with the SMART data, we&#39;re going to write a small script that the check_mk agent can use. Unlike the SMART script, getting IO stats is incredibly easy.&lt;/p&gt;
+&lt;div class=&#34;system-message&#34;&gt;
+&lt;p class=&#34;system-message-title&#34;&gt;System Message: ERROR/3 (&lt;tt class=&#34;docutils&#34;&gt;&amp;lt;stdin&amp;gt;&lt;/tt&gt;, line 15)&lt;/p&gt;
+&lt;p&gt;Unknown directive type &amp;quot;listing&amp;quot;.&lt;/p&gt;
+&lt;pre class=&#34;literal-block&#34;&gt;
+.. listing:: iostat bash
+
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;Yep, that&#39;s all it is. We&#39;re only really interesting in the drives being used in ZFS, but you could open it up to all drives if you wanted to.&lt;/p&gt;
+&lt;p&gt;Next up is to let check_mk be able to recognize the agent&#39;s output. The check script that I use can be found &lt;a class=&#34;reference external&#34; href=&#34;https://smuth.me/check_mk_freenas_iostat/iostat&#34;&gt;here&lt;/a&gt;. It should be placed in the &amp;quot;checks/&amp;quot; directory of your check_mk install.&lt;/p&gt;
+&lt;p&gt;I also created a quick template for pnp4nagios, found &lt;a class=&#34;reference external&#34; href=&#34;https://smuth.me/check_mk_freenas_iostat/check_mk-iostat.php&#34;&gt;here&lt;/a&gt;, which should be placed in the &amp;quot;templates/&amp;quot; directory.&lt;/p&gt;
+&lt;p&gt;After all this, we&#39;ve finally got a solid set up for tracking disks in FreeNAS. For each disk, there will be three associated services: SMART data, temperature (taken from the SMART data), and iostat data.&lt;/p&gt;
+&lt;/div&gt;</description>
+    </item>
+    
+    <item>
+      <title>Check_mk and FreeNAS, Pt. 2</title>
       <link>https://smuth.me/post/check_mk-and-freenas-pt-2/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 25 Apr 2014 00:00:00 +0000</pubDate>
       
       <guid>https://smuth.me/post/check_mk-and-freenas-pt-2/</guid>
       <description>&lt;div class=&#34;document&#34;&gt;
@@ -202,57 +287,9 @@ Unknown interpreted text role &amp;quot;doc&amp;quot;.&lt;/div&gt;
     </item>
     
     <item>
-      <title></title>
-      <link>https://smuth.me/post/check_mk-and-freenas-pt-3/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://smuth.me/post/check_mk-and-freenas-pt-3/</guid>
-      <description>&lt;div class=&#34;document&#34;&gt;
-
-
-&lt;!-- title: Check_mk and FreeNAS, Pt. 3 --&gt;
-&lt;!-- slug: check_mk-and-freenas-pt-3 --&gt;
-&lt;!-- date: 2014-07-10 11:44:19 UTC-04:00 --&gt;
-&lt;!-- tags: check_mk,FreeNAS,monitoring --&gt;
-&lt;!-- link: --&gt;
-&lt;!-- description: --&gt;
-&lt;!-- type: text --&gt;
-&lt;p&gt;A continuation of &lt;a href=&#34;#id1&#34;&gt;&lt;span class=&#34;problematic&#34; id=&#34;id2&#34;&gt;:doc:`check_mk-and-freenas-pt-2`&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;div class=&#34;system-message&#34; id=&#34;id1&#34;&gt;
-&lt;p class=&#34;system-message-title&#34;&gt;System Message: ERROR/3 (&lt;tt class=&#34;docutils&#34;&gt;&amp;lt;stdin&amp;gt;&lt;/tt&gt;, line 9); &lt;em&gt;&lt;a href=&#34;#id2&#34;&gt;backlink&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
-Unknown interpreted text role &amp;quot;doc&amp;quot;.&lt;/div&gt;
-&lt;p&gt;Now that we have all our smart data nicely set up, let&#39;s see if we can&#39;t get some stats on I/O speed. I&#39;m pretty sure FreeNAS is supposed to have a I/O section in its &amp;quot;Reports&amp;quot; section, but for whatever reason, it&#39;s not in my install, and I&#39;d like to have the data in Nagios in any case.&lt;/p&gt;
-&lt;p&gt;Just like with the SMART data, we&#39;re going to write a small script that the check_mk agent can use. Unlike the SMART script, getting IO stats is incredibly easy.&lt;/p&gt;
-&lt;div class=&#34;system-message&#34;&gt;
-&lt;p class=&#34;system-message-title&#34;&gt;System Message: ERROR/3 (&lt;tt class=&#34;docutils&#34;&gt;&amp;lt;stdin&amp;gt;&lt;/tt&gt;, line 15)&lt;/p&gt;
-&lt;p&gt;Unknown directive type &amp;quot;listing&amp;quot;.&lt;/p&gt;
-&lt;pre class=&#34;literal-block&#34;&gt;
-.. listing:: iostat bash
-
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;Yep, that&#39;s all it is. We&#39;re only really interesting in the drives being used in ZFS, but you could open it up to all drives if you wanted to.&lt;/p&gt;
-&lt;p&gt;Next up is to let check_mk be able to recognize the agent&#39;s output. The check script that I use can be found &lt;a class=&#34;reference external&#34; href=&#34;https://smuth.me/check_mk_freenas_iostat/iostat&#34;&gt;here&lt;/a&gt;. It should be placed in the &amp;quot;checks/&amp;quot; directory of your check_mk install.&lt;/p&gt;
-&lt;p&gt;I also created a quick template for pnp4nagios, found &lt;a class=&#34;reference external&#34; href=&#34;https://smuth.me/check_mk_freenas_iostat/check_mk-iostat.php&#34;&gt;here&lt;/a&gt;, which should be placed in the &amp;quot;templates/&amp;quot; directory.&lt;/p&gt;
-&lt;p&gt;After all this, we&#39;ve finally got a solid set up for tracking disks in FreeNAS. For each disk, there will be three associated services: SMART data, temperature (taken from the SMART data), and iostat data. See below for a small &lt;a class=&#34;reference external&#34; href=&#34;https://smuth.me/galleries/check_mk/&#34;&gt;gallery&lt;/a&gt; of what it looks like in my setup.&lt;/p&gt;
-&lt;div class=&#34;system-message&#34;&gt;
-&lt;p class=&#34;system-message-title&#34;&gt;System Message: ERROR/3 (&lt;tt class=&#34;docutils&#34;&gt;&amp;lt;stdin&amp;gt;&lt;/tt&gt;, line 25)&lt;/p&gt;
-&lt;p&gt;Unknown directive type &amp;quot;slides&amp;quot;.&lt;/p&gt;
-&lt;pre class=&#34;literal-block&#34;&gt;
-.. slides::
-
-   /galleries/check_mk/iostat_disks.png
-   /galleries/check_mk/pnp4nagios_disks.png
-
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;</description>
-    </item>
-    
-    <item>
-      <title></title>
+      <title>Check_mk and FreeNAS</title>
       <link>https://smuth.me/post/check_mk-and-freenas/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 23 Feb 2014 00:00:00 +0000</pubDate>
       
       <guid>https://smuth.me/post/check_mk-and-freenas/</guid>
       <description>&lt;div class=&#34;document&#34;&gt;
@@ -318,231 +355,85 @@ Unknown interpreted text role &amp;quot;doc&amp;quot;.&lt;/div&gt;
     </item>
     
     <item>
-      <title></title>
-      <link>https://smuth.me/post/flashing-lsi-sas-9211-8i-with-efi/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <title>BASH Documentation</title>
+      <link>https://smuth.me/post/bash-documentation/</link>
+      <pubDate>Mon, 13 Jan 2014 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/flashing-lsi-sas-9211-8i-with-efi/</guid>
-      <description>&lt;div class=&#34;document&#34;&gt;
+      <guid>https://smuth.me/post/bash-documentation/</guid>
+      <description>&lt;p&gt;One of the things that always bothers me is lack of proper documentation. Now, I&amp;rsquo;m lazy just like everyone else, but if I&amp;rsquo;m going to document something, I prefer to do it properly and keep it up to date. I&amp;rsquo;ve inhierited a nice suite of bash scripts, which aren&amp;rsquo;t really complicated, but they all have the same copy &amp;amp; pasted header that&amp;rsquo;s dated from 2003. Not exactly helpful.&lt;/p&gt;
 
+&lt;p&gt;So while I have a wiki that explains how some of the processes work on a higher level, it would be nice to have clean documentation in my bash scripts. Ideally, it would be embeddable, exportable and human readable. Basically, I shouldn&amp;rsquo;t have to maintain two files, I should be able to paste it somewhere else if need be, and I should be able to maintain it without any external tools whatsoever, if I wanted to.&lt;/p&gt;
 
-&lt;!-- title: Flashing LSI SAS 9211-8i with EFI --&gt;
-&lt;!-- slug: flashing-lsi-sas-9211-8i-with-efi --&gt;
-&lt;!-- date: 2015-02-08 15:00:17 UTC-05:00 --&gt;
-&lt;!-- tags: storage,firmare --&gt;
-&lt;!-- category: --&gt;
-&lt;!-- link: --&gt;
-&lt;!-- description: --&gt;
-&lt;!-- type: text --&gt;
-&lt;p&gt;I recently went on an upgrade crusade to my homelab, and as part of that, upgraded FreeNAS to 9.3. When I did, there was a non-urgent alert about a driver mismatch for my LSI HBA (FreeNAS expected 16, LSI had 12). Thus, I decided to upgrade the firmware.&lt;/p&gt;
-&lt;!-- TEASER_END --&gt;
-&lt;div class=&#34;section&#34; id=&#34;directions&#34;&gt;
-&lt;h1&gt;Directions&lt;/h1&gt;
-&lt;p&gt;This assumes that your server can boot directly into an EFI shell. It might require a Shell.efi for some motherboards, but I can&#39;t tell you much more than that, as it boots straight to EFI on mine. I&#39;m going to be flashing mine to IT mode (so it passes the disks through directly to ZFS), but the steps to upgrading the firmware in IR mode is very similar.&lt;/p&gt;
-&lt;p&gt;To do this, you&#39;re going to need a USB drive (formatted with something like &lt;a class=&#34;reference external&#34; href=&#34;http://rufus.akeo.ie/&#34;&gt;Rufus&lt;/a&gt;) and 3 files:&lt;/p&gt;
-&lt;ul class=&#34;simple&#34;&gt;
-&lt;li&gt;sas2flash.efi - The executable that will be doing the flashing&lt;/li&gt;
-&lt;li&gt;mptsas2.rom - The BIOS ROM&lt;/li&gt;
-&lt;li&gt;2118it.bin/2118ir.bin - The firmware binary&lt;/li&gt;
+&lt;p&gt;Here are a list of options I found while browsing around:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The old-fashioned embedded comments&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://launchpad.net/bashdoc&#34;&gt;bashdoc&lt;/a&gt; (awk + ReST structure via python&amp;rsquo;s docutils)&lt;/li&gt;
+&lt;li&gt;embedded Perl POD (via a &lt;a href=&#34;http://bahut.alma.ch/2007/08/embedding-documentation-in-shell-script_16.html&#34;&gt;heredoc hack&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://rfsber.home.xs4all.nl/Robo/robodoc.html&#34;&gt;ROBODoc&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;All three of these files can be found on &lt;a class=&#34;reference external&#34; href=&#34;http://www.lsi.com&#34;&gt;LSI&#39;s website&lt;/a&gt;. The two downloads you need are Installer_PXX_for_UEFI and 9211-8i_Package_PXX_IR_IT_Firmware_BIOS_for_MSDOS_Windows, where XX is the version you want. If you need an older version like I did, you can find them through the &lt;a class=&#34;reference external&#34; href=&#34;http://www.lsi.com/support/pages/download-search.aspx&#34;&gt;download search page&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Now open up Installer_PXX_for_UEFI.zip, find sas2flash_efi_ebc_rel/sas2flash.efi, and put that on the USB drive. Similarly, open up 9211-8i_Package_PXX_IR_IT_Firmware_BIOS_for_MSDOS_Windows.zip, extract Firmware/HBA_9211_8i_IT/2118it.bin and sasbios_rel/mptsas2.rom, and put those on the USB drive as well.&lt;/p&gt;
-&lt;p&gt;Alright, now that we have our files, we can boot into the EFI shell.&lt;/p&gt;
-&lt;p&gt;Verify you&#39;re in the USB root directory with &lt;tt class=&#34;docutils literal&#34;&gt;ls&lt;/tt&gt;. If not, try &lt;tt class=&#34;docutils literal&#34;&gt;map&lt;/tt&gt; to list the devices, &lt;tt class=&#34;docutils literal&#34;&gt;mount &amp;lt;device&amp;gt;&lt;/tt&gt; and then &lt;tt class=&#34;docutils literal&#34;&gt;&amp;lt;device&amp;gt;:&lt;/tt&gt; to mount and enter the USB.&lt;/p&gt;
-&lt;div class=&#34;note&#34;&gt;
-&lt;p class=&#34;first admonition-title&#34;&gt;Note&lt;/p&gt;
-&lt;p class=&#34;last&#34;&gt;For this next step, apparenlty it&#39;s possible to upgrade multiple cards at once. I prefer the slow but safe way, since there&#39;s a (slim) chance of bricking a card, and flashed each card one at a time, manually pulling them in and out.&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;Verify we can see the hardware, and that it&#39;s a version we want to update:&lt;/p&gt;
-&lt;pre class=&#34;literal-block&#34;&gt;
-sas2flash.efi -listall
-&lt;/pre&gt;
-&lt;p&gt;First we erase the old firmware:&lt;/p&gt;
-&lt;pre class=&#34;literal-block&#34;&gt;
-sas2flash.efi -o -e 6
-&lt;/pre&gt;
-&lt;p&gt;Then we install the new one:&lt;/p&gt;
-&lt;pre class=&#34;literal-block&#34;&gt;
-sas2flash.efi -o -f 2118it.bin -b mptsas2.rom
-&lt;/pre&gt;
-&lt;p&gt;And Bob&#39;s your uncle! Enjoy your new and exciting passthrough disk I/O.&lt;/p&gt;
-&lt;p&gt;Useful links:&lt;/p&gt;
-&lt;p&gt;&lt;a class=&#34;reference external&#34; href=&#34;http://digitalcardboard.com/blog/2014/07/09/flashing-it-firmware-to-the-lsi-sas-9211-8i-hba-2014-efi-recipe/&#34;&gt;http://digitalcardboard.com/blog/2014/07/09/flashing-it-firmware-to-the-lsi-sas-9211-8i-hba-2014-efi-recipe/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;a class=&#34;reference external&#34; href=&#34;http://brycv.com/blog/2012/flashing-it-firmware-to-lsi-sas9211-8i/&#34;&gt;http://brycv.com/blog/2012/flashing-it-firmware-to-lsi-sas9211-8i/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;a class=&#34;reference external&#34; href=&#34;http://linustechtips.com/main/topic/104425-flashing-an-lsi-9211-8i-raid-card-to-it-mode-for-zfssoftware-raid-tutorial/&#34;&gt;http://linustechtips.com/main/topic/104425-flashing-an-lsi-9211-8i-raid-card-to-it-mode-for-zfssoftware-raid-tutorial/&lt;/a&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;</description>
+
+&lt;p&gt;Of these choices, POD seems a bit bloated to be inside a script, and ROBODoc looks way overblown for my simple needs, so I&amp;rsquo;ve decided to go with bashdoc. I&amp;rsquo;m already working with ReST, via this blog, and it fits pretty much all the criteria. Plus, it has few dependencies (awk, bash and python&amp;rsquo;s docutils) and doesn&amp;rsquo;t require a package for itself, so I wouldn&amp;rsquo;t feel bad about setting this up on production servers (although I should really set it up as a git hook in the script repo or something). However, documentation for bashdoc is quite limited (irony at it&amp;rsquo;s finest). The best way to figure out what is going on is to read lib/basic.awk, and the docutils source code, which isn&amp;rsquo;t exactly everyone&amp;rsquo;s cup of tea. That said, it shouldn&amp;rsquo;t be too difficult to build a small template I can copy and paste everywhere, which will hoepfully be more useful than the current header.&lt;/p&gt;
+</description>
     </item>
     
     <item>
-      <title></title>
-      <link>https://smuth.me/post/help-my-php-code-isnt-showing-in-nikola/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <title>Fun with Basic PHP Optimization</title>
+      <link>https://smuth.me/post/basic-php-optimization/</link>
+      <pubDate>Thu, 09 Jan 2014 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/help-my-php-code-isnt-showing-in-nikola/</guid>
-      <description>&lt;div class=&#34;document&#34;&gt;
+      <guid>https://smuth.me/post/basic-php-optimization/</guid>
+      <description>&lt;p&gt;A while ago I came across a full-featured PHP application for controlling a daemon. It worked well with a small data set, but quickly became laggy with a dataset numbering in the thousands. Admittedly, it really wasn&amp;rsquo;t built for that kind of load, so I removed it and controlled the daemon manually, which wasn&amp;rsquo;t a big deal.&lt;/p&gt;
 
+&lt;p&gt;Then a while later, I came across a post by someone who managed to mitigate the problem by shifting a particularly expensive operation to an external python program. Obviously, this was not exactly the most elegant solution, so I decided to take a look at the problematic section of code.&lt;/p&gt;
 
-&lt;!-- link: --&gt;
-&lt;!-- description: --&gt;
-&lt;!-- tags: php, nikola, python --&gt;
-&lt;!-- date: 2014/01/09 14:25:27 --&gt;
-&lt;!-- title: Help! My PHP code isn&#39;t showing in Nikola! --&gt;
-&lt;!-- slug: help-my-php-code-isnt-showing-in-nikola --&gt;
-&lt;p&gt;I came upon this problem with my last post, and thought I should put out a short PSA. This isn&#39;t actually a problem with Nikola, but it&#39;s not an easy thing to google. The problem lies with &lt;a class=&#34;reference external&#34; href=&#34;http://pygments.org&#34;&gt;Pygments&lt;/a&gt;, the parser docutils uses to parse and mark up code. Basically, the &lt;a class=&#34;reference external&#34; href=&#34;http://pygments.org/docs/lexers/&#34;&gt;PHP lexer&lt;/a&gt; expects a &lt;tt class=&#34;docutils literal&#34;&gt;&lt;span class=&#34;pre&#34;&gt;&amp;lt;?php&lt;/span&gt;&lt;/tt&gt; to start off the code block, unless a special option is given. Short of making that change manually in the docutil source, I couldn&#39;t find any way to change that option.&lt;/p&gt;
-&lt;/div&gt;</description>
+&lt;p&gt;It looked something like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
+for ($i = 0; $i&amp;lt;count($req-&amp;gt;val); $i+=$cnt) {
+  $output[$req-&amp;gt;val[$i]] = array_slice($req-&amp;gt;val, $i+1, $cnt-1);
+}
+?&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Looks pretty basic, right? It cycles through an array ($req) and splits it into a new dictionary ($output) based on a fixed length ($cnt). However, if we turn this into a generic big O structure, with the values borrowed from &lt;a href=&#34;http://stackoverflow.com/a/2484455&#34;&gt;this serverfault post&lt;/a&gt;, the problem quickly becomes apparent.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
+for ($i = 0; $i&amp;lt;O(n); $i+=$cnt)
+  $output[$req-&amp;gt;val[$i]] = O(n)
+?&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Taking into account the for loop, this would appear to mean that the operation is O(2n&lt;sup&gt;2&lt;/sup&gt;), in contrast to the very similar &lt;a href=&#34;http://www.php.net/manual/en/function.array-chunk.php&#34;&gt;array_chunk&lt;/a&gt; O(n) function. So how do we optimize this? The most important thing to do is make it so php can complete this in one loop over the array. Everything else will be a nice improvement, but when scaling, the big O is king.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the new code:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
+foreach($req-&amp;gt;val as $index=&amp;gt;$value)
+{
+  if($index % $cnt == 0)
+  {
+    $current_index = $value;
+    $output[$current_index] = array();
+  }
+  else
+    $output[$current_index][] = $value;
+}
+?&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We&amp;rsquo;ve dropped the for/count() loop in favor of foreach, and eliminated slicing in favor of appending to newly created elements. In a real world test, this cut down the response time of the module from 12s to 4s on average. A pretty big improvement for a pretty small change!&lt;/p&gt;
+</description>
     </item>
     
     <item>
-      <title></title>
-      <link>https://smuth.me/post/tuning-nfs-in-the-real-world/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://smuth.me/post/tuning-nfs-in-the-real-world/</guid>
-      <description>&lt;div class=&#34;document&#34;&gt;
-
-
-&lt;!-- title: Tuning NFS in the real world --&gt;
-&lt;!-- slug: tuning-nfs-in-the-real-world --&gt;
-&lt;!-- date: 2014/01/28 16:06:46 --&gt;
-&lt;!-- tags: nfs, tuning --&gt;
-&lt;!-- link: --&gt;
-&lt;!-- description: --&gt;
-&lt;!-- type: text --&gt;
-&lt;div class=&#34;section&#34; id=&#34;intro&#34;&gt;
-&lt;h1&gt;Intro&lt;/h1&gt;
-&lt;p&gt;After a hardware upgrade, I found myself with the classic setup of a high-power server on one end of a switch, and a NAS on the other. However, serving files over NFS was painfully slow. Back in the day I could have written it off as &amp;quot;NFS sucks&amp;quot;, but I&#39;m potentially planning to use these datastores for VMs potentially, and with the speeds I was getting, it would get ugly very quickly. So, armed with this &lt;a class=&#34;reference external&#34; href=&#34;http://mirror.linux.org.au/pub/linux.conf.au/2008/slides/130-lca2008-nfs-tuning-secrets-d7.odp&#34;&gt;very nice presentation from SGI&lt;/a&gt;, I was ready to tackle the world.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class=&#34;section&#34; id=&#34;initial-testing&#34;&gt;
-&lt;h1&gt;Initial Testing&lt;/h1&gt;
-&lt;p&gt;The first thing they said was to get exact numbers and check for bottlenecks. In a real-world test, the max file transfer speed turned out to be a little more the 10mb/s. Not terrible for a network, but much less that I&#39;ll need. My disks with WD Reds in a RAID6, so I was confident the read speeds would be faster than 10mb/s, although I should really get exact numbers, at the very least to prepare for it possibly being a bottleneck later on.
-However, testing the the network (using iperf), it turned out that the max network speed I could get was 94.1 Mbits (11.7 mb). ...Shit. I should&#39;ve seen this coming, having only a 100Mbps switch. I could probably bring that up to 200Mbps with a little bonding magic, but I figured it was safer to future-proof, and bought a cheap gigabit switch.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://smuth.me/post/using-heretrix-to-archive-sites-to-a-directory-structure/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://smuth.me/post/using-heretrix-to-archive-sites-to-a-directory-structure/</guid>
-      <description>&lt;div class=&#34;document&#34;&gt;
-
-
-&lt;!-- title: Using Heritrix to archive sites to a directory structure --&gt;
-&lt;!-- slug: using-heritrix-to-archive-sites-to-a-directory-structure --&gt;
-&lt;!-- date: 2014-08-12 11:47:27 UTC-04:00 --&gt;
-&lt;!-- tags: heritrix archive --&gt;
-&lt;!-- link: --&gt;
-&lt;!-- description: --&gt;
-&lt;!-- type: text --&gt;
-&lt;p&gt;So I one day I found myself in the market for a good web archiver. Specifically, there were some interesting open directories I wanted to mirror. My ideal solution would be a web front end around &lt;a class=&#34;reference external&#34; href=&#34;http://www.gnu.org/software/wget/manual/wget.html&#34;&gt;wget&lt;/a&gt;, but a little bit of research and testing showed that such an architecture would be too simplistic for the level of detail I wanted. There were a couple spider frameworks I tried out, like &lt;a class=&#34;reference external&#34; href=&#34;http://scrapy.org/&#34;&gt;scrapy&lt;/a&gt;, but I wasn&#39;t enthusiastic about the prospect of trying to roll my own solution, when I knew sites like the &lt;a class=&#34;reference external&#34; href=&#34;http://archive.org&#34;&gt;Internet Archive&lt;/a&gt; had the exact kind of thing I had in mind, and they use the &lt;a class=&#34;reference external&#34; href=&#34;https://webarchive.jira.com/wiki/display/Heritrix/Heritrix&#34;&gt;Heritrix&lt;/a&gt; engine archive their material. The &lt;a class=&#34;reference external&#34; href=&#34;http://en.wikipedia.org/wiki/Heritrix&#34;&gt;Heritrix Wikipedia page&lt;/a&gt; mentions that it can output in the same directory format as wget (perfect!), but there&#39;s no citation for that, and the Heretrix documentation is unorganized, to say the least.&lt;/p&gt;
-&lt;!-- TEASER_END --&gt;
-&lt;div class=&#34;section&#34; id=&#34;setting-it-up&#34;&gt;
-&lt;h1&gt;Setting it up&lt;/h1&gt;
-&lt;div class=&#34;section&#34; id=&#34;software&#34;&gt;
-&lt;h2&gt;Software&lt;/h2&gt;
-&lt;p&gt;I used Heritrix 3.2.0, the most recent stable version, for this project.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class=&#34;section&#34; id=&#34;steps&#34;&gt;
-&lt;h2&gt;Steps&lt;/h2&gt;
-&lt;p&gt;This is not going to be a full tutorial on how to use Heritrix. Be sure to read the &lt;a class=&#34;reference external&#34; href=&#34;https://webarchive.jira.com/wiki/display/Heritrix/Heritrix#Heritrix-Documentation&#34;&gt;documentation&lt;/a&gt;, and to read the default job configuration file before starting a large job.&lt;/p&gt;
-&lt;p&gt;Install Heritrix as per the instructions and get it started. Navigate to the web interface and create a new job with the standard configuration.&lt;/p&gt;
-&lt;p&gt;Next we want to edit the disposition chain, which starts at line 335 in my default configuration. The first bean defined should be the &lt;tt class=&#34;docutils literal&#34;&gt;warcWriter&lt;/tt&gt;, which, obviously, writes out scraped content to WARC files. WARC files are perfect for preserving websites exactly how they were accessed, but are a little too clumsy to be convenient.&lt;/p&gt;
-&lt;p&gt;After the WARC bean, add the follow code:&lt;/p&gt;
-&lt;pre class=&#34;code xml literal-block&#34;&gt;
-&lt;span class=&#34;name tag&#34;&gt;&amp;lt;bean&lt;/span&gt; &lt;span class=&#34;name attribute&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;literal string&#34;&gt;&amp;quot;mirrorWriter&amp;quot;&lt;/span&gt; &lt;span class=&#34;name attribute&#34;&gt;class=&lt;/span&gt;&lt;span class=&#34;literal string&#34;&gt;&amp;quot;org.archive.modules.writer.MirrorWriterProcessor&amp;quot;&lt;/span&gt;&lt;span class=&#34;name tag&#34;&gt;&amp;gt;&lt;/span&gt;
-&lt;span class=&#34;name tag&#34;&gt;&amp;lt;/bean&amp;gt;&lt;/span&gt;
-&lt;/pre&gt;
-&lt;p&gt;Then, in the &lt;tt class=&#34;docutils literal&#34;&gt;dispositionProcessors&lt;/tt&gt; bean, remove the line &lt;tt class=&#34;docutils literal&#34;&gt;&amp;lt;ref &lt;span class=&#34;pre&#34;&gt;bean=&amp;quot;warcWriter&amp;quot;/&amp;gt;&lt;/span&gt;&lt;/tt&gt; from the the &lt;tt class=&#34;docutils literal&#34;&gt;processors&lt;/tt&gt; list, and add &lt;tt class=&#34;docutils literal&#34;&gt;&amp;lt;ref &lt;span class=&#34;pre&#34;&gt;bean=&amp;quot;mirrorWriter&amp;quot;/&amp;gt;&lt;/span&gt;&lt;/tt&gt;.&lt;/p&gt;
-&lt;p&gt;That&#39;s pretty much all that&#39;s needed to get started. There are more parameters that can be tweaked, which can be found in the &lt;a class=&#34;reference external&#34; href=&#34;http://builds.archive.org/javadoc/heritrix-3.2.0/org/archive/modules/writer/MirrorWriterProcessor.html&#34;&gt;3.2.0 Javadoc&lt;/a&gt;, but the defaults are not anything surprising.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://smuth.me/post/using-shush-as-a-crontab-wrapper/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://smuth.me/post/using-shush-as-a-crontab-wrapper/</guid>
-      <description>&lt;div class=&#34;document&#34;&gt;
-
-
-&lt;!-- title: Using shush as a crontab wrapper --&gt;
-&lt;!-- slug: using-shush-as-a-crontab-wrapper --&gt;
-&lt;!-- date: 2015-04-11 15:24:09 UTC-04:00 --&gt;
-&lt;!-- tags: cron --&gt;
-&lt;!-- category: --&gt;
-&lt;!-- link: --&gt;
-&lt;!-- description: --&gt;
-&lt;!-- type: text --&gt;
-&lt;p&gt;&lt;a class=&#34;reference external&#34; href=&#34;http://linux.die.net/man/1/crontab&#34;&gt;Cron&lt;/a&gt; is a great tool for linux servers, but it&#39;s a very limited in it&#39;s capabilities (since it follows the Unix philosophy), so when I started to run up against those limits, I began doing all sorts of bash trickery to accomplish what I needed to happen, but that swiftly started giving me even more problem. At work, I use the &lt;a class=&#34;reference external&#34; href=&#34;https://jenkins-ci.org/&#34;&gt;Jenkins CI&lt;/a&gt; tool as a cron replacement (great tool, allows for distributed runs, queueing tasks, emails on failure, etc), but it seemed rather heavy weight for a homelab. Thankfully, there are a lot of cron wrappers/replacements out there, but I settled on &lt;a class=&#34;reference external&#34; href=&#34;http://web.taranis.org/shush/&#34;&gt;shush&lt;/a&gt;, a neat little wrapper around script for cron.&lt;/p&gt;
-&lt;!-- TEASER_END --&gt;
-&lt;p&gt;There are a couple reasons I like it:&lt;/p&gt;
-&lt;ul class=&#34;simple&#34;&gt;
-&lt;li&gt;The ability to manually run scripts under shush before adding them to cron&lt;/li&gt;
-&lt;li&gt;Automatic crontab management&lt;/li&gt;
-&lt;li&gt;Simple C binary, very few dependencies&lt;/li&gt;
-&lt;li&gt;Text based config file&lt;/li&gt;
-&lt;li&gt;Locking and timeout handling&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Basically how it works is that there&#39;s a designated directory that holds all the shush configuration files. These files can be named anything, although I usually have them be extensionless for simplicity. You can then run any of these files with &lt;tt class=&#34;docutils literal&#34;&gt;shush &lt;span class=&#34;pre&#34;&gt;-c&lt;/span&gt; &amp;lt;directory&amp;gt; &amp;lt;config_file_name&amp;gt;&lt;/tt&gt;. If you use the default directory of &lt;tt class=&#34;docutils literal&#34;&gt;&lt;span class=&#34;pre&#34;&gt;$HOME/.shush/&lt;/span&gt;&lt;/tt&gt;, you can just run &lt;tt class=&#34;docutils literal&#34;&gt;shush &amp;lt;config_file_name&amp;gt;&lt;/tt&gt;. However, in order to have the config file run regularly, you need to set the &lt;tt class=&#34;docutils literal&#34;&gt;schedule&lt;/tt&gt; setting, and run &lt;tt class=&#34;docutils literal&#34;&gt;shush &lt;span class=&#34;pre&#34;&gt;-c&lt;/span&gt; &amp;lt;directory&amp;gt; &lt;span class=&#34;pre&#34;&gt;-u&lt;/span&gt;&lt;/tt&gt; to update the crontab file.&lt;/p&gt;
-&lt;p&gt;The &lt;a class=&#34;reference external&#34; href=&#34;http://web.taranis.org/shush/shush.1.html&#34;&gt;man page&lt;/a&gt; has some more documentation, but I&#39;ll at least break down the example config file make it more understandable.&lt;/p&gt;
-&lt;p&gt;Set the command &lt;tt class=&#34;docutils literal&#34;&gt;shush &lt;span class=&#34;pre&#34;&gt;-c&lt;/span&gt; /etc/shush &lt;span class=&#34;pre&#34;&gt;-u&lt;/span&gt;&lt;/tt&gt; to run every day at 9 PM:&lt;/p&gt;
-&lt;pre class=&#34;code literal-block&#34;&gt;
-command=shush -c /etc/shush -u
-schedule=0 9 * * *
-&lt;/pre&gt;
-&lt;p&gt;Use a lockfile. If a lockfile already exists, send an email to root and root-logs, then abort the job:&lt;/p&gt;
-&lt;pre class=&#34;code literal-block&#34;&gt;
-lock=notify=root root-logs,abort
-&lt;/pre&gt;
-&lt;p&gt;Send out an email notification if the script is still running after 5 minutes, but keep the script alive:&lt;/p&gt;
-&lt;pre class=&#34;code literal-block&#34;&gt;
-timeout=5m,notify=root root-logs
-&lt;/pre&gt;
-&lt;p&gt;Print stderr output first, use the &lt;tt class=&#34;docutils literal&#34;&gt;text&lt;/tt&gt; format, and set the email subject:&lt;/p&gt;
-&lt;pre class=&#34;code literal-block&#34;&gt;
-stderr=first
-format=text
-Subject=Crontab Daily Update
-&lt;/pre&gt;
-&lt;p&gt;Always send an email to root-logs:&lt;/p&gt;
-&lt;pre class=&#34;code literal-block&#34;&gt;
-[logs]
-to=root-logs
-&lt;/pre&gt;
-&lt;p&gt;If one of the various failure conditions applies, send an email to root:&lt;/p&gt;
-&lt;pre class=&#34;code literal-block&#34;&gt;
-[readers]
-if=$exit != 0 || $outlines != 1 || $errsize &amp;gt; 0 || U
-to=root
-format=rich
-&lt;/pre&gt;
-&lt;p&gt;Shush is a very powerful tool, and I&#39;m very happy with the ways that I&#39;ve been able to implement it in my homelab. However, it can be a bit confusing for a beginner, and the regex matching features leave much to be desired. With the intention of fixing things up, I&#39;ve create a repositoty at &lt;a class=&#34;reference external&#34; href=&#34;https://github.com/smuth4/shush&#34;&gt;https://github.com/smuth4/shush&lt;/a&gt;, which I can hopefully use to clean up things, and get the project active again. Feel free to compile, try out and mayb even contribute to this neat little tool!&lt;/p&gt;
-&lt;/div&gt;</description>
-    </item>
-    
-    <item>
-      <title></title>
+      <title>Welcome to my blog</title>
       <link>https://smuth.me/post/welcome-to-my-blog/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 09 Jan 2014 00:00:00 +0000</pubDate>
       
       <guid>https://smuth.me/post/welcome-to-my-blog/</guid>
-      <description>&lt;div class=&#34;document&#34;&gt;
-
-
-&lt;!-- link: --&gt;
-&lt;!-- description: --&gt;
-&lt;!-- tags: --&gt;
-&lt;!-- date: 2014/01/09 10:11:20 --&gt;
-&lt;!-- title: Welcome to my blog --&gt;
-&lt;!-- slug: welcome-to-my-blog --&gt;
-&lt;p&gt;Hopefully I&#39;ll be able to build this into a little repository of my tips, tricks and hacks as I navigate the strange and wonderful world of information technology. Maybe I&#39;ll even improve my writing, or help someone out with an obscure problem. The possibilities are endless! (For specific definitions of endless.)&lt;/p&gt;
-&lt;/div&gt;</description>
+      <description>&lt;p&gt;Hopefully I&amp;rsquo;ll be able to build this into a little repository of my tips, tricks and hacks as I navigate the strange and wonderful world of information technology. Maybe I&amp;rsquo;ll even improve my writing, or help someone out with an obscure problem. The possibilities are endless! (For specific definitions of endless.)&lt;/p&gt;
+</description>
     </item>
     
   </channel>

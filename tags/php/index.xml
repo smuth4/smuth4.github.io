@@ -15,14 +15,7 @@
       <pubDate>Thu, 09 Jan 2014 00:00:00 +0000</pubDate>
       
       <guid>https://smuth.me/post/basic-php-optimization/</guid>
-      <description>&lt;p&gt;.. link:
-.. description:
-.. tags: php, programming
-.. date: 2014/01/09 12:27:35
-.. title: Fun with Basic PHP Optimization
-.. slug: basic-php-optimization&lt;/p&gt;
-
-&lt;p&gt;A while ago I came across a nice peice of php software for controlling a daemon. It worked well with a small data set, but quickly became laggy with a dataset numbering in the thousands. Admittedly, it really wasn&amp;rsquo;t built for that kind of load, so I removed it and controlled the daemon manually, which wasn&amp;rsquo;t a big deal.&lt;/p&gt;
+      <description>&lt;p&gt;A while ago I came across a full-featured PHP application for controlling a daemon. It worked well with a small data set, but quickly became laggy with a dataset numbering in the thousands. Admittedly, it really wasn&amp;rsquo;t built for that kind of load, so I removed it and controlled the daemon manually, which wasn&amp;rsquo;t a big deal.&lt;/p&gt;
 
 &lt;p&gt;Then a while later, I came across a post by someone who managed to mitigate the problem by shifting a particularly expensive operation to an external python program. Obviously, this was not exactly the most elegant solution, so I decided to take a look at the problematic section of code.&lt;/p&gt;
 

@@ -6,7 +6,7 @@
   
   <meta charset="UTF-8">
   <title>
-     | cat /dev/null &gt; /proc/mind
+    Flashing LSI SAS 9211-8i with EFI | cat /dev/null &gt; /proc/mind
   </title>
 
 
@@ -43,13 +43,13 @@
     <div class="row gutters">
       <div id="site-title" class="col span_6">
         <h1><a href="https://smuth.me/">cat /dev/null &gt; /proc/mind</a></h1>
-        
+        <h2>Ain&#39;t the brightest bit in the byte.</h2>
       </div>
       <div id="social" class="col span_6">
         <ul>
           
           
-          
+          <li><a href="https://github.com/smuth4" target="_blank">GitHub</a></li>
           
         </ul>
       </div>
@@ -60,9 +60,13 @@
   
   <main id="single" role="main">
     <div class="article-header">
-      <h1></h1>
+      <h1>Flashing LSI SAS 9211-8i with EFI</h1>
       <div class="meta">
-        Jan 1, 0001 &nbsp;
+        Feb 8, 2015 &nbsp;
+        
+          #<a href="/tags/storage">storage</a>&nbsp;
+        
+          #<a href="/tags/firmware">firmware</a>&nbsp;
         
       </div>
     </div>
@@ -79,7 +83,6 @@
 <!-- description: -->
 <!-- type: text -->
 <p>I recently went on an upgrade crusade to my homelab, and as part of that, upgraded FreeNAS to 9.3. When I did, there was a non-urgent alert about a driver mismatch for my LSI HBA (FreeNAS expected 16, LSI had 12). Thus, I decided to upgrade the firmware.</p>
-<!-- TEASER_END -->
 <div class="section" id="directions">
 <h1>Directions</h1>
 <p>This assumes that your server can boot directly into an EFI shell. It might require a Shell.efi for some motherboards, but I can't tell you much more than that, as it boots straight to EFI on mine. I'm going to be flashing mine to IT mode (so it passes the disks through directly to ZFS), but the steps to upgrading the firmware in IR mode is very similar.</p>
@@ -140,10 +143,10 @@ sas2flash.efi -o -f 2118it.bin -b mptsas2.rom
   
   <nav class="pagination-single">
     
-      <span class="previous">&larr; <a href="https://smuth.me/post/help-my-php-code-isnt-showing-in-nikola/" rel="prev"></a></span>
+      <span class="previous">&larr; <a href="https://smuth.me/post/using-heretrix-to-archive-sites-to-a-directory-structure/" rel="prev">Using Heritrix to archive sites to a directory structure</a></span>
     
     
-      <span class="next"><a href="https://smuth.me/post/check_mk-and-freenas/" rel="next"></a> &rarr;</span>
+      <span class="next"><a href="https://smuth.me/post/using-shush-as-a-crontab-wrapper/" rel="next">Using shush as a crontab wrapper</a> &rarr;</span>
     
   </nav>
 

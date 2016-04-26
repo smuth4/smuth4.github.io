@@ -6,7 +6,7 @@
   
   <meta charset="UTF-8">
   <title>
-     | cat /dev/null &gt; /proc/mind
+    Check_mk and FreeNAS, Pt. 3 | cat /dev/null &gt; /proc/mind
   </title>
 
 
@@ -43,13 +43,13 @@
     <div class="row gutters">
       <div id="site-title" class="col span_6">
         <h1><a href="https://smuth.me/">cat /dev/null &gt; /proc/mind</a></h1>
-        
+        <h2>Ain&#39;t the brightest bit in the byte.</h2>
       </div>
       <div id="social" class="col span_6">
         <ul>
           
           
-          
+          <li><a href="https://github.com/smuth4" target="_blank">GitHub</a></li>
           
         </ul>
       </div>
@@ -60,9 +60,15 @@
   
   <main id="single" role="main">
     <div class="article-header">
-      <h1></h1>
+      <h1>Check_mk and FreeNAS, Pt. 3</h1>
       <div class="meta">
-        Jan 1, 0001 &nbsp;
+        Jul 10, 2014 &nbsp;
+        
+          #<a href="/tags/freenas">FreeNAS</a>&nbsp;
+        
+          #<a href="/tags/check_mk">check_mk</a>&nbsp;
+        
+          #<a href="/tags/monitoring">monitoring</a>&nbsp;
         
       </div>
     </div>
@@ -94,18 +100,7 @@ Unknown interpreted text role &quot;doc&quot;.</div>
 <p>Yep, that's all it is. We're only really interesting in the drives being used in ZFS, but you could open it up to all drives if you wanted to.</p>
 <p>Next up is to let check_mk be able to recognize the agent's output. The check script that I use can be found <a class="reference external" href="/check_mk_freenas_iostat/iostat">here</a>. It should be placed in the &quot;checks/&quot; directory of your check_mk install.</p>
 <p>I also created a quick template for pnp4nagios, found <a class="reference external" href="/check_mk_freenas_iostat/check_mk-iostat.php">here</a>, which should be placed in the &quot;templates/&quot; directory.</p>
-<p>After all this, we've finally got a solid set up for tracking disks in FreeNAS. For each disk, there will be three associated services: SMART data, temperature (taken from the SMART data), and iostat data. See below for a small <a class="reference external" href="/galleries/check_mk/">gallery</a> of what it looks like in my setup.</p>
-<div class="system-message">
-<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">&lt;stdin&gt;</tt>, line 25)</p>
-<p>Unknown directive type &quot;slides&quot;.</p>
-<pre class="literal-block">
-.. slides::
-
-   /galleries/check_mk/iostat_disks.png
-   /galleries/check_mk/pnp4nagios_disks.png
-
-</pre>
-</div>
+<p>After all this, we've finally got a solid set up for tracking disks in FreeNAS. For each disk, there will be three associated services: SMART data, temperature (taken from the SMART data), and iostat data.</p>
 </div>
       
       
@@ -131,10 +126,10 @@ Unknown interpreted text role &quot;doc&quot;.</div>
   
   <nav class="pagination-single">
     
-      <span class="previous">&larr; <a href="https://smuth.me/post/check_mk-and-freenas/" rel="prev"></a></span>
+      <span class="previous">&larr; <a href="https://smuth.me/post/check_mk-and-freenas-pt-2/" rel="prev">Check_mk and FreeNAS, Pt. 2</a></span>
     
     
-      <span class="next"><a href="https://smuth.me/post/check_mk-and-freenas-pt-2/" rel="next"></a> &rarr;</span>
+      <span class="next"><a href="https://smuth.me/post/using-heretrix-to-archive-sites-to-a-directory-structure/" rel="next">Using Heritrix to archive sites to a directory structure</a> &rarr;</span>
     
   </nav>
 
