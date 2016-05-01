@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  
+  <meta charset="UTF-8">
+  <title>
+    Making Terraform work with PowerDNS 4 | cat /dev/null &gt; /proc/mind
+  </title>
+
+
+  
+  <meta name="viewport" content="width=device-width,user-scalable=no,maximum-scale=1,initial-scale=1">
+
+  
+  <link rel="canonical" href="https://smuth.me/post/powerdns-4-with-terraform/"/>
+
+  
+  <link rel="stylesheet" href="/css/sanitize.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/highlight_monokai.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/custom.css">
+  
+  
+  <link href="https://smuth.me/index.xml" rel="alternate" type="application/rss+xml" title="cat /dev/null &gt; /proc/mind" />
+  <link href="https://smuth.me/index.xml" rel="feed" type="application/rss+xml" title="cat /dev/null &gt; /proc/mind" />
+
+  
+  
+
+
+</head>
+
+
+
+<body>
+<div class="container">
+
+  
+  <header role="banner">
+    <div class="row gutters">
+      <div id="site-title" class="col span_6">
+        <h1><a href="https://smuth.me/">cat /dev/null &gt; /proc/mind</a></h1>
+        <h2>Ain&#39;t the brightest bit in the byte.</h2>
+      </div>
+      <div id="social" class="col span_6">
+        <ul>
+          
+          
+          <li><a href="https://github.com/smuth4" target="_blank">GitHub</a></li>
+          
+        </ul>
+      </div>
+    </div>
+  </header>
+
+
+  
+  <main id="single" role="main">
+    <div class="article-header">
+      <h1>Making Terraform work with PowerDNS 4</h1>
+      <div class="meta">
+        May 1, 2016 &nbsp;
+        
+          #<a href="/tags/terraform">terraform</a>&nbsp;
+        
+          #<a href="/tags/powerdns">powerdns</a>&nbsp;
+        
+      </div>
+    </div>
+    <article>
+      
+
+<p>I&rsquo;ve really enjoyed using <a href="https://www.powerdns.com/">PowerDNS</a> as my DNS server at home. Most people only think of <a href="https://www.isc.org/downloads/bind/">BIND</a> and <a href="http://www.thekelleys.org.uk/dnsmasq/doc.html">dnsmasq</a> when it comes to DNS, while ignoring this stable, scalable, secure database-backed offering that powers some really large deployments. But enough proselytizing! I&rsquo;m in the middle of trying to migrate my infrastructure to be controlled via <a href="https://www.terraform.io/">Terraform</a> (mostly). I figure this will help me consolidate and track most of my VPSs and the like.</p>
+
+<h2 id="the-problem:0c5dca5f12bc2770cba9ee25c8d97993">The problem</h2>
+
+<p>PowerDNS has a nice HTTP/JSON API that can be used, but it changed URL locations in version 4, from <code>/</code> to <code>/api/v1/</code>, which makes any Terraform changes return <code>powerdns_record.dns: Failed to create PowerDNS Record: Error creating record set: exmaple.com:::A, reason: &quot;Not Found&quot;</code>, which isn&rsquo;t exactly helpful (for the record, that&rsquo;s the error message returned by the API whenever a bad URL is requested).</p>
+
+<h2 id="the-solution:0c5dca5f12bc2770cba9ee25c8d97993">The solution</h2>
+
+<p>Unfortunately there&rsquo;s no easy fix, short of breaking compatibility for one thing or another. However, what I decided to do was to use <a href="https://www.nginx.com/resources/wiki/">nginx</a> as a reverse proxy for the API. My configuration looks like this:</p>
+
+<pre><code>server {
+    listen 8000;
+    server_name _;
+
+    location /api/v1/ {
+        proxy_pass http://localhost:8081/;
+    }
+
+    location / {
+        proxy_pass http://localhost:8081/api/v1/;
+    }
+}
+</code></pre>
+
+<p>This lets us use both the new and old locations simultaneously. I&rsquo;m sure this can be done in Apache as well, but wasn&rsquo;t up for installing it just to test something so simple.</p>
+
+      
+      
+      
+    </article>
+    
+
+
+<script type="text/javascript">
+     
+    var disqus_shortname = '';
+
+     
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+  </main>
+  
+  <nav class="pagination-single">
+    
+      <span class="previous">&larr; <a href="https://smuth.me/post/blog/" rel="prev">Picking a blogging platform.</a></span>
+    
+    
+  </nav>
+
+
+  
+  <footer role="contentinfo">
+    <div style="text-align:center;">
+      
+      
+    </div>
+  </footer>
+
+
+</div>
+
+<script src="/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+</body>
+</html>
+
