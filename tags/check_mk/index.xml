@@ -123,11 +123,18 @@ Unknown interpreted text role &amp;quot;doc&amp;quot;.&lt;/div&gt;
 &lt;p&gt;From here it&#39;s basically following the instructions on the &lt;a class=&#34;reference external&#34; href=&#34;http://mathias-kettner.com/checkmk_datasource_programs.html&#34;&gt;datasource programs&lt;/a&gt; documentation link. Here&#39;s a quick overview of the steps involved:&lt;/p&gt;
 &lt;ol class=&#34;arabic&#34;&gt;
 &lt;li&gt;&lt;p class=&#34;first&#34;&gt;Add datasource programs configuration entry to main.mk. It will looks something like this:&lt;/p&gt;
-&lt;pre class=&#34;code python literal-block&#34;&gt;
-&lt;span class=&#34;name&#34;&gt;datasource_programs&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;punctuation&#34;&gt;[&lt;/span&gt;
-  &lt;span class=&#34;punctuation&#34;&gt;(&lt;/span&gt; &lt;span class=&#34;literal string double&#34;&gt;&amp;quot;ssh -l omd_user &amp;lt;IP&amp;gt; check_mk_agent&amp;quot;&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;punctuation&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;literal string single&#34;&gt;&#39;ssh&#39;&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;],&lt;/span&gt; &lt;span class=&#34;name&#34;&gt;ALL_HOSTS&lt;/span&gt; &lt;span class=&#34;punctuation&#34;&gt;),&lt;/span&gt;
-&lt;span class=&#34;punctuation&#34;&gt;]&lt;/span&gt;
+&lt;div class=&#34;system-message&#34;&gt;
+&lt;p class=&#34;system-message-title&#34;&gt;System Message: WARNING/2 (&lt;tt class=&#34;docutils&#34;&gt;&amp;lt;stdin&amp;gt;&lt;/tt&gt;, line 37)&lt;/p&gt;
+&lt;p&gt;Cannot analyze code. Pygments package not found.&lt;/p&gt;
+&lt;pre class=&#34;literal-block&#34;&gt;
+.. code:: python
+
+  datasource_programs = [
+    ( &amp;quot;ssh -l omd_user &amp;lt;IP&amp;gt; check_mk_agent&amp;quot;, [&#39;ssh&#39;], ALL_HOSTS ),
+  ]
+
 &lt;/pre&gt;
+&lt;/div&gt;
 &lt;/li&gt;
 &lt;li&gt;&lt;p class=&#34;first&#34;&gt;Set up password-less key authentication ssh access for omd_user to FreeNAS&lt;/p&gt;
 &lt;/li&gt;

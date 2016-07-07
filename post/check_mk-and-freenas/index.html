@@ -108,11 +108,18 @@
 <p>From here it's basically following the instructions on the <a class="reference external" href="http://mathias-kettner.com/checkmk_datasource_programs.html">datasource programs</a> documentation link. Here's a quick overview of the steps involved:</p>
 <ol class="arabic">
 <li><p class="first">Add datasource programs configuration entry to main.mk. It will looks something like this:</p>
-<pre class="code python literal-block">
-<span class="name">datasource_programs</span> <span class="operator">=</span> <span class="punctuation">[</span>
-  <span class="punctuation">(</span> <span class="literal string double">&quot;ssh -l omd_user &lt;IP&gt; check_mk_agent&quot;</span><span class="punctuation">,</span> <span class="punctuation">[</span><span class="literal string single">'ssh'</span><span class="punctuation">],</span> <span class="name">ALL_HOSTS</span> <span class="punctuation">),</span>
-<span class="punctuation">]</span>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">&lt;stdin&gt;</tt>, line 37)</p>
+<p>Cannot analyze code. Pygments package not found.</p>
+<pre class="literal-block">
+.. code:: python
+
+  datasource_programs = [
+    ( &quot;ssh -l omd_user &lt;IP&gt; check_mk_agent&quot;, ['ssh'], ALL_HOSTS ),
+  ]
+
 </pre>
+</div>
 </li>
 <li><p class="first">Set up password-less key authentication ssh access for omd_user to FreeNAS</p>
 </li>
@@ -139,19 +146,6 @@
     </article>
     
 
-
-<script type="text/javascript">
-     
-    var disqus_shortname = '';
-
-     
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 
   </main>
   

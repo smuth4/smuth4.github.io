@@ -19,11 +19,11 @@
 
 &lt;p&gt;I&amp;rsquo;ve really enjoyed using &lt;a href=&#34;https://www.powerdns.com/&#34;&gt;PowerDNS&lt;/a&gt; as my DNS server at home. Most people only think of &lt;a href=&#34;https://www.isc.org/downloads/bind/&#34;&gt;BIND&lt;/a&gt; and &lt;a href=&#34;http://www.thekelleys.org.uk/dnsmasq/doc.html&#34;&gt;dnsmasq&lt;/a&gt; when it comes to DNS, while ignoring this stable, scalable, secure database-backed offering that powers some really large deployments. But enough proselytizing! I&amp;rsquo;m in the middle of trying to migrate my infrastructure to be controlled via &lt;a href=&#34;https://www.terraform.io/&#34;&gt;Terraform&lt;/a&gt; (mostly). I figure this will help me consolidate and track most of my VPSs and the like.&lt;/p&gt;
 
-&lt;h2 id=&#34;the-problem:0c5dca5f12bc2770cba9ee25c8d97993&#34;&gt;The problem&lt;/h2&gt;
+&lt;h2 id=&#34;the-problem&#34;&gt;The problem&lt;/h2&gt;
 
 &lt;p&gt;PowerDNS has a nice HTTP/JSON API that can be used, but it changed URL locations in version 4, from &lt;code&gt;/&lt;/code&gt; to &lt;code&gt;/api/v1/&lt;/code&gt;, which makes any Terraform changes return &lt;code&gt;powerdns_record.dns: Failed to create PowerDNS Record: Error creating record set: exmaple.com:::A, reason: &amp;quot;Not Found&amp;quot;&lt;/code&gt;, which isn&amp;rsquo;t exactly helpful (for the record, that&amp;rsquo;s the error message returned by the API whenever a bad URL is requested).&lt;/p&gt;
 
-&lt;h2 id=&#34;the-solution:0c5dca5f12bc2770cba9ee25c8d97993&#34;&gt;The solution&lt;/h2&gt;
+&lt;h2 id=&#34;the-solution&#34;&gt;The solution&lt;/h2&gt;
 
 &lt;p&gt;Unfortunately there&amp;rsquo;s no easy fix, short of breaking compatibility for one thing or another. However, what I decided to do was to use &lt;a href=&#34;https://www.nginx.com/resources/wiki/&#34;&gt;nginx&lt;/a&gt; as a reverse proxy for the API. My configuration looks like this:&lt;/p&gt;
 

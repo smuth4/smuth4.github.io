@@ -38,10 +38,17 @@
 &lt;p&gt;Install Heritrix as per the instructions and get it started. Navigate to the web interface and create a new job with the standard configuration.&lt;/p&gt;
 &lt;p&gt;Next we want to edit the disposition chain, which starts at line 335 in my default configuration. The first bean defined should be the &lt;tt class=&#34;docutils literal&#34;&gt;warcWriter&lt;/tt&gt;, which, obviously, writes out scraped content to WARC files. WARC files are perfect for preserving websites exactly how they were accessed, but are a little too clumsy to be convenient.&lt;/p&gt;
 &lt;p&gt;After the WARC bean, add the follow code:&lt;/p&gt;
-&lt;pre class=&#34;code xml literal-block&#34;&gt;
-&lt;span class=&#34;name tag&#34;&gt;&amp;lt;bean&lt;/span&gt; &lt;span class=&#34;name attribute&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;literal string&#34;&gt;&amp;quot;mirrorWriter&amp;quot;&lt;/span&gt; &lt;span class=&#34;name attribute&#34;&gt;class=&lt;/span&gt;&lt;span class=&#34;literal string&#34;&gt;&amp;quot;org.archive.modules.writer.MirrorWriterProcessor&amp;quot;&lt;/span&gt;&lt;span class=&#34;name tag&#34;&gt;&amp;gt;&lt;/span&gt;
-&lt;span class=&#34;name tag&#34;&gt;&amp;lt;/bean&amp;gt;&lt;/span&gt;
+&lt;div class=&#34;system-message&#34;&gt;
+&lt;p class=&#34;system-message-title&#34;&gt;System Message: WARNING/2 (&lt;tt class=&#34;docutils&#34;&gt;&amp;lt;stdin&amp;gt;&lt;/tt&gt;, line 29)&lt;/p&gt;
+&lt;p&gt;Cannot analyze code. Pygments package not found.&lt;/p&gt;
+&lt;pre class=&#34;literal-block&#34;&gt;
+.. code:: xml
+
+   &amp;lt;bean id=&amp;quot;mirrorWriter&amp;quot; class=&amp;quot;org.archive.modules.writer.MirrorWriterProcessor&amp;quot;&amp;gt;
+   &amp;lt;/bean&amp;gt;
+
 &lt;/pre&gt;
+&lt;/div&gt;
 &lt;p&gt;Then, in the &lt;tt class=&#34;docutils literal&#34;&gt;dispositionProcessors&lt;/tt&gt; bean, remove the line &lt;tt class=&#34;docutils literal&#34;&gt;&amp;lt;ref &lt;span class=&#34;pre&#34;&gt;bean=&amp;quot;warcWriter&amp;quot;/&amp;gt;&lt;/span&gt;&lt;/tt&gt; from the the &lt;tt class=&#34;docutils literal&#34;&gt;processors&lt;/tt&gt; list, and add &lt;tt class=&#34;docutils literal&#34;&gt;&amp;lt;ref &lt;span class=&#34;pre&#34;&gt;bean=&amp;quot;mirrorWriter&amp;quot;/&amp;gt;&lt;/span&gt;&lt;/tt&gt;.&lt;/p&gt;
 &lt;p&gt;That&#39;s pretty much all that&#39;s needed to get started. There are more parameters that can be tweaked, which can be found in the &lt;a class=&#34;reference external&#34; href=&#34;http://builds.archive.org/javadoc/heritrix-3.2.0/org/archive/modules/writer/MirrorWriterProcessor.html&#34;&gt;3.2.0 Javadoc&lt;/a&gt;, but the defaults are not anything surprising.&lt;/p&gt;
 &lt;/div&gt;

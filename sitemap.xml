@@ -3,8 +3,12 @@
   
   <url>
     <loc>https://smuth.me/</loc>
-    <lastmod>2016-04-24T00:00:00+00:00</lastmod>
-    <priority>0</priority>
+    <lastmod>2016-05-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://smuth.me/post/powerdns-4-with-terraform/</loc>
+    <lastmod>2016-05-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>

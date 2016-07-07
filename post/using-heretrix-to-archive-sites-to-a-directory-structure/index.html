@@ -94,10 +94,17 @@
 <p>Install Heritrix as per the instructions and get it started. Navigate to the web interface and create a new job with the standard configuration.</p>
 <p>Next we want to edit the disposition chain, which starts at line 335 in my default configuration. The first bean defined should be the <tt class="docutils literal">warcWriter</tt>, which, obviously, writes out scraped content to WARC files. WARC files are perfect for preserving websites exactly how they were accessed, but are a little too clumsy to be convenient.</p>
 <p>After the WARC bean, add the follow code:</p>
-<pre class="code xml literal-block">
-<span class="name tag">&lt;bean</span> <span class="name attribute">id=</span><span class="literal string">&quot;mirrorWriter&quot;</span> <span class="name attribute">class=</span><span class="literal string">&quot;org.archive.modules.writer.MirrorWriterProcessor&quot;</span><span class="name tag">&gt;</span>
-<span class="name tag">&lt;/bean&gt;</span>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">&lt;stdin&gt;</tt>, line 29)</p>
+<p>Cannot analyze code. Pygments package not found.</p>
+<pre class="literal-block">
+.. code:: xml
+
+   &lt;bean id=&quot;mirrorWriter&quot; class=&quot;org.archive.modules.writer.MirrorWriterProcessor&quot;&gt;
+   &lt;/bean&gt;
+
 </pre>
+</div>
 <p>Then, in the <tt class="docutils literal">dispositionProcessors</tt> bean, remove the line <tt class="docutils literal">&lt;ref <span class="pre">bean=&quot;warcWriter&quot;/&gt;</span></tt> from the the <tt class="docutils literal">processors</tt> list, and add <tt class="docutils literal">&lt;ref <span class="pre">bean=&quot;mirrorWriter&quot;/&gt;</span></tt>.</p>
 <p>That's pretty much all that's needed to get started. There are more parameters that can be tweaked, which can be found in the <a class="reference external" href="http://builds.archive.org/javadoc/heritrix-3.2.0/org/archive/modules/writer/MirrorWriterProcessor.html">3.2.0 Javadoc</a>, but the defaults are not anything surprising.</p>
 </div>
@@ -109,19 +116,6 @@
     </article>
     
 
-
-<script type="text/javascript">
-     
-    var disqus_shortname = '';
-
-     
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 
   </main>
   

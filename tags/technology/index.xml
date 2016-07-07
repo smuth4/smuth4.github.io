@@ -19,37 +19,41 @@
 
 &lt;p&gt;I&amp;rsquo;ve been bouncing around between picking a blog platform, and realized I should really settle down and stick with one. This is mostly a page to track my decision-making, and isn&amp;rsquo;t meant to be an objective comparison of different platforms. The one thing I&amp;rdquo;ll be limiting myself to is static site generators. They&amp;rsquo;re light, easy to write to, and I can keep my blog in source control.&lt;/p&gt;
 
-&lt;h2 id=&#34;the-markup-language:e95c7dc8eefee7d0e25121cd7f0007ae&#34;&gt;The markup language&lt;/h2&gt;
+&lt;h2 id=&#34;the-markup-language&#34;&gt;The markup language&lt;/h2&gt;
 
 &lt;p&gt;I&amp;rsquo;d really rather avoid having to learn a wholle new markup, so that effectively limits me to either Markdown or ReST. While I really like the expressiveness of ReST, I don&amp;rsquo;t think I&amp;rsquo;ll be needing the advanced feautures enough to merit having to deal with the syntax.&lt;/p&gt;
 
-&lt;h2 id=&#34;the-tool-s-language:e95c7dc8eefee7d0e25121cd7f0007ae&#34;&gt;The tool&amp;rsquo;s language&lt;/h2&gt;
+&lt;h2 id=&#34;the-tool-s-language&#34;&gt;The tool&amp;rsquo;s language&lt;/h2&gt;
 
 &lt;p&gt;Meh, I really don&amp;rsquo;t care. As long it takes less than 30 seconds to build the site, that&amp;rsquo;s good enough for me.&lt;/p&gt;
 
-&lt;h2 id=&#34;templating:e95c7dc8eefee7d0e25121cd7f0007ae&#34;&gt;Templating&lt;/h2&gt;
+&lt;h2 id=&#34;templating&#34;&gt;Templating&lt;/h2&gt;
 
 &lt;p&gt;It would be nice if it had a minimal black on white theme available, but I&amp;rsquo;m not really averse to creating my own.&lt;/p&gt;
 
-&lt;h2 id=&#34;hosting:e95c7dc8eefee7d0e25121cd7f0007ae&#34;&gt;Hosting&lt;/h2&gt;
+&lt;h2 id=&#34;hosting&#34;&gt;Hosting&lt;/h2&gt;
 
 &lt;p&gt;I&amp;rsquo;ll be most likely hosting this on github pages. Integration with that would be a bonus, but I&amp;rsquo;m not going to specifically check for that.&lt;/p&gt;
 
-&lt;h2 id=&#34;candidates:e95c7dc8eefee7d0e25121cd7f0007ae&#34;&gt;Candidates&lt;/h2&gt;
+&lt;h2 id=&#34;candidates&#34;&gt;Candidates&lt;/h2&gt;
 
 &lt;p&gt;A list of platforms that might meet my needs:&lt;/p&gt;
 
-&lt;h3 id=&#34;nikola-https-getnikola-com:e95c7dc8eefee7d0e25121cd7f0007ae&#34;&gt;&lt;a href=&#34;https://getnikola.com/&#34;&gt;Nikola&lt;/a&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;nikola-https-getnikola-com&#34;&gt;&lt;a href=&#34;https://getnikola.com/&#34;&gt;Nikola&lt;/a&gt;&lt;/h3&gt;
 
 &lt;p&gt;My previous platform. I thinks it&amp;rsquo;s a great product, but it just didn&amp;rsquo;t strike the right chord.&lt;/p&gt;
 
-&lt;h3 id=&#34;jekyll-https-jekyllrb-com:e95c7dc8eefee7d0e25121cd7f0007ae&#34;&gt;&lt;a href=&#34;https://jekyllrb.com/&#34;&gt;Jekyll&lt;/a&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;jekyll-https-jekyllrb-com&#34;&gt;&lt;a href=&#34;https://jekyllrb.com/&#34;&gt;Jekyll&lt;/a&gt;&lt;/h3&gt;
 
 &lt;p&gt;By far and away the most popular static site generator. However, the YY/MM/DD/ folder structure it enforces irks me much more than it should.&lt;/p&gt;
 
-&lt;h3 id=&#34;hugo-https-gohugo-io:e95c7dc8eefee7d0e25121cd7f0007ae&#34;&gt;&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;hugo-https-gohugo-io&#34;&gt;&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;&lt;/h3&gt;
 
 &lt;p&gt;The strongest contender so far. Simple and does what I need.&lt;/p&gt;
+
+&lt;h2 id=&#34;my-decision&#34;&gt;My decision&lt;/h2&gt;
+
+&lt;p&gt;I decided to go with Hugo. It&amp;rsquo;s written in Go, the new hotness, doesn&amp;rsquo;t force a directory structure on me, and has a really nice &lt;a href=&#34;http://themes.gohugo.io/&#34;&gt;selection of themes&lt;/a&gt; I can use (I&amp;rsquo;m using &lt;a href=&#34;http://themes.gohugo.io/angels-ladder/&#34;&gt;angels-ladder&lt;/a&gt; currently.&lt;/p&gt;
 </description>
     </item>
     

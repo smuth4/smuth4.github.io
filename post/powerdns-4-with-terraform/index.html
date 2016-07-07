@@ -75,11 +75,11 @@
 
 <p>I&rsquo;ve really enjoyed using <a href="https://www.powerdns.com/">PowerDNS</a> as my DNS server at home. Most people only think of <a href="https://www.isc.org/downloads/bind/">BIND</a> and <a href="http://www.thekelleys.org.uk/dnsmasq/doc.html">dnsmasq</a> when it comes to DNS, while ignoring this stable, scalable, secure database-backed offering that powers some really large deployments. But enough proselytizing! I&rsquo;m in the middle of trying to migrate my infrastructure to be controlled via <a href="https://www.terraform.io/">Terraform</a> (mostly). I figure this will help me consolidate and track most of my VPSs and the like.</p>
 
-<h2 id="the-problem:0c5dca5f12bc2770cba9ee25c8d97993">The problem</h2>
+<h2 id="the-problem">The problem</h2>
 
 <p>PowerDNS has a nice HTTP/JSON API that can be used, but it changed URL locations in version 4, from <code>/</code> to <code>/api/v1/</code>, which makes any Terraform changes return <code>powerdns_record.dns: Failed to create PowerDNS Record: Error creating record set: exmaple.com:::A, reason: &quot;Not Found&quot;</code>, which isn&rsquo;t exactly helpful (for the record, that&rsquo;s the error message returned by the API whenever a bad URL is requested).</p>
 
-<h2 id="the-solution:0c5dca5f12bc2770cba9ee25c8d97993">The solution</h2>
+<h2 id="the-solution">The solution</h2>
 
 <p>Unfortunately there&rsquo;s no easy fix, short of breaking compatibility for one thing or another. However, what I decided to do was to use <a href="https://www.nginx.com/resources/wiki/">nginx</a> as a reverse proxy for the API. My configuration looks like this:</p>
 
@@ -105,19 +105,6 @@
     </article>
     
 
-
-<script type="text/javascript">
-     
-    var disqus_shortname = '';
-
-     
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 
   </main>
   
