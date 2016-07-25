@@ -42,6 +42,8 @@
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;This lets us use both the new and old locations simultaneously. I&amp;rsquo;m sure this can be done in Apache as well, but wasn&amp;rsquo;t up for installing it just to test something so simple.&lt;/p&gt;
+
+&lt;p&gt;Update: This method doesn&amp;rsquo;t work anymore, it doesn&amp;rsquo;t handle the TTL field correctly. See &lt;a href=&#34;https://github.com/hashicorp/terraform/issues/6056&#34;&gt;https://github.com/hashicorp/terraform/issues/6056&lt;/a&gt; for more information about fixing this directly in terrform.&lt;/p&gt;
 </description>
     </item>
     
