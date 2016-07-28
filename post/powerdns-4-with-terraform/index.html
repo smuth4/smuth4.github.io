@@ -73,6 +73,8 @@
     <article>
       
 
+<p>Edit: This post has been made obsolete by a pull request I opened in the terraform repository: <a href="https://github.com/hashicorp/terraform/pull/7819">https://github.com/hashicorp/terraform/pull/7819</a></p>
+
 <p>I&rsquo;ve really enjoyed using <a href="https://www.powerdns.com/">PowerDNS</a> as my DNS server at home. Most people only think of <a href="https://www.isc.org/downloads/bind/">BIND</a> and <a href="http://www.thekelleys.org.uk/dnsmasq/doc.html">dnsmasq</a> when it comes to DNS, while ignoring this stable, scalable, secure database-backed offering that powers some really large deployments. But enough proselytizing! I&rsquo;m in the middle of trying to migrate my infrastructure to be controlled via <a href="https://www.terraform.io/">Terraform</a> (mostly). I figure this will help me consolidate and track most of my VPSs and the like.</p>
 
 <h2 id="the-problem">The problem</h2>
@@ -98,8 +100,6 @@
 </code></pre>
 
 <p>This lets us use both the new and old locations simultaneously. I&rsquo;m sure this can be done in Apache as well, but wasn&rsquo;t up for installing it just to test something so simple.</p>
-
-<p>Update: This method doesn&rsquo;t work anymore, it doesn&rsquo;t handle the TTL field correctly. See <a href="https://github.com/hashicorp/terraform/issues/6056">https://github.com/hashicorp/terraform/issues/6056</a> for more information about fixing this directly in terrform.</p>
 
       
       
