@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Php on cat /dev/null &gt; /proc/mind</title>
-    <link>https://smuth.me/tags/php/</link>
-    <description>Recent content in Php on cat /dev/null &gt; /proc/mind</description>
+    <title>Freebsd on cat /dev/null &gt; /proc/mind</title>
+    <link>https://smuth.me/tags/freebsd/</link>
+    <description>Recent content in Freebsd on cat /dev/null &gt; /proc/mind</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 31 Jul 2016 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://smuth.me/tags/php/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://smuth.me/tags/freebsd/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Upgrading from PHP 5.5 to 5.6 on FreeBSD</title>
@@ -76,55 +76,6 @@ Build 5.6 over 5.5 with portmaster:&lt;/p&gt;
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Restart any necessary daemons, and you&amp;rsquo;re done! This was a learning process for me, I&amp;rsquo;m sure this could be compressed into a nice script. Of course, if you need to upgrade many machines, or downtime is an issue, building packages from the ports system (possible with portmaster&amp;rsquo;s &lt;code&gt;-g&lt;/code&gt; flag), and then installing them wholesale would cut down on the amount of time spent compiling everything.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Fun with Basic PHP Optimization</title>
-      <link>https://smuth.me/post/basic-php-optimization/</link>
-      <pubDate>Thu, 09 Jan 2014 00:00:00 +0000</pubDate>
-      
-      <guid>https://smuth.me/post/basic-php-optimization/</guid>
-      <description>&lt;p&gt;A while ago I came across a full-featured PHP application for controlling a daemon. It worked well with a small data set, but quickly became laggy with a dataset numbering in the thousands. Admittedly, it really wasn&amp;rsquo;t built for that kind of load, so I removed it and controlled the daemon manually, which wasn&amp;rsquo;t a big deal.&lt;/p&gt;
-
-&lt;p&gt;Then a while later, I came across a post by someone who managed to mitigate the problem by shifting a particularly expensive operation to an external python program. Obviously, this was not exactly the most elegant solution, so I decided to take a look at the problematic section of code.&lt;/p&gt;
-
-&lt;p&gt;It looked something like this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
-for ($i = 0; $i&amp;lt;count($req-&amp;gt;val); $i+=$cnt) {
-  $output[$req-&amp;gt;val[$i]] = array_slice($req-&amp;gt;val, $i+1, $cnt-1);
-}
-?&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Looks pretty basic, right? It cycles through an array ($req) and splits it into a new dictionary ($output) based on a fixed length ($cnt). However, if we turn this into a generic big O structure, with the values borrowed from &lt;a href=&#34;http://stackoverflow.com/a/2484455&#34;&gt;this serverfault post&lt;/a&gt;, the problem quickly becomes apparent.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
-for ($i = 0; $i&amp;lt;O(n); $i+=$cnt)
-  $output[$req-&amp;gt;val[$i]] = O(n)
-?&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Taking into account the for loop, this would appear to mean that the operation is O(2n&lt;sup&gt;2&lt;/sup&gt;), in contrast to the very similar &lt;a href=&#34;http://www.php.net/manual/en/function.array-chunk.php&#34;&gt;array_chunk&lt;/a&gt; O(n) function. So how do we optimize this? The most important thing to do is make it so php can complete this in one loop over the array. Everything else will be a nice improvement, but when scaling, the big O is king.&lt;/p&gt;
-
-&lt;p&gt;Here&amp;rsquo;s the new code:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
-foreach($req-&amp;gt;val as $index=&amp;gt;$value)
-{
-  if($index % $cnt == 0)
-  {
-    $current_index = $value;
-    $output[$current_index] = array();
-  }
-  else
-    $output[$current_index][] = $value;
-}
-?&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We&amp;rsquo;ve dropped the for/count() loop in favor of foreach, and eliminated slicing in favor of appending to newly created elements. In a real world test, this cut down the response time of the module from 12s to 4s on average. A pretty big improvement for a pretty small change!&lt;/p&gt;
 </description>
     </item>
     
