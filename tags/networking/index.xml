@@ -47,7 +47,7 @@ fi
 for lower in /sys/devices/virtual/net/&amp;quot;${intf}&amp;quot;/lower_*; do
   child_intf=&amp;quot;$(basename &amp;quot;$lower&amp;quot; | sed &#39;s/lower_//&#39;)&amp;quot;
   if [[ &amp;quot;$(cat &amp;quot;$lower&amp;quot;/mtu)&amp;quot; -lt &amp;quot;$mtu&amp;quot; ]]; then
-    ip link set &amp;quot;$child_intf&amp;quot; mtu 9000
+    ip link set &amp;quot;$child_intf&amp;quot; mtu &amp;quot;$mtu&amp;quot;
   fi
 done
 &lt;/code&gt;&lt;/pre&gt;

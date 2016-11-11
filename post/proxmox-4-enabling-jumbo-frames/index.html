@@ -99,7 +99,7 @@ fi
 for lower in /sys/devices/virtual/net/&quot;${intf}&quot;/lower_*; do
   child_intf=&quot;$(basename &quot;$lower&quot; | sed 's/lower_//')&quot;
   if [[ &quot;$(cat &quot;$lower&quot;/mtu)&quot; -lt &quot;$mtu&quot; ]]; then
-    ip link set &quot;$child_intf&quot; mtu 9000
+    ip link set &quot;$child_intf&quot; mtu &quot;$mtu&quot;
   fi
 done
 </code></pre>
@@ -157,6 +157,8 @@ rtt min/avg/max/mdev = 1.425/1.449/1.512/0.058 ms
     
       <span class="previous">&larr; <a href="https://smuth.me/post/freebsd-upgrading-php55-to-56/" rel="prev">Upgrading from PHP 5.5 to 5.6 on FreeBSD</a></span>
     
+    
+      <span class="next"><a href="https://smuth.me/post/ssh-public-key-shenanigans/" rel="next">SSH public key shenanigans</a> &rarr;</span>
     
   </nav>
 

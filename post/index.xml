@@ -6,8 +6,49 @@
     <description>Recent content in Posts on cat /dev/null &gt; /proc/mind</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 02 Oct 2016 15:58:01 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 19 Oct 2016 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://smuth.me/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>SSH public key shenanigans</title>
+      <link>https://smuth.me/post/ssh-public-key-shenanigans/</link>
+      <pubDate>Wed, 19 Oct 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/post/ssh-public-key-shenanigans/</guid>
+      <description>&lt;p&gt;A fun little fact I discovered about SSH: when you specify a private key to use, it checks ${key}.pub for hints about how to parse the private key, without warning. Under normal operations this is never a problem, but you need to replace a private key in-place, and don&amp;rsquo;t update the .pub file, authentication will fail:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ ls -la
+ssh.key ssh.key.pub
+$ ssh user@host echo ping
+user@host&#39;s password: ^C
+$ mv ssh.key.pub ssh.key.pub.bak
+$ ssh user@host echo ping
+Last login: Tue Oct 19
+ping
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This can be partially seen in the output of the ssh client&amp;rsquo;s &lt;code&gt;-vvv&lt;/code&gt; option. On the left is with the public key preset, on the right is without:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;debug1: identity file ./ssh.key type 2                   | debug1: identity file ./ssh.key type -1
+...
+debug2: dh_gen_key: priv key bits set: 131/256           | debug2: dh_gen_key: priv key bits set: 125/256
+debug2: bits set: 529/1024                               | debug2: bits set: 532/1024
+...
+debug2: bits set: 512/1024                               | debug2: bits set: 482/1024
+...
+debug2: key: ./ssh.key (0x7fdea492cb30)                  | debug2: key: ./ssh.key ((nil))
+...
+debug3: send_pubkey_test                                 | debug1: read PEM private key done: type DSA
+                                                         &amp;gt; debug3: sign_and_send_pubkey
+debug2: we sent a publickey packet, wait for reply         debug2: we sent a publickey packet, wait for reply
+debug3: Wrote 528 bytes for a total of 1653              | debug3: Wrote 592 bytes for a total of 1717
+debug1: Authentications that can continue: publickey,pas | debug1: Authentication succeeded (publickey).
+debug2: we did not send a packet, disable method         | debug2: fd 5 setting O_NONBLOCK
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Interestingly, I wasn&amp;rsquo;t able to find any official documentation that mentions this, and only figured it out after restorting to &lt;code&gt;strace&lt;/code&gt;.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Enabling jumbo frames on Proxmox 4</title>
@@ -47,7 +88,7 @@ fi
 for lower in /sys/devices/virtual/net/&amp;quot;${intf}&amp;quot;/lower_*; do
   child_intf=&amp;quot;$(basename &amp;quot;$lower&amp;quot; | sed &#39;s/lower_//&#39;)&amp;quot;
   if [[ &amp;quot;$(cat &amp;quot;$lower&amp;quot;/mtu)&amp;quot; -lt &amp;quot;$mtu&amp;quot; ]]; then
-    ip link set &amp;quot;$child_intf&amp;quot; mtu 9000
+    ip link set &amp;quot;$child_intf&amp;quot; mtu &amp;quot;$mtu&amp;quot;
   fi
 done
 &lt;/code&gt;&lt;/pre&gt;
