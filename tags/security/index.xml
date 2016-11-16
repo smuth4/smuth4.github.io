@@ -17,7 +17,7 @@
       <guid>https://smuth.me/post/ssh-public-key-shenanigans/</guid>
       <description>&lt;p&gt;A fun little fact I discovered about SSH: when you specify a private key to use, it checks ${key}.pub for hints about how to parse the private key, without warning. Under normal operations this is never a problem, but you need to replace a private key in-place, and don&amp;rsquo;t update the .pub file, authentication will fail:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ ls -la
+&lt;pre&gt;&lt;code class=&#34;language-none&#34;&gt;$ ls -la
 ssh.key ssh.key.pub
 $ ssh user@host echo ping
 user@host&#39;s password: ^C
@@ -29,7 +29,7 @@ ping
 
 &lt;p&gt;This can be partially seen in the output of the ssh client&amp;rsquo;s &lt;code&gt;-vvv&lt;/code&gt; option. On the left is with the public key preset, on the right is without:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;debug1: identity file ./ssh.key type 2                   | debug1: identity file ./ssh.key type -1
+&lt;pre&gt;&lt;code class=&#34;language-none&#34;&gt;debug1: identity file ./ssh.key type 2                   | debug1: identity file ./ssh.key type -1
 ...
 debug2: dh_gen_key: priv key bits set: 131/256           | debug2: dh_gen_key: priv key bits set: 125/256
 debug2: bits set: 529/1024                               | debug2: bits set: 532/1024
@@ -46,7 +46,7 @@ debug1: Authentications that can continue: publickey,pas | debug1: Authenticatio
 debug2: we did not send a packet, disable method         | debug2: fd 5 setting O_NONBLOCK
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Interestingly, I wasn&amp;rsquo;t able to find any official documentation that mentions this, and only figured it out after restorting to &lt;code&gt;strace&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Interestingly, I wasn&amp;rsquo;t able to find any official documentation that mentions this, and only figured it out after resorting to &lt;code&gt;strace&lt;/code&gt;.&lt;/p&gt;
 </description>
     </item>
     
