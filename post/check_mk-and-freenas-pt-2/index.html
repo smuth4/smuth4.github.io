@@ -79,22 +79,11 @@
 <!-- link: -->
 <!-- description: -->
 <!-- type: text -->
-<p>A continuation of <a href="#id1"><span class="problematic" id="id2">:doc:`check_mk-and-freenas`</span></a></p>
-<div class="system-message" id="id1">
-<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">&lt;stdin&gt;</tt>, line 9); <em><a href="#id2">backlink</a></em></p>
-Unknown interpreted text role &quot;doc&quot;.</div>
+<p>A continuation of Check_mk and FreeNAS, Pt. 1.</p>
 <p>So I've got my check_mk on set up on my NAS, and it's monitoring stuff beautifully. However, it's not monitoring something very near and dear to my heart for this server: S.M.A.R.T. data. FreeNAS comes with smartctl, and there's already S.M.A.R.T. data plugins for the linux agents, so I figured this wouldn't be a big deal. And I was right! All I had to do was add the following script to my plugins/ folder for check_mk to find, and the server picked it up automatically.</p>
 <div class="note">
 <p class="first admonition-title">Note</p>
 <p class="last">The linux script has a lot fancier checking for edge cases. I figured FreeNAS would be homogeneous enough that it wouldn't be worth converting all those edge cases, so this is a very simple script, shared on a &quot;works for me&quot; basis.</p>
-</div>
-<div class="system-message">
-<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">&lt;stdin&gt;</tt>, line 16)</p>
-<p>Unknown directive type &quot;listing&quot;.</p>
-<pre class="literal-block">
-.. listing:: smart bash
-
-</pre>
 </div>
 </div>
 

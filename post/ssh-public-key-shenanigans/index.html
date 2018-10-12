@@ -69,19 +69,19 @@
     <article>
       <p>A fun little fact I discovered about SSH: when you specify a private key to use, it checks ${key}.pub for hints about how to parse the private key, without warning. Under normal operations this is never a problem, but you need to replace a private key in-place, and don&rsquo;t update the .pub file, authentication will fail:</p>
 
-<pre><code class="language-none">$ ls -la
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-diff" data-lang="diff">$ ls -la
 ssh.key ssh.key.pub
 $ ssh user@host echo ping
-user@host's password: ^C
+user@host&#39;s password: ^C
 $ mv ssh.key.pub ssh.key.pub.bak
 $ ssh user@host echo ping
 Last login: Tue Oct 19
 ping
-</code></pre>
+</code></pre></div>
 
 <p>This can be partially seen in the output of the ssh client&rsquo;s <code>-vvv</code> option. On the left is with the public key preset, on the right is without:</p>
 
-<pre><code class="language-none">debug1: identity file ./ssh.key type 2                   | debug1: identity file ./ssh.key type -1
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-diff" data-lang="diff">debug1: identity file ./ssh.key type 2                   | debug1: identity file ./ssh.key type -1
 ...
 debug2: dh_gen_key: priv key bits set: 131/256           | debug2: dh_gen_key: priv key bits set: 125/256
 debug2: bits set: 529/1024                               | debug2: bits set: 532/1024
@@ -96,7 +96,7 @@ debug2: we sent a publickey packet, wait for reply         debug2: we sent a pub
 debug3: Wrote 528 bytes for a total of 1653              | debug3: Wrote 592 bytes for a total of 1717
 debug1: Authentications that can continue: publickey,pas | debug1: Authentication succeeded (publickey).
 debug2: we did not send a packet, disable method         | debug2: fd 5 setting O_NONBLOCK
-</code></pre>
+</code></pre></div>
 
 <p>Interestingly, I wasn&rsquo;t able to find any official documentation that mentions this, and only figured it out after resorting to <code>strace</code>.</p>
 

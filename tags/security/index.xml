@@ -18,7 +18,7 @@
       
       <guid>https://smuth.me/post/ssh-public-key-shenanigans/</guid>
       <description>A fun little fact I discovered about SSH: when you specify a private key to use, it checks ${key}.pub for hints about how to parse the private key, without warning. Under normal operations this is never a problem, but you need to replace a private key in-place, and don&amp;rsquo;t update the .pub file, authentication will fail:
-$ ls -la ssh.key ssh.key.pub $ ssh user@host echo ping user@host&#39;s password: ^C $ mv ssh.</description>
+$ ls -la ssh.key ssh.key.pub $ ssh user@host echo ping user@host&amp;#39;s password: ^C $ mv ssh.</description>
     </item>
     
   </channel>

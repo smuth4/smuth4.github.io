@@ -17,9 +17,9 @@
       <pubDate>Thu, 10 Jul 2014 00:00:00 +0000</pubDate>
       
       <guid>https://smuth.me/post/check_mk-and-freenas-pt-3/</guid>
-      <description>A continuation of :doc:`check_mk-and-freenas-pt-2`
-System Message: ERROR/3 (&amp;lt;stdin&amp;gt;, line 9); backlink
-Unknown interpreted text role &amp;quot;doc&amp;quot;. Now that we have all our smart data nicely set up, let&#39;s see if we can&#39;t get some stats on I/O speed. I&#39;m pretty sure FreeNAS is supposed to have a I/O section in its &amp;quot;Reports&amp;quot; section, but for whatever reason, it&#39;s not in my install, and I&#39;d like to have the data in Nagios in any case.</description>
+      <description>A continuation of Check_mk and FreeNAS, Pt. 2
+Now that we have all our smart data nicely set up, let&#39;s see if we can&#39;t get some stats on I/O speed. I&#39;m pretty sure FreeNAS is supposed to have a I/O section in its &amp;quot;Reports&amp;quot; section, but for whatever reason, it&#39;s not in my install, and I&#39;d like to have the data in Nagios in any case.
+Just like with the SMART data, we&#39;re going to write a small script that the check_mk agent can use.</description>
     </item>
     
     <item>
@@ -28,9 +28,8 @@ Unknown interpreted text role &amp;quot;doc&amp;quot;. Now that we have all our 
       <pubDate>Fri, 25 Apr 2014 00:00:00 +0000</pubDate>
       
       <guid>https://smuth.me/post/check_mk-and-freenas-pt-2/</guid>
-      <description>A continuation of :doc:`check_mk-and-freenas`
-System Message: ERROR/3 (&amp;lt;stdin&amp;gt;, line 9); backlink
-Unknown interpreted text role &amp;quot;doc&amp;quot;. So I&#39;ve got my check_mk on set up on my NAS, and it&#39;s monitoring stuff beautifully. However, it&#39;s not monitoring something very near and dear to my heart for this server: S.M.A.R.T. data. FreeNAS comes with smartctl, and there&#39;s already S.M.A.R.T. data plugins for the linux agents, so I figured this wouldn&#39;t be a big deal.</description>
+      <description>A continuation of Check_mk and FreeNAS, Pt. 1.
+So I&#39;ve got my check_mk on set up on my NAS, and it&#39;s monitoring stuff beautifully. However, it&#39;s not monitoring something very near and dear to my heart for this server: S.M.A.R.T. data. FreeNAS comes with smartctl, and there&#39;s already S.M.A.R.T. data plugins for the linux agents, so I figured this wouldn&#39;t be a big deal. And I was right! All I had to do was add the following script to my plugins/ folder for check_mk to find, and the server picked it up automatically.</description>
     </item>
     
     <item>

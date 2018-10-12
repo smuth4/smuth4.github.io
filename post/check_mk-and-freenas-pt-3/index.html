@@ -79,20 +79,9 @@
 <!-- link: -->
 <!-- description: -->
 <!-- type: text -->
-<p>A continuation of <a href="#id1"><span class="problematic" id="id2">:doc:`check_mk-and-freenas-pt-2`</span></a></p>
-<div class="system-message" id="id1">
-<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">&lt;stdin&gt;</tt>, line 9); <em><a href="#id2">backlink</a></em></p>
-Unknown interpreted text role &quot;doc&quot;.</div>
+<p>A continuation of Check_mk and FreeNAS, Pt. 2</p>
 <p>Now that we have all our smart data nicely set up, let's see if we can't get some stats on I/O speed. I'm pretty sure FreeNAS is supposed to have a I/O section in its &quot;Reports&quot; section, but for whatever reason, it's not in my install, and I'd like to have the data in Nagios in any case.</p>
 <p>Just like with the SMART data, we're going to write a small script that the check_mk agent can use. Unlike the SMART script, getting IO stats is incredibly easy.</p>
-<div class="system-message">
-<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">&lt;stdin&gt;</tt>, line 15)</p>
-<p>Unknown directive type &quot;listing&quot;.</p>
-<pre class="literal-block">
-.. listing:: iostat bash
-
-</pre>
-</div>
 <p>Yep, that's all it is. We're only really interesting in the drives being used in ZFS, but you could open it up to all drives if you wanted to.</p>
 <p>Next up is to let check_mk be able to recognize the agent's output. The check script that I use can be found <a class="reference external" href="/check_mk_freenas_iostat/iostat">here</a>. It should be placed in the &quot;checks/&quot; directory of your check_mk install.</p>
 <p>I also created a quick template for pnp4nagios, found <a class="reference external" href="/check_mk_freenas_iostat/check_mk-iostat.php">here</a>, which should be placed in the &quot;templates/&quot; directory.</p>
