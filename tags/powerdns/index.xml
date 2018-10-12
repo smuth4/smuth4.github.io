@@ -7,7 +7,9 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 01 May 2016 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://smuth.me/tags/powerdns/index.xml" rel="self" type="application/rss+xml" />
+    
+	<atom:link href="https://smuth.me/tags/powerdns/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>Making Terraform work with PowerDNS 4</title>
@@ -15,36 +17,8 @@
       <pubDate>Sun, 01 May 2016 00:00:00 +0000</pubDate>
       
       <guid>https://smuth.me/post/powerdns-4-with-terraform/</guid>
-      <description>
-
-&lt;p&gt;Edit: This post has been made obsolete by a pull request I opened in the terraform repository: &lt;a href=&#34;https://github.com/hashicorp/terraform/pull/7819&#34;&gt;https://github.com/hashicorp/terraform/pull/7819&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;I&amp;rsquo;ve really enjoyed using &lt;a href=&#34;https://www.powerdns.com/&#34;&gt;PowerDNS&lt;/a&gt; as my DNS server at home. Most people only think of &lt;a href=&#34;https://www.isc.org/downloads/bind/&#34;&gt;BIND&lt;/a&gt; and &lt;a href=&#34;http://www.thekelleys.org.uk/dnsmasq/doc.html&#34;&gt;dnsmasq&lt;/a&gt; when it comes to DNS, while ignoring this stable, scalable, secure database-backed offering that powers some really large deployments. But enough proselytizing! I&amp;rsquo;m in the middle of trying to migrate my infrastructure to be controlled via &lt;a href=&#34;https://www.terraform.io/&#34;&gt;Terraform&lt;/a&gt; (mostly). I figure this will help me consolidate and track most of my VPSs and the like.&lt;/p&gt;
-
-&lt;h2 id=&#34;the-problem&#34;&gt;The problem&lt;/h2&gt;
-
-&lt;p&gt;PowerDNS has a nice HTTP/JSON API that can be used, but it changed URL locations in version 4, from &lt;code&gt;/&lt;/code&gt; to &lt;code&gt;/api/v1/&lt;/code&gt;, which makes any Terraform changes return &lt;code&gt;powerdns_record.dns: Failed to create PowerDNS Record: Error creating record set: exmaple.com:::A, reason: &amp;quot;Not Found&amp;quot;&lt;/code&gt;, which isn&amp;rsquo;t exactly helpful (for the record, that&amp;rsquo;s the error message returned by the API whenever a bad URL is requested).&lt;/p&gt;
-
-&lt;h2 id=&#34;the-solution&#34;&gt;The solution&lt;/h2&gt;
-
-&lt;p&gt;Unfortunately there&amp;rsquo;s no easy fix, short of breaking compatibility for one thing or another. However, what I decided to do was to use &lt;a href=&#34;https://www.nginx.com/resources/wiki/&#34;&gt;nginx&lt;/a&gt; as a reverse proxy for the API. My configuration looks like this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;server {
-    listen 8000;
-    server_name _;
-
-    location /api/v1/ {
-        proxy_pass http://localhost:8081/;
-    }
-
-    location / {
-        proxy_pass http://localhost:8081/api/v1/;
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This lets us use both the new and old locations simultaneously. I&amp;rsquo;m sure this can be done in Apache as well, but wasn&amp;rsquo;t up for installing it just to test something so simple.&lt;/p&gt;
-</description>
+      <description>Edit: This post has been made obsolete by a pull request I opened in the terraform repository: https://github.com/hashicorp/terraform/pull/7819
+I&amp;rsquo;ve really enjoyed using PowerDNS as my DNS server at home. Most people only think of BIND and dnsmasq when it comes to DNS, while ignoring this stable, scalable, secure database-backed offering that powers some really large deployments. But enough proselytizing! I&amp;rsquo;m in the middle of trying to migrate my infrastructure to be controlled via Terraform (mostly).</description>
     </item>
     
   </channel>

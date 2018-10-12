@@ -69,7 +69,7 @@
     <article>
       
 
-<p>While turning on <a href="https://en.wikipedia.org/wiki/Jumbo_frame">jumbo frames</a> on a basic interface is straightforward (<code>ip link set eth0 mtu 9000</code>), <a href="https://www.proxmox.com/">Proxmox&rsquo;s</a> use of bridges to connect VMs makes things much more interesting. To start with, all interfaces connected to the bridge must have their MTUs upgraded first, otherwise it will give you an unhelpful error. Note that interfaces connected to the bridge include those of running containers/VMs.<sup class="footnote-ref" id="fnref:1"><a rel="footnote" href="#fn:1">1</a></sup></p>
+<p>While turning on <a href="https://en.wikipedia.org/wiki/Jumbo_frame">jumbo frames</a> on a basic interface is straightforward (<code>ip link set eth0 mtu 9000</code>), <a href="https://www.proxmox.com/">Proxmox&rsquo;s</a> use of bridges to connect VMs makes things much more interesting. To start with, all interfaces connected to the bridge must have their MTUs upgraded first, otherwise it will give you an unhelpful error. Note that interfaces connected to the bridge include those of running containers/VMs.<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></p>
 
 <pre><code># ip a | grep mtu
 1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1
@@ -83,9 +83,9 @@ RTNETLINK answers: Invalid argument
 # ip link set dev vmbr0 mtu 9000
 </code></pre>
 
-<p>Note that setting the MTU on vmbr0 is technically unnecessary, since bridges inherit the smallest MTU of the slaved devices<sup class="footnote-ref" id="fnref:3"><a rel="footnote" href="#fn:3">2</a></sup>.</p>
+<p>Note that setting the MTU on vmbr0 is technically unnecessary, since bridges inherit the smallest MTU of the slaved devices<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">2</a></sup>.</p>
 
-<p>However, this only enables it temporarily. The jumbo frames will be lost at the next reboot. To fix this, ideally we could simply define the MTU via the <code>/etc/network/interfaces</code> file. However, due to a series of bugs, I was not able to get this working, even with the <code>post-up</code> option.<sup class="footnote-ref" id="fnref:2"><a rel="footnote" href="#fn:2">3</a></sup><sup class="footnote-ref" id="fnref:4"><a rel="footnote" href="#fn:4">4</a></sup> My (hacky) solution was to write a simple script that goes through and raises the MTU for each interface assigned to a bridge, and run it every 5 minutes via cron.</p>
+<p>However, this only enables it temporarily. The jumbo frames will be lost at the next reboot. To fix this, ideally we could simply define the MTU via the <code>/etc/network/interfaces</code> file. However, due to a series of bugs, I was not able to get this working, even with the <code>post-up</code> option.<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">3</a></sup><sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup> My (hacky) solution was to write a simple script that goes through and raises the MTU for each interface assigned to a bridge, and run it every 5 minutes via cron.</p>
 
 <pre><code class="language-bash">#!/bin/bash
 intf=&quot;$1&quot;

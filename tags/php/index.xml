@@ -7,7 +7,9 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 31 Jul 2016 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://smuth.me/tags/php/index.xml" rel="self" type="application/rss+xml" />
+    
+	<atom:link href="https://smuth.me/tags/php/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>Upgrading from PHP 5.5 to 5.6 on FreeBSD</title>
@@ -15,68 +17,8 @@
       <pubDate>Sun, 31 Jul 2016 00:00:00 +0000</pubDate>
       
       <guid>https://smuth.me/post/freebsd-upgrading-php55-to-56/</guid>
-      <description>
-
-&lt;p&gt;Recently PHP 5.5 got &lt;a href=&#34;http://php.net/supported-versions.php&#34;&gt;EOL&amp;rsquo;d&lt;/a&gt;, but PHP 5.6 will be supported for another two years. On Debian, this is a just a matter of upgrading the php5 package, but FreeBSD splits it out into two packages: php55 and php56, not to mention that extensions are also split out this way. The fact that I&amp;rsquo;ve installed php via ports also complicates things.&lt;/p&gt;
-
-&lt;h2 id=&#34;doing-the-deed&#34;&gt;Doing the deed&lt;/h2&gt;
-
-&lt;p&gt;This assumes &lt;a href=&#34;https://www.freebsd.org/cgi/man.cgi?query=portmaster&amp;amp;apropos=0&amp;amp;sektion=8&amp;amp;manpath=FreeBSD+10.3-RELEASE+and+Ports&amp;amp;arch=default&amp;amp;format=html&#34;&gt;portmaster&lt;/a&gt; is installed.&lt;/p&gt;
-
-&lt;p&gt;Listing the installed php55 packages:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ pkg info | grep php55
-php55-5.5.38                   PHP Scripting Language
-php55-ctype-5.5.38             The ctype shared extension for php
-etc...
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Get the original ports path they were installed from (&lt;a href=&#34;https://www.freebsd.org/cgi/man.cgi?query=pkg-query&amp;amp;sektion=8&#34;&gt;pkg query&lt;/a&gt; is a fantastic command to have in your toolbelt), and convert any 5.5 refereces to 5.6:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ pkg query &amp;quot;%o&amp;quot; $(pkg info | grep php55 | cut -f 1 -d &#39; &#39; | tr &#39;\n&#39; &#39; &#39;) \
-  | sed &#39;s/55/56/g&#39;
-lang/php56
-extproc/php56-ctype
-etc...
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;For the sake of brevity, I&amp;rsquo;m going to place the list of packages into a temporary file&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;pkg query &amp;quot;%o&amp;quot; $(pkg info | grep php55 | cut -f 1 -d &#39; &#39; | tr &#39;\n&#39; &#39; &#39;) \
-  | sed &#39;s/55/56/g&#39; &amp;gt; /tmp/php56-packages.txt
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;I&amp;rsquo;m pretty sure that all the packages I care about have 5.6 equivalents, but just to be sure, let&amp;rsquo;s check that those directories exist in the ports directory:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;while read d; do [[ -d /usr/local/&amp;quot;$d&amp;quot; ]] &amp;amp;&amp;amp; echo &amp;quot;$d does not exist&amp;quot;; done &amp;lt; /tmp/php56-packages.txt
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Copy over the ports&amp;rsquo; options directory. (skip this step if you think any packages may need to be compiled differently):&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mkdir -p /var/db/ports/lang_php56/ /var/db/ports/lang_php56-extensions/
-cp /var/db/ports/lang_php55/options /var/db/ports/lang_php56/
-cp /var/db/ports/lang_php55-extensions/options /var/db/ports/lang_php56-extensions/
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now begins the actual changes!
-Build 5.6 over 5.5 with portmaster:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo portmaster -n -o /usr/ports/lang/php56 lang/php55
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Do a quick dry run with portmaster (if there are any new options that can be set, portmaster will open up a prompt):&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;portmaster -n $(cat /tmp/php56-packages.txt | tr &#39;\n&#39; &#39; &#39;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Install the other packages sequentially, in the same manner as the main php56 package:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;cat /tmp/php56-packages.txt | grep -v &#39;lang/php56$&#39; | \
-  while read p; do echo portmaster -D --no-confirm -o &amp;quot;/usr/ports/$p&amp;quot; &amp;quot;$(echo &amp;quot;$p&amp;quot; | sed &#39;s/56/55/g&#39;)&amp;quot;; done
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Restart any necessary daemons, and you&amp;rsquo;re done! This was a learning process for me, I&amp;rsquo;m sure this could be compressed into a nice script. Of course, if you need to upgrade many machines, or downtime is an issue, building packages from the ports system (possible with portmaster&amp;rsquo;s &lt;code&gt;-g&lt;/code&gt; flag), and then installing them wholesale would cut down on the amount of time spent compiling everything.&lt;/p&gt;
-</description>
+      <description>Recently PHP 5.5 got EOL&amp;rsquo;d, but PHP 5.6 will be supported for another two years. On Debian, this is a just a matter of upgrading the php5 package, but FreeBSD splits it out into two packages: php55 and php56, not to mention that extensions are also split out this way. The fact that I&amp;rsquo;ve installed php via ports also complicates things.
+Doing the deed This assumes portmaster is installed.</description>
     </item>
     
     <item>
@@ -85,47 +27,8 @@ Build 5.6 over 5.5 with portmaster:&lt;/p&gt;
       <pubDate>Thu, 09 Jan 2014 00:00:00 +0000</pubDate>
       
       <guid>https://smuth.me/post/basic-php-optimization/</guid>
-      <description>&lt;p&gt;A while ago I came across a full-featured PHP application for controlling a daemon. It worked well with a small data set, but quickly became laggy with a dataset numbering in the thousands. Admittedly, it really wasn&amp;rsquo;t built for that kind of load, so I removed it and controlled the daemon manually, which wasn&amp;rsquo;t a big deal.&lt;/p&gt;
-
-&lt;p&gt;Then a while later, I came across a post by someone who managed to mitigate the problem by shifting a particularly expensive operation to an external python program. Obviously, this was not exactly the most elegant solution, so I decided to take a look at the problematic section of code.&lt;/p&gt;
-
-&lt;p&gt;It looked something like this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
-for ($i = 0; $i&amp;lt;count($req-&amp;gt;val); $i+=$cnt) {
-  $output[$req-&amp;gt;val[$i]] = array_slice($req-&amp;gt;val, $i+1, $cnt-1);
-}
-?&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Looks pretty basic, right? It cycles through an array ($req) and splits it into a new dictionary ($output) based on a fixed length ($cnt). However, if we turn this into a generic big O structure, with the values borrowed from &lt;a href=&#34;http://stackoverflow.com/a/2484455&#34;&gt;this serverfault post&lt;/a&gt;, the problem quickly becomes apparent.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
-for ($i = 0; $i&amp;lt;O(n); $i+=$cnt)
-  $output[$req-&amp;gt;val[$i]] = O(n)
-?&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Taking into account the for loop, this would appear to mean that the operation is O(2n&lt;sup&gt;2&lt;/sup&gt;), in contrast to the very similar &lt;a href=&#34;http://www.php.net/manual/en/function.array-chunk.php&#34;&gt;array_chunk&lt;/a&gt; O(n) function. So how do we optimize this? The most important thing to do is make it so php can complete this in one loop over the array. Everything else will be a nice improvement, but when scaling, the big O is king.&lt;/p&gt;
-
-&lt;p&gt;Here&amp;rsquo;s the new code:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
-foreach($req-&amp;gt;val as $index=&amp;gt;$value)
-{
-  if($index % $cnt == 0)
-  {
-    $current_index = $value;
-    $output[$current_index] = array();
-  }
-  else
-    $output[$current_index][] = $value;
-}
-?&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We&amp;rsquo;ve dropped the for/count() loop in favor of foreach, and eliminated slicing in favor of appending to newly created elements. In a real world test, this cut down the response time of the module from 12s to 4s on average. A pretty big improvement for a pretty small change!&lt;/p&gt;
-</description>
+      <description>A while ago I came across a full-featured PHP application for controlling a daemon. It worked well with a small data set, but quickly became laggy with a dataset numbering in the thousands. Admittedly, it really wasn&amp;rsquo;t built for that kind of load, so I removed it and controlled the daemon manually, which wasn&amp;rsquo;t a big deal.
+Then a while later, I came across a post by someone who managed to mitigate the problem by shifting a particularly expensive operation to an external python program.</description>
     </item>
     
   </channel>

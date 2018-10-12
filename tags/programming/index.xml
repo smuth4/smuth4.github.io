@@ -7,7 +7,9 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 09 Jan 2014 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://smuth.me/tags/programming/index.xml" rel="self" type="application/rss+xml" />
+    
+	<atom:link href="https://smuth.me/tags/programming/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>Fun with Basic PHP Optimization</title>
@@ -15,47 +17,8 @@
       <pubDate>Thu, 09 Jan 2014 00:00:00 +0000</pubDate>
       
       <guid>https://smuth.me/post/basic-php-optimization/</guid>
-      <description>&lt;p&gt;A while ago I came across a full-featured PHP application for controlling a daemon. It worked well with a small data set, but quickly became laggy with a dataset numbering in the thousands. Admittedly, it really wasn&amp;rsquo;t built for that kind of load, so I removed it and controlled the daemon manually, which wasn&amp;rsquo;t a big deal.&lt;/p&gt;
-
-&lt;p&gt;Then a while later, I came across a post by someone who managed to mitigate the problem by shifting a particularly expensive operation to an external python program. Obviously, this was not exactly the most elegant solution, so I decided to take a look at the problematic section of code.&lt;/p&gt;
-
-&lt;p&gt;It looked something like this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
-for ($i = 0; $i&amp;lt;count($req-&amp;gt;val); $i+=$cnt) {
-  $output[$req-&amp;gt;val[$i]] = array_slice($req-&amp;gt;val, $i+1, $cnt-1);
-}
-?&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Looks pretty basic, right? It cycles through an array ($req) and splits it into a new dictionary ($output) based on a fixed length ($cnt). However, if we turn this into a generic big O structure, with the values borrowed from &lt;a href=&#34;http://stackoverflow.com/a/2484455&#34;&gt;this serverfault post&lt;/a&gt;, the problem quickly becomes apparent.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
-for ($i = 0; $i&amp;lt;O(n); $i+=$cnt)
-  $output[$req-&amp;gt;val[$i]] = O(n)
-?&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Taking into account the for loop, this would appear to mean that the operation is O(2n&lt;sup&gt;2&lt;/sup&gt;), in contrast to the very similar &lt;a href=&#34;http://www.php.net/manual/en/function.array-chunk.php&#34;&gt;array_chunk&lt;/a&gt; O(n) function. So how do we optimize this? The most important thing to do is make it so php can complete this in one loop over the array. Everything else will be a nice improvement, but when scaling, the big O is king.&lt;/p&gt;
-
-&lt;p&gt;Here&amp;rsquo;s the new code:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
-foreach($req-&amp;gt;val as $index=&amp;gt;$value)
-{
-  if($index % $cnt == 0)
-  {
-    $current_index = $value;
-    $output[$current_index] = array();
-  }
-  else
-    $output[$current_index][] = $value;
-}
-?&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We&amp;rsquo;ve dropped the for/count() loop in favor of foreach, and eliminated slicing in favor of appending to newly created elements. In a real world test, this cut down the response time of the module from 12s to 4s on average. A pretty big improvement for a pretty small change!&lt;/p&gt;
-</description>
+      <description>A while ago I came across a full-featured PHP application for controlling a daemon. It worked well with a small data set, but quickly became laggy with a dataset numbering in the thousands. Admittedly, it really wasn&amp;rsquo;t built for that kind of load, so I removed it and controlled the daemon manually, which wasn&amp;rsquo;t a big deal.
+Then a while later, I came across a post by someone who managed to mitigate the problem by shifting a particularly expensive operation to an external python program.</description>
     </item>
     
   </channel>

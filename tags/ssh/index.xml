@@ -7,7 +7,9 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 19 Oct 2016 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://smuth.me/tags/ssh/index.xml" rel="self" type="application/rss+xml" />
+    
+	<atom:link href="https://smuth.me/tags/ssh/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>SSH public key shenanigans</title>
@@ -15,39 +17,8 @@
       <pubDate>Wed, 19 Oct 2016 00:00:00 +0000</pubDate>
       
       <guid>https://smuth.me/post/ssh-public-key-shenanigans/</guid>
-      <description>&lt;p&gt;A fun little fact I discovered about SSH: when you specify a private key to use, it checks ${key}.pub for hints about how to parse the private key, without warning. Under normal operations this is never a problem, but you need to replace a private key in-place, and don&amp;rsquo;t update the .pub file, authentication will fail:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-none&#34;&gt;$ ls -la
-ssh.key ssh.key.pub
-$ ssh user@host echo ping
-user@host&#39;s password: ^C
-$ mv ssh.key.pub ssh.key.pub.bak
-$ ssh user@host echo ping
-Last login: Tue Oct 19
-ping
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This can be partially seen in the output of the ssh client&amp;rsquo;s &lt;code&gt;-vvv&lt;/code&gt; option. On the left is with the public key preset, on the right is without:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-none&#34;&gt;debug1: identity file ./ssh.key type 2                   | debug1: identity file ./ssh.key type -1
-...
-debug2: dh_gen_key: priv key bits set: 131/256           | debug2: dh_gen_key: priv key bits set: 125/256
-debug2: bits set: 529/1024                               | debug2: bits set: 532/1024
-...
-debug2: bits set: 512/1024                               | debug2: bits set: 482/1024
-...
-debug2: key: ./ssh.key (0x7fdea492cb30)                  | debug2: key: ./ssh.key ((nil))
-...
-debug3: send_pubkey_test                                 | debug1: read PEM private key done: type DSA
-                                                         &amp;gt; debug3: sign_and_send_pubkey
-debug2: we sent a publickey packet, wait for reply         debug2: we sent a publickey packet, wait for reply
-debug3: Wrote 528 bytes for a total of 1653              | debug3: Wrote 592 bytes for a total of 1717
-debug1: Authentications that can continue: publickey,pas | debug1: Authentication succeeded (publickey).
-debug2: we did not send a packet, disable method         | debug2: fd 5 setting O_NONBLOCK
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Interestingly, I wasn&amp;rsquo;t able to find any official documentation that mentions this, and only figured it out after resorting to &lt;code&gt;strace&lt;/code&gt;.&lt;/p&gt;
-</description>
+      <description>A fun little fact I discovered about SSH: when you specify a private key to use, it checks ${key}.pub for hints about how to parse the private key, without warning. Under normal operations this is never a problem, but you need to replace a private key in-place, and don&amp;rsquo;t update the .pub file, authentication will fail:
+$ ls -la ssh.key ssh.key.pub $ ssh user@host echo ping user@host&#39;s password: ^C $ mv ssh.</description>
     </item>
     
   </channel>

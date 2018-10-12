@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on cat /dev/null &gt; /proc/mind</title>
+    <link>https://smuth.me/tags/</link>
+    <description>Recent content in Tags on cat /dev/null &gt; /proc/mind</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 12 Aug 2014 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://smuth.me/tags/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Archive</title>
+      <link>https://smuth.me/tags/archive/</link>
+      <pubDate>Tue, 12 Aug 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/tags/archive/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Bash</title>
+      <link>https://smuth.me/tags/bash/</link>
+      <pubDate>Mon, 13 Jan 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/tags/bash/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Check_mk</title>
+      <link>https://smuth.me/tags/check_mk/</link>
+      <pubDate>Thu, 10 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/tags/check_mk/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Cron</title>
+      <link>https://smuth.me/tags/cron/</link>
+      <pubDate>Sat, 11 Apr 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/tags/cron/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Firmware</title>
+      <link>https://smuth.me/tags/firmware/</link>
+      <pubDate>Sun, 08 Feb 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/tags/firmware/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Freebsd</title>
+      <link>https://smuth.me/tags/freebsd/</link>
+      <pubDate>Sun, 31 Jul 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/tags/freebsd/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Freenas</title>
+      <link>https://smuth.me/tags/freenas/</link>
+      <pubDate>Thu, 10 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/tags/freenas/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Heritrix</title>
+      <link>https://smuth.me/tags/heritrix/</link>
+      <pubDate>Tue, 12 Aug 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/tags/heritrix/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Lxc</title>
+      <link>https://smuth.me/tags/lxc/</link>
+      <pubDate>Thu, 11 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/tags/lxc/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Monitoring</title>
+      <link>https://smuth.me/tags/monitoring/</link>
+      <pubDate>Thu, 10 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/tags/monitoring/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Networking</title>
+      <link>https://smuth.me/tags/networking/</link>
+      <pubDate>Sun, 02 Oct 2016 15:58:01 +0000</pubDate>
+      
+      <guid>https://smuth.me/tags/networking/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Nfs</title>
+      <link>https://smuth.me/tags/nfs/</link>
+      <pubDate>Thu, 11 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/tags/nfs/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Php</title>
+      <link>https://smuth.me/tags/php/</link>
+      <pubDate>Sun, 31 Jul 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/tags/php/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Powerdns</title>
+      <link>https://smuth.me/tags/powerdns/</link>
+      <pubDate>Sun, 01 May 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/tags/powerdns/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Programming</title>
+      <link>https://smuth.me/tags/programming/</link>
+      <pubDate>Thu, 09 Jan 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/tags/programming/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Proxmox</title>
+      <link>https://smuth.me/tags/proxmox/</link>
+      <pubDate>Thu, 11 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/tags/proxmox/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Python</title>
+      <link>https://smuth.me/tags/python/</link>
+      <pubDate>Sun, 23 Feb 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/tags/python/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Security</title>
+      <link>https://smuth.me/tags/security/</link>
+      <pubDate>Wed, 19 Oct 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/tags/security/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Ssh</title>
+      <link>https://smuth.me/tags/ssh/</link>
+      <pubDate>Wed, 19 Oct 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/tags/ssh/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Storage</title>
+      <link>https://smuth.me/tags/storage/</link>
+      <pubDate>Sun, 08 Feb 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/tags/storage/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Technology</title>
+      <link>https://smuth.me/tags/technology/</link>
+      <pubDate>Sun, 24 Apr 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/tags/technology/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Terraform</title>
+      <link>https://smuth.me/tags/terraform/</link>
+      <pubDate>Sun, 01 May 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/tags/terraform/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

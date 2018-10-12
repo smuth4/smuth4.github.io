@@ -76,7 +76,7 @@
 <!-- link: -->
 <!-- description: -->
 <!-- type: text -->
-<p><a class="reference external" href="http://linux.die.net/man/1/crontab">Cron</a> is a great tool for linux servers, but it's a very limited in it's capabilities (since it follows the Unix philosophy), so when I started to run up against those limits, I began doing all sorts of bash trickery to accomplish what I needed to happen, but that swiftly started giving me even more problem. At work, I use the <a class="reference external" href="https://jenkins-ci.org/">Jenkins CI</a> tool as a cron replacement (great tool, allows for distributed runs, queueing tasks, emails on failure, etc), but it seemed rather heavy weight for a homelab. Thankfully, there are a lot of cron wrappers/replacements out there, but I settled on <a class="reference external" href="http://web.taranis.org/shush/">shush</a>, a neat little wrapper around script for cron.</p>
+<p><a class="reference external" href="http://linux.die.net/man/1/crontab">Cron</a> is a great tool for linux servers, but it's a very limited in it's capabilities (since it follows the Unix philosophy), so when I started to run up against those limits, I began doing all sorts of bash trickery to accomplish what I needed to happen, but that swiftly started giving me even more problem. At work, I use the <a class="reference external" href="https://jenkins-ci.org/">Jenkins CI</a> tool as a cron replacement (great tool, allows for distributed runs, queuing tasks, emails on failure, etc), but it seemed rather heavy weight for a homelab. Thankfully, there are a lot of cron wrappers/replacements out there, but I settled on <a class="reference external" href="http://web.taranis.org/shush/">shush</a>, a neat little wrapper script for cron.</p>
 <!-- TEASER_END -->
 <p>There are a couple reasons I like it:</p>
 <ul class="simple">
@@ -87,7 +87,7 @@
 <li>Locking and timeout handling</li>
 </ul>
 <p>Basically how it works is that there's a designated directory that holds all the shush configuration files. These files can be named anything, although I usually have them be extensionless for simplicity. You can then run any of these files with <tt class="docutils literal">shush <span class="pre">-c</span> &lt;directory&gt; &lt;config_file_name&gt;</tt>. If you use the default directory of <tt class="docutils literal"><span class="pre">$HOME/.shush/</span></tt>, you can just run <tt class="docutils literal">shush &lt;config_file_name&gt;</tt>. However, in order to have the config file run regularly, you need to set the <tt class="docutils literal">schedule</tt> setting, and run <tt class="docutils literal">shush <span class="pre">-c</span> &lt;directory&gt; <span class="pre">-u</span></tt> to update the crontab file.</p>
-<p>The <a class="reference external" href="http://web.taranis.org/shush/shush.1.html">man page</a> has some more documentation, but I'll at least break down the example config file make it more understandable.</p>
+<p>The <a class="reference external" href="http://web.taranis.org/shush/shush.1.html">man page</a> has some more documentation, but I'll at least break down the example config file to make it more understandable.</p>
 <p>Set the command <tt class="docutils literal">shush <span class="pre">-c</span> /etc/shush <span class="pre">-u</span></tt> to run every day at 9 PM:</p>
 <pre class="code literal-block">
 command=shush -c /etc/shush -u
@@ -119,7 +119,7 @@ if=$exit != 0 || $outlines != 1 || $errsize &gt; 0 || U
 to=root
 format=rich
 </pre>
-<p>Shush is a very powerful tool, and I'm very happy with the ways that I've been able to implement it in my homelab. However, it can be a bit confusing for a beginner, and the regex matching features leave much to be desired. With the intention of fixing things up, I've create a repositoty at <a class="reference external" href="https://github.com/smuth4/shush">https://github.com/smuth4/shush</a>, which I can hopefully use to clean up things, and get the project active again. Feel free to compile, try out and mayb even contribute to this neat little tool!</p>
+<p>Shush is a very powerful tool, and I'm very happy with the ways that I've been able to implement it in my homelab. However, it can be a bit confusing for a beginner, and the regexp matching features leave much to be desired. With the intention of fixing things up, I've create a repository at <a class="reference external" href="https://github.com/smuth4/shush">https://github.com/smuth4/shush</a>, which I can hopefully use to clean up things, and get the project active again. Feel free to compile, try out and maybe even contribute to this neat little tool!</p>
 </div>
 
       

@@ -7,7 +7,9 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 10 Jul 2014 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://smuth.me/tags/monitoring/index.xml" rel="self" type="application/rss+xml" />
+    
+	<atom:link href="https://smuth.me/tags/monitoring/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>Check_mk and FreeNAS, Pt. 3</title>
@@ -15,35 +17,9 @@
       <pubDate>Thu, 10 Jul 2014 00:00:00 +0000</pubDate>
       
       <guid>https://smuth.me/post/check_mk-and-freenas-pt-3/</guid>
-      <description>&lt;div class=&#34;document&#34;&gt;
-
-
-&lt;!-- title: Check_mk and FreeNAS, Pt. 3 --&gt;
-&lt;!-- slug: check_mk-and-freenas-pt-3 --&gt;
-&lt;!-- date: 2014-07-10 11:44:19 UTC-04:00 --&gt;
-&lt;!-- tags: check_mk,FreeNAS,monitoring --&gt;
-&lt;!-- link: --&gt;
-&lt;!-- description: --&gt;
-&lt;!-- type: text --&gt;
-&lt;p&gt;A continuation of &lt;a href=&#34;#id1&#34;&gt;&lt;span class=&#34;problematic&#34; id=&#34;id2&#34;&gt;:doc:`check_mk-and-freenas-pt-2`&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;div class=&#34;system-message&#34; id=&#34;id1&#34;&gt;
-&lt;p class=&#34;system-message-title&#34;&gt;System Message: ERROR/3 (&lt;tt class=&#34;docutils&#34;&gt;&amp;lt;stdin&amp;gt;&lt;/tt&gt;, line 9); &lt;em&gt;&lt;a href=&#34;#id2&#34;&gt;backlink&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
-Unknown interpreted text role &amp;quot;doc&amp;quot;.&lt;/div&gt;
-&lt;p&gt;Now that we have all our smart data nicely set up, let&#39;s see if we can&#39;t get some stats on I/O speed. I&#39;m pretty sure FreeNAS is supposed to have a I/O section in its &amp;quot;Reports&amp;quot; section, but for whatever reason, it&#39;s not in my install, and I&#39;d like to have the data in Nagios in any case.&lt;/p&gt;
-&lt;p&gt;Just like with the SMART data, we&#39;re going to write a small script that the check_mk agent can use. Unlike the SMART script, getting IO stats is incredibly easy.&lt;/p&gt;
-&lt;div class=&#34;system-message&#34;&gt;
-&lt;p class=&#34;system-message-title&#34;&gt;System Message: ERROR/3 (&lt;tt class=&#34;docutils&#34;&gt;&amp;lt;stdin&amp;gt;&lt;/tt&gt;, line 15)&lt;/p&gt;
-&lt;p&gt;Unknown directive type &amp;quot;listing&amp;quot;.&lt;/p&gt;
-&lt;pre class=&#34;literal-block&#34;&gt;
-.. listing:: iostat bash
-
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;Yep, that&#39;s all it is. We&#39;re only really interesting in the drives being used in ZFS, but you could open it up to all drives if you wanted to.&lt;/p&gt;
-&lt;p&gt;Next up is to let check_mk be able to recognize the agent&#39;s output. The check script that I use can be found &lt;a class=&#34;reference external&#34; href=&#34;https://smuth.me/check_mk_freenas_iostat/iostat&#34;&gt;here&lt;/a&gt;. It should be placed in the &amp;quot;checks/&amp;quot; directory of your check_mk install.&lt;/p&gt;
-&lt;p&gt;I also created a quick template for pnp4nagios, found &lt;a class=&#34;reference external&#34; href=&#34;https://smuth.me/check_mk_freenas_iostat/check_mk-iostat.php&#34;&gt;here&lt;/a&gt;, which should be placed in the &amp;quot;templates/&amp;quot; directory.&lt;/p&gt;
-&lt;p&gt;After all this, we&#39;ve finally got a solid set up for tracking disks in FreeNAS. For each disk, there will be three associated services: SMART data, temperature (taken from the SMART data), and iostat data.&lt;/p&gt;
-&lt;/div&gt;</description>
+      <description>A continuation of :doc:`check_mk-and-freenas-pt-2`
+System Message: ERROR/3 (&amp;lt;stdin&amp;gt;, line 9); backlink
+Unknown interpreted text role &amp;quot;doc&amp;quot;. Now that we have all our smart data nicely set up, let&#39;s see if we can&#39;t get some stats on I/O speed. I&#39;m pretty sure FreeNAS is supposed to have a I/O section in its &amp;quot;Reports&amp;quot; section, but for whatever reason, it&#39;s not in my install, and I&#39;d like to have the data in Nagios in any case.</description>
     </item>
     
     <item>
@@ -52,34 +28,9 @@ Unknown interpreted text role &amp;quot;doc&amp;quot;.&lt;/div&gt;
       <pubDate>Fri, 25 Apr 2014 00:00:00 +0000</pubDate>
       
       <guid>https://smuth.me/post/check_mk-and-freenas-pt-2/</guid>
-      <description>&lt;div class=&#34;document&#34;&gt;
-
-
-&lt;!-- title: Check_mk and FreeNAS, Pt. 2 --&gt;
-&lt;!-- slug: check_mk-and-freenas-pt-2 --&gt;
-&lt;!-- date: 2014/04/25 11:22:01 --&gt;
-&lt;!-- tags: check_mk,FreeNAS,monitoring --&gt;
-&lt;!-- link: --&gt;
-&lt;!-- description: --&gt;
-&lt;!-- type: text --&gt;
-&lt;p&gt;A continuation of &lt;a href=&#34;#id1&#34;&gt;&lt;span class=&#34;problematic&#34; id=&#34;id2&#34;&gt;:doc:`check_mk-and-freenas`&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;div class=&#34;system-message&#34; id=&#34;id1&#34;&gt;
-&lt;p class=&#34;system-message-title&#34;&gt;System Message: ERROR/3 (&lt;tt class=&#34;docutils&#34;&gt;&amp;lt;stdin&amp;gt;&lt;/tt&gt;, line 9); &lt;em&gt;&lt;a href=&#34;#id2&#34;&gt;backlink&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
-Unknown interpreted text role &amp;quot;doc&amp;quot;.&lt;/div&gt;
-&lt;p&gt;So I&#39;ve got my check_mk on set up on my NAS, and it&#39;s monitoring stuff beautifully. However, it&#39;s not monitoring something very near and dear to my heart for this server: S.M.A.R.T. data. FreeNAS comes with smartctl, and there&#39;s already S.M.A.R.T. data plugins for the linux agents, so I figured this wouldn&#39;t be a big deal. And I was right! All I had to do was add the following script to my plugins/ folder for check_mk to find, and the server picked it up automatically.&lt;/p&gt;
-&lt;div class=&#34;note&#34;&gt;
-&lt;p class=&#34;first admonition-title&#34;&gt;Note&lt;/p&gt;
-&lt;p class=&#34;last&#34;&gt;The linux script has a lot fancier checking for edge cases. I figured FreeNAS would be homogeneous enough that it wouldn&#39;t be worth converting all those edge cases, so this is a very simple script, shared on a &amp;quot;works for me&amp;quot; basis.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class=&#34;system-message&#34;&gt;
-&lt;p class=&#34;system-message-title&#34;&gt;System Message: ERROR/3 (&lt;tt class=&#34;docutils&#34;&gt;&amp;lt;stdin&amp;gt;&lt;/tt&gt;, line 16)&lt;/p&gt;
-&lt;p&gt;Unknown directive type &amp;quot;listing&amp;quot;.&lt;/p&gt;
-&lt;pre class=&#34;literal-block&#34;&gt;
-.. listing:: smart bash
-
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;</description>
+      <description>A continuation of :doc:`check_mk-and-freenas`
+System Message: ERROR/3 (&amp;lt;stdin&amp;gt;, line 9); backlink
+Unknown interpreted text role &amp;quot;doc&amp;quot;. So I&#39;ve got my check_mk on set up on my NAS, and it&#39;s monitoring stuff beautifully. However, it&#39;s not monitoring something very near and dear to my heart for this server: S.M.A.R.T. data. FreeNAS comes with smartctl, and there&#39;s already S.M.A.R.T. data plugins for the linux agents, so I figured this wouldn&#39;t be a big deal.</description>
     </item>
     
   </channel>
