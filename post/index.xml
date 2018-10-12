@@ -17,7 +17,7 @@
       <pubDate>Thu, 11 Oct 2018 00:00:00 +0000</pubDate>
       
       <guid>https://smuth.me/post/enabling-nfs-proxmox-lxc/</guid>
-      <description>Normally, Proxmox doesn&amp;rsquo;t allow mounting NFS mounts directly in containers due to security concerns. In the past it was possible to modify apparmor profiles directly in order to allow it, as seen here and here. However, as of this commit, that method is no longer an option, due to the apparmor profiles now being generated dynamically when the containers are started (you can view these profiles at /var/lib/lxc/${CID}/apparmor/lxc-${CID}_&amp;lt;-var-lib-lxc&amp;gt;. Instead, modifying apparmor directly is no longer necessary, as you can now add the undocumented feature setting to the pct.</description>
+      <description>Normally, Proxmox doesn&amp;rsquo;t allow mounting NFS mounts directly in containers due to security concerns. In the past it was possible to modify apparmor profiles directly in order to allow it, as seen here and here. However, as of this commit, that method is no longer an option, due to the apparmor profiles now being generated dynamically when the containers are started (you can view these profiles at /var/lib/lxc/${CID}/apparmor/lxc-${CID}_&amp;lt;-var-lib-lxc&amp;gt;). Instead, modifying apparmor directly is no longer necessary, as you can now add the undocumented feature setting to the pct.</description>
     </item>
     
     <item>

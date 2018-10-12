@@ -69,7 +69,7 @@
       </div>
     </div>
     <article>
-      <p>Normally, Proxmox doesn&rsquo;t allow mounting NFS mounts directly in containers due to security concerns. In the past it was possible to modify apparmor profiles directly in order to allow it, as seen <a href="https://forum.proxmox.com/threads/lxc-nfs.23763/">here</a> and <a href="https://www.svennd.be/mount-nfs-lxc-proxmox/">here</a>. However, as of <a href="https://git.proxmox.com/?p=pve-container.git;a=commit;h=5a63f1c5d3b995dd682a70e7fbd1364240e09278">this commit</a>, that method is no longer an option, due to the apparmor profiles now being generated dynamically when the containers are started (you can view these profiles at <code>/var/lib/lxc/${CID}/apparmor/lxc-${CID}_&lt;-var-lib-lxc&gt;</code>. Instead, modifying apparmor directly is no longer necessary, as you can now add the undocumented <code>feature</code> setting to the <a href="https://pve.proxmox.com/wiki/Manual:_pct.conf">pct.conf</a> files for individual containers. For instance:</p>
+      <p>Normally, Proxmox doesn&rsquo;t allow mounting NFS mounts directly in containers due to security concerns. In the past it was possible to modify apparmor profiles directly in order to allow it, as seen <a href="https://forum.proxmox.com/threads/lxc-nfs.23763/">here</a> and <a href="https://www.svennd.be/mount-nfs-lxc-proxmox/">here</a>. However, as of <a href="https://git.proxmox.com/?p=pve-container.git;a=commit;h=5a63f1c5d3b995dd682a70e7fbd1364240e09278">this commit</a>, that method is no longer an option, due to the apparmor profiles now being generated dynamically when the containers are started (you can view these profiles at <code>/var/lib/lxc/${CID}/apparmor/lxc-${CID}_&lt;-var-lib-lxc&gt;</code>). Instead, modifying apparmor directly is no longer necessary, as you can now add the undocumented <code>feature</code> setting to the <a href="https://pve.proxmox.com/wiki/Manual:_pct.conf">pct.conf</a> files for individual containers. For instance:</p>
 
 <pre><code>features: mount=nfs
 </code></pre>
@@ -82,7 +82,7 @@
 Version: 2.0-28
 </code></pre>
 
-<p>Since this change only applies on container startup, it&rsquo;s possible to upgrade the package first without impacting any running containers.</p>
+<p>Since this change only applies on container start-up, it&rsquo;s possible to upgrade the package first without impacting any running containers.</p>
 
 
       
