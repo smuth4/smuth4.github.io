@@ -74,7 +74,7 @@
 <pre><code>features: mount=nfs
 </code></pre>
 
-<p>allows NFS mounting for the specified container, although a restart will be necessary for the setting to take effect. You can verify this by running <code>grep nfs /var/lib/lxc/${CID}/apparmor/lxc-${CID}_\&lt;-var-lib-lxc\&gt;</code>, which return a line like <code>mount fstype=nfs,</code>. Other filesystems can also be allowed by separating the different types with semicolons.</p>
+<p>allows NFS mounting for the specified container, although a restart will be necessary for the setting to take effect. You can verify this by running <code>grep nfs /var/lib/lxc/${CID}/apparmor/lxc-${CID}_\&lt;-var-lib-lxc\&gt;</code>, which return a line like <code>mount fstype=nfs</code>. Other filesystems can also be allowed by separating the different types with semicolons.</p>
 
 <p>This change was released in version 2.0-28 of the pve-container package, so it&rsquo;s easy tell if you are affected:</p>
 
