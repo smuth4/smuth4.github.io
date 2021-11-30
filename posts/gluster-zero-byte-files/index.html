@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>What are those zero byte files on my glusterfs bricks? :: cat /dev/null &gt; /proc/mind</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="While troubleshooting some issues on a distributed GlusterFS cluster, I came across the presence of a bunch of odd zero-byte files with empty permissions on the bricks.
+132504 1 ---------T 2 1000 1000 0 Nov 28 02:09 /data/gluster/tank/brick-xxxxxxxx/brick/example/file.txt I had known they were there previously, but since the bricks were composed of ZFS zpools, there was very little danger of running out of inodes or anything, so I had let them be." />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://smuth.me/posts/gluster-zero-byte-files/" />
+
+
+
+
+<link rel="stylesheet" href="https://smuth.me/assets/style.css">
+
+  <link rel="stylesheet" href="https://smuth.me/assets/blue.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://smuth.me/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://smuth.me/img/favicon/blue.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="What are those zero byte files on my glusterfs bricks?">
+<meta property="og:description" content="While troubleshooting some issues on a distributed GlusterFS cluster, I came across the presence of a bunch of odd zero-byte files with empty permissions on the bricks.
+132504 1 ---------T 2 1000 1000 0 Nov 28 02:09 /data/gluster/tank/brick-xxxxxxxx/brick/example/file.txt I had known they were there previously, but since the bricks were composed of ZFS zpools, there was very little danger of running out of inodes or anything, so I had let them be." />
+<meta property="og:url" content="https://smuth.me/posts/gluster-zero-byte-files/" />
+<meta property="og:site_name" content="cat /dev/null &gt; /proc/mind" />
+
+  
+    <meta property="og:image" content="https://smuth.me/img/favicon/blue.png">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2020-08-02 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="blue">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    cat /dev/null &gt; /proc/mind
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="https://github.com/smuth4">Github</a></li>
+        
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="https://github.com/smuth4">Github</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://smuth.me/posts/gluster-zero-byte-files/">What are those zero byte files on my glusterfs bricks?</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2020-08-02
+        
+      </span>
+    
+    
+    
+  </div>
+
+  
+  <span class="post-tags">
+    
+    #<a href="https://smuth.me/tags/gluster/">gluster</a>&nbsp;
+    
+  </span>
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <p>While troubleshooting some issues on a distributed GlusterFS cluster, I came across the presence of a bunch of odd zero-byte files with empty permissions on the bricks.</p>
+<pre tabindex="0"><code>132504 1 ---------T 2 1000 1000 0 Nov 28 02:09 /data/gluster/tank/brick-xxxxxxxx/brick/example/file.txt
+</code></pre><p>I had known they were there previously, but since the bricks were composed of ZFS zpools, there was very little danger of running out of inodes or anything, so I had let them be. This time however, they seemed to be related to the issue at hand, and after some digging, I found they were being <a href="https://gluster-users.gluster.narkive.com/FNNOr7Ru/files-losing-permissions#post5">used to maintain hard link information</a>.</p>
+<p>The mailing list has strict instructions to not meddle with them, but in my particular case they ended up being the root of the problem. At some point in the past, it seems the cluster was in a partially available state, and some files had gotten into a state where they existing on multiple bricks (which never happens under normal cirumstances). During a later cleanup effort, they had been replaced with hardlinks to identical files. This caused the very unusual symptom of gluster reporting client-side the existence of multiple files with the same exacts paths, one of which was the actual file, the others being the zero-byte files at hand.</p>
+<p>Interestingly, most programs dealt with this reasonably well. Since the files still had different inodes, anything that scanned the effected parent directories discarded the bad files as unreadable and continued on. It was only when programs attempted to open the files directly by the path that things went haywire. Generally they&rsquo;d get a handle to the good path, but under certain circumanstances they&rsquo;d get the bad one. It was possible to coax the client cache into recognizing the good path again, but ultimately I ended up deleting the bad files directly from the bricks in order to resolve the problem.</p>
+
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        <span class="button previous">
+            <a href="https://smuth.me/posts/vector-loki-geoip/">
+                <span class="button__icon">←</span>
+                <span class="button__text">Tracking Geo IP information with Vector, Loki and Grafana</span>
+            </a>
+        </span>
+        
+        
+        <span class="button next">
+            <a href="https://smuth.me/posts/git-diff-deleted/">
+                <span class="button__text">Finding the log for deleted files in git</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2021 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://smuth.me/assets/main.js"></script>
+<script src="https://smuth.me/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

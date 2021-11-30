@@ -1,23 +1,29 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Lxc on cat /dev/null &gt; /proc/mind</title>
+    <title>lxc on cat /dev/null &gt; /proc/mind</title>
     <link>https://smuth.me/tags/lxc/</link>
-    <description>Recent content in Lxc on cat /dev/null &gt; /proc/mind</description>
+    <description>Recent content in lxc on cat /dev/null &gt; /proc/mind</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 11 Oct 2018 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://smuth.me/tags/lxc/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Thu, 11 Oct 2018 00:00:00 +0000</lastBuildDate><atom:link href="https://smuth.me/tags/lxc/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Enabling NFS mounts in Proxmox 5.2 LXC containers</title>
-      <link>https://smuth.me/post/enabling-nfs-proxmox-lxc/</link>
+      <link>https://smuth.me/posts/enabling-nfs-proxmox-lxc/</link>
       <pubDate>Thu, 11 Oct 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/enabling-nfs-proxmox-lxc/</guid>
-      <description>Normally, Proxmox doesn&amp;rsquo;t allow mounting NFS mounts directly in containers due to security concerns. In the past it was possible to modify apparmor profiles directly in order to allow it, as seen here and here. However, as of this commit, that method is no longer an option, due to the apparmor profiles now being generated dynamically when the containers are started (you can view these profiles at /var/lib/lxc/${CID}/apparmor/lxc-${CID}_&amp;lt;-var-lib-lxc&amp;gt;). Instead, modifying apparmor directly is no longer necessary, as you can now add the undocumented feature setting to the pct.</description>
+      <guid>https://smuth.me/posts/enabling-nfs-proxmox-lxc/</guid>
+      <description>Edit: This post has been made obsolete in recent releases, which allow enabling these flags via both the web UI and the pct CLI tool.
+Normally, Proxmox doesn&amp;rsquo;t allow mounting NFS mounts directly in containers due to security concerns. In the past it was possible to modify apparmor profiles directly in order to allow it, as seen here and here. However, as of this commit, that method is no longer an option, due to the apparmor profiles now being generated dynamically when the containers are started (you can view these profiles at /var/lib/lxc/${CID}/apparmor/lxc-${CID}_&amp;lt;-var-lib-lxc&amp;gt;).</description>
+      <content>&lt;p&gt;Edit: This post has been made obsolete in recent releases, which allow enabling these flags via both the web UI and the &lt;code&gt;pct&lt;/code&gt; CLI tool.&lt;/p&gt;
+&lt;p&gt;Normally, Proxmox doesn&amp;rsquo;t allow mounting NFS mounts directly in containers due to security concerns. In the past it was possible to modify apparmor profiles directly in order to allow it, as seen &lt;a href=&#34;https://forum.proxmox.com/threads/lxc-nfs.23763/&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;https://www.svennd.be/mount-nfs-lxc-proxmox/&#34;&gt;here&lt;/a&gt;. However, as of &lt;a href=&#34;https://git.proxmox.com/?p=pve-container.git;a=commit;h=5a63f1c5d3b995dd682a70e7fbd1364240e09278&#34;&gt;this commit&lt;/a&gt;, that method is no longer an option, due to the apparmor profiles now being generated dynamically when the containers are started (you can view these profiles at &lt;code&gt;/var/lib/lxc/${CID}/apparmor/lxc-${CID}_&amp;lt;-var-lib-lxc&amp;gt;&lt;/code&gt;). Instead, modifying apparmor directly is no longer necessary, as you can now add the undocumented &lt;code&gt;feature&lt;/code&gt; setting to the &lt;a href=&#34;https://pve.proxmox.com/wiki/Manual:_pct.conf&#34;&gt;pct.conf&lt;/a&gt; files for individual containers. For instance:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;features: mount=nfs
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;allows NFS mounting for the specified container, although a restart will be necessary for the setting to take effect. You can verify this by running &lt;code&gt;grep nfs /var/lib/lxc/${CID}/apparmor/lxc-${CID}_\&amp;lt;-var-lib-lxc\&amp;gt;&lt;/code&gt;, which return a line like &lt;code&gt;mount fstype=nfs&lt;/code&gt;. Other filesystems can also be allowed by separating the different types with semicolons.&lt;/p&gt;
+&lt;p&gt;This change was released in version 2.0-28 of the pve-container package, so it&amp;rsquo;s easy tell if you are affected:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;$ dpkg -s pve-container | grep &#39;^Version:&#39;
+Version: 2.0-28
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Since this change only applies on container start-up, it&amp;rsquo;s possible to upgrade the package first without impacting any running containers.&lt;/p&gt;
+</content>
     </item>
     
   </channel>

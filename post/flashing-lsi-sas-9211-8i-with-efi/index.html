@@ -1,73 +1,122 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="en">
 <head>
+  
+    <title>Flashing LSI SAS 9211-8i with EFI :: cat /dev/null &gt; /proc/mind</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="I recently went on an upgrade crusade to my homelab, and as part of that, upgraded FreeNAS to 9.3. When I did, there was a non-urgent alert about a driver mismatch for my LSI HBA (FreeNAS expected 16, LSI had 12). Thus, I decided to upgrade the firmware.
+Directions This assumes that your server can boot directly into an EFI shell. It might require a Shell.efi for some motherboards, but I can&#39;t tell you much more than that, as it boots straight to EFI on mine." />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/post/flashing-lsi-sas-9211-8i-with-efi/" />
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css">
+
+  <link rel="stylesheet" href="/assets/blue.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="/img/favicon/blue.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Flashing LSI SAS 9211-8i with EFI">
+<meta property="og:description" content="I recently went on an upgrade crusade to my homelab, and as part of that, upgraded FreeNAS to 9.3. When I did, there was a non-urgent alert about a driver mismatch for my LSI HBA (FreeNAS expected 16, LSI had 12). Thus, I decided to upgrade the firmware.
+Directions This assumes that your server can boot directly into an EFI shell. It might require a Shell.efi for some motherboards, but I can&#39;t tell you much more than that, as it boots straight to EFI on mine." />
+<meta property="og:url" content="/post/flashing-lsi-sas-9211-8i-with-efi/" />
+<meta property="og:site_name" content="cat /dev/null &gt; /proc/mind" />
 
   
-  <meta charset="UTF-8">
-  <title>
-    Flashing LSI SAS 9211-8i with EFI | cat /dev/null &gt; /proc/mind
-  </title>
+    <meta property="og:image" content="/img/favicon/blue.png">
+  
 
-  
-  <meta name="viewport" content="width=device-width,user-scalable=no,maximum-scale=1,initial-scale=1">
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
 
-  
-  <link rel="canonical" href="https://smuth.me/post/flashing-lsi-sas-9211-8i-with-efi/"/>
 
-  
-  <link rel="stylesheet" href="/css/sanitize.css">
-  <link rel="stylesheet" href="/css/responsive.css">
-  <link rel="stylesheet" href="/css/highlight_monokai.css">
-  <link rel="stylesheet" href="/css/theme.css">
-  <link rel="stylesheet" href="/css/custom.css">
+  <meta property="article:published_time" content="2015-02-08 00:00:00 &#43;0000 UTC" />
 
-  
-  <link href="https://smuth.me/index.xml" rel="alternate" type="application/rss+xml" title="cat /dev/null &gt; /proc/mind" />
-  <link href="https://smuth.me/index.xml" rel="feed" type="application/rss+xml" title="cat /dev/null &gt; /proc/mind" />
 
-  
-  
+
+
+
+
+
+
+
+
+
 
 </head>
+<body class="blue">
 
-<body>
 
-<div class="container">
+<div class="container headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    Terminal
+  </div>
+</a>
+
+    </div>
+    
+  </div>
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="/post/flashing-lsi-sas-9211-8i-with-efi/">Flashing LSI SAS 9211-8i with EFI</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2015-02-08
+        
+      </span>
+    
+    
+    
+  </div>
 
   
-  <header role="banner">
-    <div class="row gutters">
-      <div id="site-title" class="col span_6">
-        <h1><a href="https://smuth.me/">cat /dev/null &gt; /proc/mind</a></h1>
-        <h2>Ain&#39;t the brightest bit in the byte.</h2>
-      </div>
-      <div id="social" class="col span_6">
-        <ul>
-          
-          
-          <li><a href="https://github.com/smuth4" target="_blank">GitHub</a></li>
-          
-        </ul>
-      </div>
-    </div>
-  </header>
+  <span class="post-tags">
+    
+    #<a href="/tags/storage/">storage</a>&nbsp;
+    
+    #<a href="/tags/firmware/">firmware</a>&nbsp;
+    
+  </span>
+  
+  
 
 
   
-  <main id="single" role="main">
-    <div class="article-header">
-      <h1>Flashing LSI SAS 9211-8i with EFI</h1>
-      <div class="meta">
-        Feb 8, 2015 &nbsp;
-        
-          #<a href="/tags/storage">storage</a>&nbsp;
-        
-          #<a href="/tags/firmware">firmware</a>&nbsp;
-        
-      </div>
-    </div>
-    <article>
-      <div class="document">
+
+  <div class="post-content"><div>
+        <div class="document">
 
 
 <!-- title: Flashing LSI SAS 9211-8i with EFI -->
@@ -92,7 +141,7 @@
 <p>Now open up Installer_PXX_for_UEFI.zip, find sas2flash_efi_ebc_rel/sas2flash.efi, and put that on the USB drive. Similarly, open up 9211-8i_Package_PXX_IR_IT_Firmware_BIOS_for_MSDOS_Windows.zip, extract Firmware/HBA_9211_8i_IT/2118it.bin and sasbios_rel/mptsas2.rom, and put those on the USB drive as well.</p>
 <p>Alright, now that we have our files, we can boot into the EFI shell.</p>
 <p>Verify you're in the USB root directory with <tt class="docutils literal">ls</tt>. If not, try <tt class="docutils literal">map</tt> to list the devices, <tt class="docutils literal">mount &lt;device&gt;</tt> and then <tt class="docutils literal">&lt;device&gt;:</tt> to mount and enter the USB.</p>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">For this next step, apparenlty it's possible to upgrade multiple cards at once. I prefer the slow but safe way, since there's a (slim) chance of bricking a card, and flashed each card one at a time, manually pulling them in and out.</p>
 </div>
@@ -115,50 +164,39 @@ sas2flash.efi -o -f 2118it.bin -b mptsas2.rom
 <p><a class="reference external" href="http://linustechtips.com/main/topic/104425-flashing-an-lsi-9211-8i-raid-card-to-it-mode-for-zfssoftware-raid-tutorial/">http://linustechtips.com/main/topic/104425-flashing-an-lsi-9211-8i-raid-card-to-it-mode-for-zfssoftware-raid-tutorial/</a></p>
 </div>
 </div>
-
-      
-      
-    </article>
-    
-
-    
-
-
-  </main>
-
-  <nav class="pagination-single">
-    
-      <span class="previous">&larr; <a href="https://smuth.me/post/using-heretrix-to-archive-sites-to-a-directory-structure/" rel="prev">Using Heritrix to archive sites to a directory structure</a></span>
-    
-    
-      <span class="next"><a href="https://smuth.me/post/using-shush-as-a-crontab-wrapper/" rel="next">Using shush as a crontab wrapper</a> &rarr;</span>
-    
-  </nav>
-
+      </div></div>
 
   
-  <footer role="contentinfo">
-    <div style="text-align:center;">
-      
-      
-    </div>
-  </footer>
 
+  
 
 </div>
 
-<script src="/js/highlight.pack.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+  </div>
 
-<script>
-	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-	ga('create', 'UA-80421871-1', 'auto');
-	ga('send', 'pageview');
-</script>
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2021 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
 
 </body>
 </html>
-

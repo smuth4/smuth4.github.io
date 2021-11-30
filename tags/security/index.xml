@@ -1,24 +1,47 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Security on cat /dev/null &gt; /proc/mind</title>
+    <title>security on cat /dev/null &gt; /proc/mind</title>
     <link>https://smuth.me/tags/security/</link>
-    <description>Recent content in Security on cat /dev/null &gt; /proc/mind</description>
+    <description>Recent content in security on cat /dev/null &gt; /proc/mind</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 19 Oct 2016 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://smuth.me/tags/security/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Wed, 19 Oct 2016 00:00:00 +0000</lastBuildDate><atom:link href="https://smuth.me/tags/security/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>SSH public key shenanigans</title>
-      <link>https://smuth.me/post/ssh-public-key-shenanigans/</link>
+      <link>https://smuth.me/posts/ssh-public-key-shenanigans/</link>
       <pubDate>Wed, 19 Oct 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/ssh-public-key-shenanigans/</guid>
+      <guid>https://smuth.me/posts/ssh-public-key-shenanigans/</guid>
       <description>A fun little fact I discovered about SSH: when you specify a private key to use, it checks ${key}.pub for hints about how to parse the private key, without warning. Under normal operations this is never a problem, but you need to replace a private key in-place, and don&amp;rsquo;t update the .pub file, authentication will fail:
 $ ls -la ssh.key ssh.key.pub $ ssh user@host echo ping user@host&amp;#39;s password: ^C $ mv ssh.</description>
+      <content>&lt;p&gt;A fun little fact I discovered about SSH: when you specify a private key to use, it checks ${key}.pub for hints about how to parse the private key, without warning. Under normal operations this is never a problem, but you need to replace a private key in-place, and don&amp;rsquo;t update the .pub file, authentication will fail:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ ls -la
+ssh.key ssh.key.pub
+$ ssh user@host echo ping
+user@host&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&amp;#39;&lt;/span&gt;s password: ^C
+$ mv ssh.key.pub ssh.key.pub.bak
+$ ssh user@host echo ping
+Last login: Tue Oct &lt;span style=&#34;color:#ae81ff&#34;&gt;19&lt;/span&gt;
+ping
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This can be partially seen in the output of the ssh client&amp;rsquo;s &lt;code&gt;-vvv&lt;/code&gt; option. On the left is with the public key preset, on the right is without:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-diff&#34; data-lang=&#34;diff&#34;&gt;debug1: identity file ./ssh.key type 2                   | debug1: identity file ./ssh.key type -1
+...
+debug2: dh_gen_key: priv key bits set: 131/256           | debug2: dh_gen_key: priv key bits set: 125/256
+debug2: bits set: 529/1024                               | debug2: bits set: 532/1024
+...
+debug2: bits set: 512/1024                               | debug2: bits set: 482/1024
+...
+debug2: key: ./ssh.key (0x7fdea492cb30)                  | debug2: key: ./ssh.key ((nil))
+...
+debug3: send_pubkey_test                                 | debug1: read PEM private key done: type DSA
+                                                         &amp;gt; debug3: sign_and_send_pubkey
+debug2: we sent a publickey packet, wait for reply         debug2: we sent a publickey packet, wait for reply
+debug3: Wrote 528 bytes for a total of 1653              | debug3: Wrote 592 bytes for a total of 1717
+debug1: Authentications that can continue: publickey,pas | debug1: Authentication succeeded (publickey).
+debug2: we did not send a packet, disable method         | debug2: fd 5 setting O_NONBLOCK
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Interestingly, I wasn&amp;rsquo;t able to find any official documentation that mentions this, and only figured it out after resorting to &lt;code&gt;strace&lt;/code&gt;.&lt;/p&gt;
+</content>
     </item>
     
   </channel>

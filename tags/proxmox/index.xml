@@ -1,33 +1,101 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Proxmox on cat /dev/null &gt; /proc/mind</title>
+    <title>proxmox on cat /dev/null &gt; /proc/mind</title>
     <link>https://smuth.me/tags/proxmox/</link>
-    <description>Recent content in Proxmox on cat /dev/null &gt; /proc/mind</description>
+    <description>Recent content in proxmox on cat /dev/null &gt; /proc/mind</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 11 Oct 2018 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://smuth.me/tags/proxmox/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Thu, 11 Oct 2018 00:00:00 +0000</lastBuildDate><atom:link href="https://smuth.me/tags/proxmox/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Enabling NFS mounts in Proxmox 5.2 LXC containers</title>
-      <link>https://smuth.me/post/enabling-nfs-proxmox-lxc/</link>
+      <link>https://smuth.me/posts/enabling-nfs-proxmox-lxc/</link>
       <pubDate>Thu, 11 Oct 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/enabling-nfs-proxmox-lxc/</guid>
-      <description>Normally, Proxmox doesn&amp;rsquo;t allow mounting NFS mounts directly in containers due to security concerns. In the past it was possible to modify apparmor profiles directly in order to allow it, as seen here and here. However, as of this commit, that method is no longer an option, due to the apparmor profiles now being generated dynamically when the containers are started (you can view these profiles at /var/lib/lxc/${CID}/apparmor/lxc-${CID}_&amp;lt;-var-lib-lxc&amp;gt;). Instead, modifying apparmor directly is no longer necessary, as you can now add the undocumented feature setting to the pct.</description>
+      <guid>https://smuth.me/posts/enabling-nfs-proxmox-lxc/</guid>
+      <description>Edit: This post has been made obsolete in recent releases, which allow enabling these flags via both the web UI and the pct CLI tool.
+Normally, Proxmox doesn&amp;rsquo;t allow mounting NFS mounts directly in containers due to security concerns. In the past it was possible to modify apparmor profiles directly in order to allow it, as seen here and here. However, as of this commit, that method is no longer an option, due to the apparmor profiles now being generated dynamically when the containers are started (you can view these profiles at /var/lib/lxc/${CID}/apparmor/lxc-${CID}_&amp;lt;-var-lib-lxc&amp;gt;).</description>
+      <content>&lt;p&gt;Edit: This post has been made obsolete in recent releases, which allow enabling these flags via both the web UI and the &lt;code&gt;pct&lt;/code&gt; CLI tool.&lt;/p&gt;
+&lt;p&gt;Normally, Proxmox doesn&amp;rsquo;t allow mounting NFS mounts directly in containers due to security concerns. In the past it was possible to modify apparmor profiles directly in order to allow it, as seen &lt;a href=&#34;https://forum.proxmox.com/threads/lxc-nfs.23763/&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;https://www.svennd.be/mount-nfs-lxc-proxmox/&#34;&gt;here&lt;/a&gt;. However, as of &lt;a href=&#34;https://git.proxmox.com/?p=pve-container.git;a=commit;h=5a63f1c5d3b995dd682a70e7fbd1364240e09278&#34;&gt;this commit&lt;/a&gt;, that method is no longer an option, due to the apparmor profiles now being generated dynamically when the containers are started (you can view these profiles at &lt;code&gt;/var/lib/lxc/${CID}/apparmor/lxc-${CID}_&amp;lt;-var-lib-lxc&amp;gt;&lt;/code&gt;). Instead, modifying apparmor directly is no longer necessary, as you can now add the undocumented &lt;code&gt;feature&lt;/code&gt; setting to the &lt;a href=&#34;https://pve.proxmox.com/wiki/Manual:_pct.conf&#34;&gt;pct.conf&lt;/a&gt; files for individual containers. For instance:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;features: mount=nfs
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;allows NFS mounting for the specified container, although a restart will be necessary for the setting to take effect. You can verify this by running &lt;code&gt;grep nfs /var/lib/lxc/${CID}/apparmor/lxc-${CID}_\&amp;lt;-var-lib-lxc\&amp;gt;&lt;/code&gt;, which return a line like &lt;code&gt;mount fstype=nfs&lt;/code&gt;. Other filesystems can also be allowed by separating the different types with semicolons.&lt;/p&gt;
+&lt;p&gt;This change was released in version 2.0-28 of the pve-container package, so it&amp;rsquo;s easy tell if you are affected:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;$ dpkg -s pve-container | grep &#39;^Version:&#39;
+Version: 2.0-28
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Since this change only applies on container start-up, it&amp;rsquo;s possible to upgrade the package first without impacting any running containers.&lt;/p&gt;
+</content>
     </item>
     
     <item>
       <title>Enabling jumbo frames on Proxmox 4</title>
-      <link>https://smuth.me/post/proxmox-4-enabling-jumbo-frames/</link>
+      <link>https://smuth.me/posts/proxmox-4-enabling-jumbo-frames/</link>
       <pubDate>Sun, 02 Oct 2016 15:58:01 +0000</pubDate>
       
-      <guid>https://smuth.me/post/proxmox-4-enabling-jumbo-frames/</guid>
+      <guid>https://smuth.me/posts/proxmox-4-enabling-jumbo-frames/</guid>
       <description>While turning on jumbo frames on a basic interface is straightforward (ip link set eth0 mtu 9000), Proxmox&amp;rsquo;s use of bridges to connect VMs makes things much more interesting. To start with, all interfaces connected to the bridge must have their MTUs upgraded first, otherwise it will give you an unhelpful error. Note that interfaces connected to the bridge include those of running containers/VMs.1
-# ip a | grep mtu 1: lo: &amp;lt;LOOPBACK,UP,LOWER_UP&amp;gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1 2: eth0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc mq master vmbr0 state UP group default qlen 1000 3: vmbr0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc noqueue state UP group default qlen 1000 4: veth102i0@if7: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc noqueue master vmbr0 state UP group default qlen 1000 # ip link set dev vmbr0 mtu 9000 RTNETLINK answers: Invalid argument # ip link set dev eth0 mtu 9000 # ip link set dev veth102i0 mtu 9000 # ip link set dev vmbr0 mtu 9000  Note that setting the MTU on vmbr0 is technically unnecessary, since bridges inherit the smallest MTU of the slaved devices2.</description>
+# ip a | grep mtu 1: lo: &amp;lt;LOOPBACK,UP,LOWER_UP&amp;gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1 2: eth0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc mq master vmbr0 state UP group default qlen 1000 3: vmbr0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc noqueue state UP group default qlen 1000 4: veth102i0@if7: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc noqueue master vmbr0 state UP group default qlen 1000 # ip link set dev vmbr0 mtu 9000 RTNETLINK answers: Invalid argument # ip link set dev eth0 mtu 9000 # ip link set dev veth102i0 mtu 9000 # ip link set dev vmbr0 mtu 9000 Note that setting the MTU on vmbr0 is technically unnecessary, since bridges inherit the smallest MTU of the slaved devices2.</description>
+      <content>&lt;p&gt;While turning on &lt;a href=&#34;https://en.wikipedia.org/wiki/Jumbo_frame&#34;&gt;jumbo frames&lt;/a&gt; on a basic interface is straightforward (&lt;code&gt;ip link set eth0 mtu 9000&lt;/code&gt;), &lt;a href=&#34;https://www.proxmox.com/&#34;&gt;Proxmox&amp;rsquo;s&lt;/a&gt; use of bridges to connect VMs makes things much more interesting. To start with, all interfaces connected to the bridge must have their MTUs upgraded first, otherwise it will give you an unhelpful error. Note that interfaces connected to the bridge include those of running containers/VMs.&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;# ip a | grep mtu
+1: lo: &amp;lt;LOOPBACK,UP,LOWER_UP&amp;gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1
+2: eth0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc mq master vmbr0 state UP group default qlen 1000
+3: vmbr0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc noqueue state UP group default qlen 1000
+4: veth102i0@if7: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc noqueue master vmbr0 state UP group default qlen 1000
+# ip link set dev vmbr0 mtu 9000
+RTNETLINK answers: Invalid argument
+# ip link set dev eth0 mtu 9000
+# ip link set dev veth102i0 mtu 9000
+# ip link set dev vmbr0 mtu 9000
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Note that setting the MTU on vmbr0 is technically unnecessary, since bridges inherit the smallest MTU of the slaved devices&lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;p&gt;However, this only enables it temporarily. The jumbo frames will be lost at the next reboot. To fix this, ideally we could simply define the MTU via the &lt;code&gt;/etc/network/interfaces&lt;/code&gt; file. However, due to a series of bugs, I was not able to get this working, even with the &lt;code&gt;post-up&lt;/code&gt; option.&lt;sup id=&#34;fnref:3&#34;&gt;&lt;a href=&#34;#fn:3&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;3&lt;/a&gt;&lt;/sup&gt;&lt;sup id=&#34;fnref:4&#34;&gt;&lt;a href=&#34;#fn:4&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;4&lt;/a&gt;&lt;/sup&gt; My (hacky) solution was to write a simple script that goes through and raises the MTU for each interface assigned to a bridge, and run it every 5 minutes via cron.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/bin/bash
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;intf&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$1&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
+mtu&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$2&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[[&lt;/span&gt; -z &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$intf&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;||&lt;/span&gt; -z &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$mtu&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;]]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
+  echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Usage: &lt;/span&gt;$0&lt;span style=&#34;color:#e6db74&#34;&gt; interface mtu&amp;#34;&lt;/span&gt;
+  exit &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
+        
+&lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; lower in /sys/devices/virtual/net/&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;intf&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;/lower_*; &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt;
+  child_intf&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;basename &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$lower&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; | sed &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;s/lower_//&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[[&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;cat &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$lower&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;/mtu&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; -lt &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$mtu&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;]]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
+    ip link set &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$child_intf&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; mtu &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$mtu&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;done&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Saving this to /usr/local/bin/br_mtu and running it as &lt;code&gt;/usr/local/bin/br_mtu vmbr0 9000&lt;/code&gt; takes care of the host, and we can test that out with ping:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;$ ping -c 5 -M do -s 8000 192.168.1.1
+PING 192.168.1.1 (192.168.1.1) 8000(8028) bytes of data.
+8008 bytes from 192.168.1.1: icmp_seq=1 ttl=64 time=1.42 ms
+8008 bytes from 192.168.1.1: icmp_seq=2 ttl=64 time=1.42 ms
+8008 bytes from 192.168.1.1: icmp_seq=3 ttl=64 time=1.43 ms
+8008 bytes from 192.168.1.1: icmp_seq=4 ttl=64 time=1.51 ms
+8008 bytes from 192.168.1.1: icmp_seq=5 ttl=64 time=1.45 ms
+
+--- 192.168.1.1 ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4057ms
+rtt min/avg/max/mdev = 1.425/1.449/1.512/0.058 ms
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;(Note that the network stack all the way to the target host will need to have jumbo frames enabling for this to work)&lt;/p&gt;
+&lt;p&gt;However, the containers/VMs will still need to be told to use jumbo frames on their internal interfaces. As long as it&amp;rsquo;s enabled on the host, you should be able to simply follow your OS&amp;rsquo;s instructions for doing so.&lt;/p&gt;
+&lt;p&gt;A word of warning: On one of my hosts, after a reboot while testing some of these changes, containers with &amp;ldquo;Start at boot&amp;rdquo; set to yes were unreachable, and I had to delete and re-add the interfaces for them to work correctly again. This is probably due to all the changes I was making, and not a direct result of changing the MTU.&lt;/p&gt;
+&lt;h3 id=&#34;sources&#34;&gt;Sources&lt;/h3&gt;
+&lt;section class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34; role=&#34;doc-endnote&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://joshua.hoblitt.com/rtfm/2014/05/dynamically_changing_the_mtu_of_a_linux_bridge_interface/&#34;&gt;https://joshua.hoblitt.com/rtfm/2014/05/dynamically_changing_the_mtu_of_a_linux_bridge_interface/&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:2&#34; role=&#34;doc-endnote&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://lists.linuxfoundation.org/pipermail/bridge/2007-August/005488.html&#34;&gt;https://lists.linuxfoundation.org/pipermail/bridge/2007-August/005488.html&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:3&#34; role=&#34;doc-endnote&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;http://askubuntu.com/questions/279362/how-do-i-set-a-network-bridge-to-have-an-mtu-of-9000&#34;&gt;http://askubuntu.com/questions/279362/how-do-i-set-a-network-bridge-to-have-an-mtu-of-9000&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:3&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:4&#34; role=&#34;doc-endnote&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1399064&#34;&gt;https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1399064&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:4&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/section&gt;
+</content>
     </item>
     
   </channel>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Check_mk and FreeNAS :: cat /dev/null &gt; /proc/mind</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Note
+Software involved:
+FreeNAS 9.2.0 OMD 1.10 (check_mk 1.2.2p3)   FreeNAS is great, and the web interface makes it easy and simple to understand my NAS&#39;s overall structure. However, my favored method of monitoring in my homelab is OMD with Check_mk, while FreeNAS prefers a self-contained collectd solution. We&#39;re in luck however, in that FreeNAS is heavily based on FreeBSD, which check_mk happens to have a plugin for, so it shouldn&#39;t be too hard to set things up the way I like them." />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://smuth.me/posts/check_mk-and-freenas/" />
+
+
+
+
+<link rel="stylesheet" href="https://smuth.me/assets/style.css">
+
+  <link rel="stylesheet" href="https://smuth.me/assets/blue.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://smuth.me/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://smuth.me/img/favicon/blue.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Check_mk and FreeNAS">
+<meta property="og:description" content="Note
+Software involved:
+FreeNAS 9.2.0 OMD 1.10 (check_mk 1.2.2p3)   FreeNAS is great, and the web interface makes it easy and simple to understand my NAS&#39;s overall structure. However, my favored method of monitoring in my homelab is OMD with Check_mk, while FreeNAS prefers a self-contained collectd solution. We&#39;re in luck however, in that FreeNAS is heavily based on FreeBSD, which check_mk happens to have a plugin for, so it shouldn&#39;t be too hard to set things up the way I like them." />
+<meta property="og:url" content="https://smuth.me/posts/check_mk-and-freenas/" />
+<meta property="og:site_name" content="cat /dev/null &gt; /proc/mind" />
+
+  
+    <meta property="og:image" content="https://smuth.me/img/favicon/blue.png">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2014-02-23 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="blue">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    cat /dev/null &gt; /proc/mind
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="https://github.com/smuth4">Github</a></li>
+        
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="https://github.com/smuth4">Github</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://smuth.me/posts/check_mk-and-freenas/">Check_mk and FreeNAS</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2014-02-23
+        
+      </span>
+    
+    
+    
+  </div>
+
+  
+  <span class="post-tags">
+    
+    #<a href="https://smuth.me/tags/freenas/">FreeNAS</a>&nbsp;
+    
+    #<a href="https://smuth.me/tags/python/">python</a>&nbsp;
+    
+    #<a href="https://smuth.me/tags/check_mk/">check_mk</a>&nbsp;
+    
+  </span>
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <div class="document">
+
+
+<!-- title: Check_mk and FreeNAS -->
+<!-- slug: check_mk-and-freenas -->
+<!-- date: 2014/02/23 15:56:35 -->
+<!-- tags: FreeNAS, python, check_mk -->
+<!-- link: -->
+<!-- description: -->
+<!-- type: text -->
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Software involved:</p>
+<ul class="last simple">
+<li>FreeNAS 9.2.0</li>
+<li>OMD 1.10 (check_mk 1.2.2p3)</li>
+</ul>
+</div>
+<p>FreeNAS is great, and the web interface makes it easy and simple to understand my NAS's overall structure. However, my favored method of monitoring in my homelab is OMD with Check_mk, while FreeNAS prefers a self-contained collectd solution. We're in luck however, in that FreeNAS is heavily based on FreeBSD, which check_mk happens to have a plugin for, so it shouldn't be too hard to set things up the way I like them. There are two possible ways to do this:</p>
+<ul class="simple">
+<li>Enable inetd and point it to the check_mk_agent</li>
+<li>Call check_mk_agent over ssh through as shown in the <a class="reference external" href="http://mathias-kettner.com/checkmk_datasource_programs.html">datasource programs</a> documentation</li>
+</ul>
+<p>I decided to go the second way, as I prefer to avoid making manual changes to FreeNAS if I can avoid it.</p>
+<p>If you do decided to go the inetd route, <a class="reference external" href="http://forums.freenas.org/index.php?threads/activation-of-inetd-server.3926/">this thread</a> may come in useful.</p>
+<div class="section" id="agent-setup">
+<h2>Agent Setup</h2>
+<p>The first thing we need to do is set up a user with a home directory where we can store the check_mk_agent program. If you already have a non-root user set up for yourself (which is good practice), that will work perfectly fine (they may need root access to collect certain data points). If you want to be more secure, you can set up a check_mk-only user, and limit it to just the agent command, which I will explain below.</p>
+<p>Once the user is set up with a writeable home directory, it's as simple as copying check_mk_agent.freebsd into the home directory. Run it once or twice to make sure it's collecting data correctly.</p>
+</div>
+<div class="section" id="check-mk-setup">
+<h2>Check_mk setup</h2>
+<p>From here it's basically following the instructions on the <a class="reference external" href="http://mathias-kettner.com/checkmk_datasource_programs.html">datasource programs</a> documentation link. Here's a quick overview of the steps involved:</p>
+<ol class="arabic">
+<li><p class="first">Add datasource programs configuration entry to main.mk. It will looks something like this:</p>
+<pre class="code python literal-block">
+<span class="name">datasource_programs</span> <span class="operator">=</span> <span class="punctuation">[</span>
+  <span class="punctuation">(</span> <span class="literal string double">&quot;ssh -l omd_user &lt;IP&gt; check_mk_agent&quot;</span><span class="punctuation">,</span> <span class="punctuation">[</span><span class="literal string single">'ssh'</span><span class="punctuation">],</span> <span class="name">ALL_HOSTS</span> <span class="punctuation">),</span>
+<span class="punctuation">]</span>
+</pre>
+</li>
+<li><p class="first">Set up password-less key authentication ssh access for omd_user to FreeNAS</p>
+</li>
+<li><p class="first">(Optional) Limit omd_user to onyl check_mk_agent command by placing command=&quot;check_mk_agent&quot;</p>
+</li>
+<li><p class="first">Add ssh tag to FreeNAS host, through WATO or configuration files</p>
+</li>
+<li><p class="first">Enjoy the pretty graphs and trends!</p>
+</li>
+</ol>
+</div>
+<div class="section" id="tweaks">
+<h2>Tweaks</h2>
+<p>So we've got everything set up, but not everything is perfect.</p>
+<div class="section" id="network">
+<h3>Network</h3>
+<p>The first thing that I noticed was missing was a network interface counter. check_mk_agent was outputting a 'netctr' section, which seemed to have all the necessary information, but it wasn't being recognized in check-mk inventory, as it's been superseeded by lnx_if. It's possible to re-enable netctr, but not on a per-host basis.</p>
+</div>
+</div>
+</div>
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        <span class="button previous">
+            <a href="https://smuth.me/posts/check_mk-and-freenas-pt-2/">
+                <span class="button__icon">←</span>
+                <span class="button__text">Check_mk and FreeNAS, Pt. 2</span>
+            </a>
+        </span>
+        
+        
+        <span class="button next">
+            <a href="https://smuth.me/posts/bash-documentation/">
+                <span class="button__text">BASH Documentation</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2021 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://smuth.me/assets/main.js"></script>
+<script src="https://smuth.me/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

@@ -1,24 +1,68 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Storage on cat /dev/null &gt; /proc/mind</title>
+    <title>storage on cat /dev/null &gt; /proc/mind</title>
     <link>https://smuth.me/tags/storage/</link>
-    <description>Recent content in Storage on cat /dev/null &gt; /proc/mind</description>
+    <description>Recent content in storage on cat /dev/null &gt; /proc/mind</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 08 Feb 2015 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://smuth.me/tags/storage/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Sun, 08 Feb 2015 00:00:00 +0000</lastBuildDate><atom:link href="https://smuth.me/tags/storage/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Flashing LSI SAS 9211-8i with EFI</title>
-      <link>https://smuth.me/post/flashing-lsi-sas-9211-8i-with-efi/</link>
+      <link>https://smuth.me/posts/flashing-lsi-sas-9211-8i-with-efi/</link>
       <pubDate>Sun, 08 Feb 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/flashing-lsi-sas-9211-8i-with-efi/</guid>
+      <guid>https://smuth.me/posts/flashing-lsi-sas-9211-8i-with-efi/</guid>
       <description>I recently went on an upgrade crusade to my homelab, and as part of that, upgraded FreeNAS to 9.3. When I did, there was a non-urgent alert about a driver mismatch for my LSI HBA (FreeNAS expected 16, LSI had 12). Thus, I decided to upgrade the firmware.
 Directions This assumes that your server can boot directly into an EFI shell. It might require a Shell.efi for some motherboards, but I can&#39;t tell you much more than that, as it boots straight to EFI on mine.</description>
+      <content>&lt;div class=&#34;document&#34;&gt;
+
+
+&lt;!-- title: Flashing LSI SAS 9211-8i with EFI --&gt;
+&lt;!-- slug: flashing-lsi-sas-9211-8i-with-efi --&gt;
+&lt;!-- date: 2015-02-08 15:00:17 UTC-05:00 --&gt;
+&lt;!-- tags: storage,firmare --&gt;
+&lt;!-- category: --&gt;
+&lt;!-- link: --&gt;
+&lt;!-- description: --&gt;
+&lt;!-- type: text --&gt;
+&lt;p&gt;I recently went on an upgrade crusade to my homelab, and as part of that, upgraded FreeNAS to 9.3. When I did, there was a non-urgent alert about a driver mismatch for my LSI HBA (FreeNAS expected 16, LSI had 12). Thus, I decided to upgrade the firmware.&lt;/p&gt;
+&lt;div class=&#34;section&#34; id=&#34;directions&#34;&gt;
+&lt;h2&gt;Directions&lt;/h2&gt;
+&lt;p&gt;This assumes that your server can boot directly into an EFI shell. It might require a Shell.efi for some motherboards, but I can&#39;t tell you much more than that, as it boots straight to EFI on mine. I&#39;m going to be flashing mine to IT mode (so it passes the disks through directly to ZFS), but the steps to upgrading the firmware in IR mode is very similar.&lt;/p&gt;
+&lt;p&gt;To do this, you&#39;re going to need a USB drive (formatted with something like &lt;a class=&#34;reference external&#34; href=&#34;http://rufus.akeo.ie/&#34;&gt;Rufus&lt;/a&gt;) and 3 files:&lt;/p&gt;
+&lt;ul class=&#34;simple&#34;&gt;
+&lt;li&gt;sas2flash.efi - The executable that will be doing the flashing&lt;/li&gt;
+&lt;li&gt;mptsas2.rom - The BIOS ROM&lt;/li&gt;
+&lt;li&gt;2118it.bin/2118ir.bin - The firmware binary&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;All three of these files can be found on &lt;a class=&#34;reference external&#34; href=&#34;http://www.lsi.com&#34;&gt;LSI&#39;s website&lt;/a&gt;. The two downloads you need are Installer_PXX_for_UEFI and 9211-8i_Package_PXX_IR_IT_Firmware_BIOS_for_MSDOS_Windows, where XX is the version you want. If you need an older version like I did, you can find them through the &lt;a class=&#34;reference external&#34; href=&#34;http://www.lsi.com/support/pages/download-search.aspx&#34;&gt;download search page&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Now open up Installer_PXX_for_UEFI.zip, find sas2flash_efi_ebc_rel/sas2flash.efi, and put that on the USB drive. Similarly, open up 9211-8i_Package_PXX_IR_IT_Firmware_BIOS_for_MSDOS_Windows.zip, extract Firmware/HBA_9211_8i_IT/2118it.bin and sasbios_rel/mptsas2.rom, and put those on the USB drive as well.&lt;/p&gt;
+&lt;p&gt;Alright, now that we have our files, we can boot into the EFI shell.&lt;/p&gt;
+&lt;p&gt;Verify you&#39;re in the USB root directory with &lt;tt class=&#34;docutils literal&#34;&gt;ls&lt;/tt&gt;. If not, try &lt;tt class=&#34;docutils literal&#34;&gt;map&lt;/tt&gt; to list the devices, &lt;tt class=&#34;docutils literal&#34;&gt;mount &amp;lt;device&amp;gt;&lt;/tt&gt; and then &lt;tt class=&#34;docutils literal&#34;&gt;&amp;lt;device&amp;gt;:&lt;/tt&gt; to mount and enter the USB.&lt;/p&gt;
+&lt;div class=&#34;admonition note&#34;&gt;
+&lt;p class=&#34;first admonition-title&#34;&gt;Note&lt;/p&gt;
+&lt;p class=&#34;last&#34;&gt;For this next step, apparenlty it&#39;s possible to upgrade multiple cards at once. I prefer the slow but safe way, since there&#39;s a (slim) chance of bricking a card, and flashed each card one at a time, manually pulling them in and out.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Verify we can see the hardware, and that it&#39;s a version we want to update:&lt;/p&gt;
+&lt;pre class=&#34;literal-block&#34;&gt;
+sas2flash.efi -listall
+&lt;/pre&gt;
+&lt;p&gt;First we erase the old firmware:&lt;/p&gt;
+&lt;pre class=&#34;literal-block&#34;&gt;
+sas2flash.efi -o -e 6
+&lt;/pre&gt;
+&lt;p&gt;Then we install the new one:&lt;/p&gt;
+&lt;pre class=&#34;literal-block&#34;&gt;
+sas2flash.efi -o -f 2118it.bin -b mptsas2.rom
+&lt;/pre&gt;
+&lt;p&gt;And Bob&#39;s your uncle! Enjoy your new and exciting passthrough disk I/O.&lt;/p&gt;
+&lt;p&gt;Useful links:&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;reference external&#34; href=&#34;http://digitalcardboard.com/blog/2014/07/09/flashing-it-firmware-to-the-lsi-sas-9211-8i-hba-2014-efi-recipe/&#34;&gt;http://digitalcardboard.com/blog/2014/07/09/flashing-it-firmware-to-the-lsi-sas-9211-8i-hba-2014-efi-recipe/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;reference external&#34; href=&#34;http://brycv.com/blog/2012/flashing-it-firmware-to-lsi-sas9211-8i/&#34;&gt;http://brycv.com/blog/2012/flashing-it-firmware-to-lsi-sas9211-8i/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;reference external&#34; href=&#34;http://linustechtips.com/main/topic/104425-flashing-an-lsi-9211-8i-raid-card-to-it-mode-for-zfssoftware-raid-tutorial/&#34;&gt;http://linustechtips.com/main/topic/104425-flashing-an-lsi-9211-8i-raid-card-to-it-mode-for-zfssoftware-raid-tutorial/&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;</content>
     </item>
     
   </channel>

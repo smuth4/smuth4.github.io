@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Posts :: cat /dev/null &gt; /proc/mind</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="" />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://smuth.me/posts/" />
+
+
+
+
+<link rel="stylesheet" href="https://smuth.me/assets/style.css">
+
+  <link rel="stylesheet" href="https://smuth.me/assets/blue.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://smuth.me/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://smuth.me/img/favicon/blue.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Posts">
+<meta property="og:description" content="" />
+<meta property="og:url" content="https://smuth.me/posts/" />
+<meta property="og:site_name" content="cat /dev/null &gt; /proc/mind" />
+
+  
+    <meta property="og:image" content="https://smuth.me/img/favicon/blue.png">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+
+
+
+  <link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="cat /dev/null &gt; /proc/mind" />
+
+
+
+
+
+
+
+
+
+</head>
+<body class="blue">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    cat /dev/null &gt; /proc/mind
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="https://github.com/smuth4">Github</a></li>
+        
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="https://github.com/smuth4">Github</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+  
+  <div class="posts">
+    
+      <div class="post on-list">
+        <h1 class="post-title">
+          <a href="https://smuth.me/posts/flashing-lsi-sas-9211-8i-with-efi/">Flashing LSI SAS 9211-8i with EFI</a>
+        </h1>
+        <div class="post-meta">
+          <span class="post-date">
+            2015-02-08
+          </span>
+          
+        </div>
+
+        
+          <span class="post-tags">
+            
+            #<a href="https://smuth.me/tags/storage/">storage</a>&nbsp;
+            
+            #<a href="https://smuth.me/tags/firmware/">firmware</a>&nbsp;
+            
+          </span>
+        
+
+        
+
+
+      
+        <div class="post-content">
+          
+          
+          I recently went on an upgrade crusade to my homelab, and as part of that, upgraded FreeNAS to 9.3. When I did, there was a non-urgent alert about a driver mismatch for my LSI HBA (FreeNAS expected 16, LSI had 12). Thus, I decided to upgrade the firmware.
+Directions This assumes that your server can boot directly into an EFI shell. It might require a Shell.efi for some motherboards, but I can't tell you much more than that, as it boots straight to EFI on mine.
+          
+          
+        </div>
+
+        
+        <div>
+          <a class="read-more button"
+            href="/posts/flashing-lsi-sas-9211-8i-with-efi/">Read more →</a>
+        </div>
+        
+      </div>
+    
+      <div class="post on-list">
+        <h1 class="post-title">
+          <a href="https://smuth.me/posts/using-heretrix-to-archive-sites-to-a-directory-structure/">Using Heritrix to archive sites to a directory structure</a>
+        </h1>
+        <div class="post-meta">
+          <span class="post-date">
+            2014-08-12
+          </span>
+          
+        </div>
+
+        
+          <span class="post-tags">
+            
+            #<a href="https://smuth.me/tags/heritrix/">heritrix</a>&nbsp;
+            
+            #<a href="https://smuth.me/tags/archive/">archive</a>&nbsp;
+            
+          </span>
+        
+
+        
+
+
+      
+        <div class="post-content">
+          
+          
+          So I one day I found myself in the market for a good web archiver. Specifically, there were some interesting open directories I wanted to mirror. My ideal solution would be a web front end around wget, but a little bit of research and testing showed that such an architecture would be too simplistic for the level of detail I wanted. There were a couple spider frameworks I tried out, like scrapy, but I wasn't enthusiastic about the prospect of trying to roll my own solution, when I knew sites like the Internet Archive had the exact kind of thing I had in mind, and they use the Heritrix engine archive their material.
+          
+          
+        </div>
+
+        
+        <div>
+          <a class="read-more button"
+            href="/posts/using-heretrix-to-archive-sites-to-a-directory-structure/">Read more →</a>
+        </div>
+        
+      </div>
+    
+      <div class="post on-list">
+        <h1 class="post-title">
+          <a href="https://smuth.me/posts/check_mk-and-freenas-pt-3/">Check_mk and FreeNAS, Pt. 3</a>
+        </h1>
+        <div class="post-meta">
+          <span class="post-date">
+            2014-07-10
+          </span>
+          
+        </div>
+
+        
+          <span class="post-tags">
+            
+            #<a href="https://smuth.me/tags/freenas/">FreeNAS</a>&nbsp;
+            
+            #<a href="https://smuth.me/tags/check_mk/">check_mk</a>&nbsp;
+            
+            #<a href="https://smuth.me/tags/monitoring/">monitoring</a>&nbsp;
+            
+          </span>
+        
+
+        
+
+
+      
+        <div class="post-content">
+          
+          
+          A continuation of Check_mk and FreeNAS, Pt. 2
+Now that we have all our smart data nicely set up, let's see if we can't get some stats on I/O speed. I'm pretty sure FreeNAS is supposed to have a I/O section in its &quot;Reports&quot; section, but for whatever reason, it's not in my install, and I'd like to have the data in Nagios in any case.
+Just like with the SMART data, we're going to write a small script that the check_mk agent can use.
+          
+          
+        </div>
+
+        
+        <div>
+          <a class="read-more button"
+            href="/posts/check_mk-and-freenas-pt-3/">Read more →</a>
+        </div>
+        
+      </div>
+    
+      <div class="post on-list">
+        <h1 class="post-title">
+          <a href="https://smuth.me/posts/check_mk-and-freenas-pt-2/">Check_mk and FreeNAS, Pt. 2</a>
+        </h1>
+        <div class="post-meta">
+          <span class="post-date">
+            2014-04-25
+          </span>
+          
+        </div>
+
+        
+          <span class="post-tags">
+            
+            #<a href="https://smuth.me/tags/check_mk/">check_mk</a>&nbsp;
+            
+            #<a href="https://smuth.me/tags/freenas/">FreeNAS</a>&nbsp;
+            
+            #<a href="https://smuth.me/tags/monitoring/">monitoring</a>&nbsp;
+            
+          </span>
+        
+
+        
+
+
+      
+        <div class="post-content">
+          
+          
+          A continuation of Check_mk and FreeNAS, Pt. 1.
+So I've got my check_mk on set up on my NAS, and it's monitoring stuff beautifully. However, it's not monitoring something very near and dear to my heart for this server: S.M.A.R.T. data. FreeNAS comes with smartctl, and there's already S.M.A.R.T. data plugins for the linux agents, so I figured this wouldn't be a big deal. And I was right! All I had to do was add the following script to my plugins/ folder for check_mk to find, and the server picked it up automatically.
+          
+          
+        </div>
+
+        
+        <div>
+          <a class="read-more button"
+            href="/posts/check_mk-and-freenas-pt-2/">Read more →</a>
+        </div>
+        
+      </div>
+    
+      <div class="post on-list">
+        <h1 class="post-title">
+          <a href="https://smuth.me/posts/check_mk-and-freenas/">Check_mk and FreeNAS</a>
+        </h1>
+        <div class="post-meta">
+          <span class="post-date">
+            2014-02-23
+          </span>
+          
+        </div>
+
+        
+          <span class="post-tags">
+            
+            #<a href="https://smuth.me/tags/freenas/">FreeNAS</a>&nbsp;
+            
+            #<a href="https://smuth.me/tags/python/">python</a>&nbsp;
+            
+            #<a href="https://smuth.me/tags/check_mk/">check_mk</a>&nbsp;
+            
+          </span>
+        
+
+        
+
+
+      
+        <div class="post-content">
+          
+          
+          Note
+Software involved:
+FreeNAS 9.2.0 OMD 1.10 (check_mk 1.2.2p3)   FreeNAS is great, and the web interface makes it easy and simple to understand my NAS's overall structure. However, my favored method of monitoring in my homelab is OMD with Check_mk, while FreeNAS prefers a self-contained collectd solution. We're in luck however, in that FreeNAS is heavily based on FreeBSD, which check_mk happens to have a plugin for, so it shouldn't be too hard to set things up the way I like them.
+          
+          
+        </div>
+
+        
+        <div>
+          <a class="read-more button"
+            href="/posts/check_mk-and-freenas/">Read more →</a>
+        </div>
+        
+      </div>
+    
+      <div class="post on-list">
+        <h1 class="post-title">
+          <a href="https://smuth.me/posts/bash-documentation/">BASH Documentation</a>
+        </h1>
+        <div class="post-meta">
+          <span class="post-date">
+            2014-01-13
+          </span>
+          
+        </div>
+
+        
+          <span class="post-tags">
+            
+            #<a href="https://smuth.me/tags/bash/">bash</a>&nbsp;
+            
+          </span>
+        
+
+        
+
+
+      
+        <div class="post-content">
+          
+          
+          One of the things that always bothers me is lack of proper documentation. Now, I&rsquo;m lazy just like everyone else, but if I&rsquo;m going to document something, I prefer to do it properly and keep it up to date. I&rsquo;ve inhierited a nice suite of bash scripts, which aren&rsquo;t really complicated, but they all have the same copy &amp; pasted header that&rsquo;s dated from 2003. Not exactly helpful.
+So while I have a wiki that explains how some of the processes work on a higher level, it would be nice to have clean documentation in my bash scripts.
+          
+          
+        </div>
+
+        
+        <div>
+          <a class="read-more button"
+            href="/posts/bash-documentation/">Read more →</a>
+        </div>
+        
+      </div>
+    
+      <div class="post on-list">
+        <h1 class="post-title">
+          <a href="https://smuth.me/posts/basic-php-optimization/">Fun with Basic PHP Optimization</a>
+        </h1>
+        <div class="post-meta">
+          <span class="post-date">
+            2014-01-09
+          </span>
+          
+        </div>
+
+        
+          <span class="post-tags">
+            
+            #<a href="https://smuth.me/tags/php/">php</a>&nbsp;
+            
+            #<a href="https://smuth.me/tags/programming/">programming</a>&nbsp;
+            
+          </span>
+        
+
+        
+
+
+      
+        <div class="post-content">
+          
+          
+          A while ago I came across a full-featured PHP application for controlling a daemon. It worked well with a small data set, but quickly became laggy with a dataset numbering in the thousands. Admittedly, it really wasn&rsquo;t built for that kind of load, so I removed it and controlled the daemon manually, which wasn&rsquo;t a big deal.
+Then a while later, I came across a post by someone who managed to mitigate the problem by shifting a particularly expensive operation to an external python program.
+          
+          
+        </div>
+
+        
+        <div>
+          <a class="read-more button"
+            href="/posts/basic-php-optimization/">Read more →</a>
+        </div>
+        
+      </div>
+    
+      <div class="post on-list">
+        <h1 class="post-title">
+          <a href="https://smuth.me/posts/welcome-to-my-blog/">Welcome to my blog</a>
+        </h1>
+        <div class="post-meta">
+          <span class="post-date">
+            2014-01-09
+          </span>
+          
+        </div>
+
+        
+
+        
+
+
+      
+        <div class="post-content">
+          
+          
+          
+        </div>
+
+        
+        <div>
+          <a class="read-more button"
+            href="/posts/welcome-to-my-blog/">Read more →</a>
+        </div>
+        
+      </div>
+    
+    <div class="pagination">
+  <div class="pagination__buttons">
+    
+      <span class="button previous">
+        <a href="/posts/">
+          <span class="button__icon">←</span>
+          <span class="button__text">Newer posts</span>
+        </a>
+      </span>
+    
+    
+  </div>
+</div>
+
+  </div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2021 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://smuth.me/assets/main.js"></script>
+<script src="https://smuth.me/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

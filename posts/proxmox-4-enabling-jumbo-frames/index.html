@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Enabling jumbo frames on Proxmox 4 :: cat /dev/null &gt; /proc/mind</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="While turning on jumbo frames on a basic interface is straightforward (ip link set eth0 mtu 9000), Proxmox&amp;rsquo;s use of bridges to connect VMs makes things much more interesting. To start with, all interfaces connected to the bridge must have their MTUs upgraded first, otherwise it will give you an unhelpful error. Note that interfaces connected to the bridge include those of running containers/VMs.1
+# ip a | grep mtu 1: lo: &amp;lt;LOOPBACK,UP,LOWER_UP&amp;gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1 2: eth0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc mq master vmbr0 state UP group default qlen 1000 3: vmbr0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc noqueue state UP group default qlen 1000 4: veth102i0@if7: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc noqueue master vmbr0 state UP group default qlen 1000 # ip link set dev vmbr0 mtu 9000 RTNETLINK answers: Invalid argument # ip link set dev eth0 mtu 9000 # ip link set dev veth102i0 mtu 9000 # ip link set dev vmbr0 mtu 9000 Note that setting the MTU on vmbr0 is technically unnecessary, since bridges inherit the smallest MTU of the slaved devices2." />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://smuth.me/posts/proxmox-4-enabling-jumbo-frames/" />
+
+
+
+
+<link rel="stylesheet" href="https://smuth.me/assets/style.css">
+
+  <link rel="stylesheet" href="https://smuth.me/assets/blue.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://smuth.me/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://smuth.me/img/favicon/blue.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Enabling jumbo frames on Proxmox 4">
+<meta property="og:description" content="While turning on jumbo frames on a basic interface is straightforward (ip link set eth0 mtu 9000), Proxmox&amp;rsquo;s use of bridges to connect VMs makes things much more interesting. To start with, all interfaces connected to the bridge must have their MTUs upgraded first, otherwise it will give you an unhelpful error. Note that interfaces connected to the bridge include those of running containers/VMs.1
+# ip a | grep mtu 1: lo: &amp;lt;LOOPBACK,UP,LOWER_UP&amp;gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1 2: eth0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc mq master vmbr0 state UP group default qlen 1000 3: vmbr0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc noqueue state UP group default qlen 1000 4: veth102i0@if7: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc noqueue master vmbr0 state UP group default qlen 1000 # ip link set dev vmbr0 mtu 9000 RTNETLINK answers: Invalid argument # ip link set dev eth0 mtu 9000 # ip link set dev veth102i0 mtu 9000 # ip link set dev vmbr0 mtu 9000 Note that setting the MTU on vmbr0 is technically unnecessary, since bridges inherit the smallest MTU of the slaved devices2." />
+<meta property="og:url" content="https://smuth.me/posts/proxmox-4-enabling-jumbo-frames/" />
+<meta property="og:site_name" content="cat /dev/null &gt; /proc/mind" />
+
+  
+    <meta property="og:image" content="https://smuth.me/img/favicon/blue.png">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2016-10-02 15:58:01 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="blue">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    cat /dev/null &gt; /proc/mind
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="https://github.com/smuth4">Github</a></li>
+        
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="https://github.com/smuth4">Github</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://smuth.me/posts/proxmox-4-enabling-jumbo-frames/">Enabling jumbo frames on Proxmox 4</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2016-10-02
+        
+      </span>
+    
+    
+    
+  </div>
+
+  
+  <span class="post-tags">
+    
+    #<a href="https://smuth.me/tags/networking/">networking</a>&nbsp;
+    
+    #<a href="https://smuth.me/tags/proxmox/">proxmox</a>&nbsp;
+    
+  </span>
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <p>While turning on <a href="https://en.wikipedia.org/wiki/Jumbo_frame">jumbo frames</a> on a basic interface is straightforward (<code>ip link set eth0 mtu 9000</code>), <a href="https://www.proxmox.com/">Proxmox&rsquo;s</a> use of bridges to connect VMs makes things much more interesting. To start with, all interfaces connected to the bridge must have their MTUs upgraded first, otherwise it will give you an unhelpful error. Note that interfaces connected to the bridge include those of running containers/VMs.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<pre tabindex="0"><code># ip a | grep mtu
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1
+2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc mq master vmbr0 state UP group default qlen 1000
+3: vmbr0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000
+4: veth102i0@if7: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue master vmbr0 state UP group default qlen 1000
+# ip link set dev vmbr0 mtu 9000
+RTNETLINK answers: Invalid argument
+# ip link set dev eth0 mtu 9000
+# ip link set dev veth102i0 mtu 9000
+# ip link set dev vmbr0 mtu 9000
+</code></pre><p>Note that setting the MTU on vmbr0 is technically unnecessary, since bridges inherit the smallest MTU of the slaved devices<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>.</p>
+<p>However, this only enables it temporarily. The jumbo frames will be lost at the next reboot. To fix this, ideally we could simply define the MTU via the <code>/etc/network/interfaces</code> file. However, due to a series of bugs, I was not able to get this working, even with the <code>post-up</code> option.<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup> My (hacky) solution was to write a simple script that goes through and raises the MTU for each interface assigned to a bridge, and run it every 5 minutes via cron.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/bash
+</span><span style="color:#75715e"></span>intf<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$1<span style="color:#e6db74">&#34;</span>
+mtu<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$2<span style="color:#e6db74">&#34;</span>
+
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> -z <span style="color:#e6db74">&#34;</span>$intf<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">||</span> -z <span style="color:#e6db74">&#34;</span>$mtu<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+  echo <span style="color:#e6db74">&#34;Usage: </span>$0<span style="color:#e6db74"> interface mtu&#34;</span>
+  exit <span style="color:#ae81ff">3</span>
+<span style="color:#66d9ef">fi</span>
+        
+<span style="color:#66d9ef">for</span> lower in /sys/devices/virtual/net/<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>intf<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>/lower_*; <span style="color:#66d9ef">do</span>
+  child_intf<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>basename <span style="color:#e6db74">&#34;</span>$lower<span style="color:#e6db74">&#34;</span> | sed <span style="color:#e6db74">&#39;s/lower_//&#39;</span><span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+  <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>cat <span style="color:#e6db74">&#34;</span>$lower<span style="color:#e6db74">&#34;</span>/mtu<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> -lt <span style="color:#e6db74">&#34;</span>$mtu<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+    ip link set <span style="color:#e6db74">&#34;</span>$child_intf<span style="color:#e6db74">&#34;</span> mtu <span style="color:#e6db74">&#34;</span>$mtu<span style="color:#e6db74">&#34;</span>
+  <span style="color:#66d9ef">fi</span>
+<span style="color:#66d9ef">done</span>
+</code></pre></div><p>Saving this to /usr/local/bin/br_mtu and running it as <code>/usr/local/bin/br_mtu vmbr0 9000</code> takes care of the host, and we can test that out with ping:</p>
+<pre tabindex="0"><code>$ ping -c 5 -M do -s 8000 192.168.1.1
+PING 192.168.1.1 (192.168.1.1) 8000(8028) bytes of data.
+8008 bytes from 192.168.1.1: icmp_seq=1 ttl=64 time=1.42 ms
+8008 bytes from 192.168.1.1: icmp_seq=2 ttl=64 time=1.42 ms
+8008 bytes from 192.168.1.1: icmp_seq=3 ttl=64 time=1.43 ms
+8008 bytes from 192.168.1.1: icmp_seq=4 ttl=64 time=1.51 ms
+8008 bytes from 192.168.1.1: icmp_seq=5 ttl=64 time=1.45 ms
+
+--- 192.168.1.1 ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4057ms
+rtt min/avg/max/mdev = 1.425/1.449/1.512/0.058 ms
+</code></pre><p>(Note that the network stack all the way to the target host will need to have jumbo frames enabling for this to work)</p>
+<p>However, the containers/VMs will still need to be told to use jumbo frames on their internal interfaces. As long as it&rsquo;s enabled on the host, you should be able to simply follow your OS&rsquo;s instructions for doing so.</p>
+<p>A word of warning: On one of my hosts, after a reboot while testing some of these changes, containers with &ldquo;Start at boot&rdquo; set to yes were unreachable, and I had to delete and re-add the interfaces for them to work correctly again. This is probably due to all the changes I was making, and not a direct result of changing the MTU.</p>
+<h3 id="sources">Sources<a href="#sources" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://joshua.hoblitt.com/rtfm/2014/05/dynamically_changing_the_mtu_of_a_linux_bridge_interface/">https://joshua.hoblitt.com/rtfm/2014/05/dynamically_changing_the_mtu_of_a_linux_bridge_interface/</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://lists.linuxfoundation.org/pipermail/bridge/2007-August/005488.html">https://lists.linuxfoundation.org/pipermail/bridge/2007-August/005488.html</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="http://askubuntu.com/questions/279362/how-do-i-set-a-network-bridge-to-have-an-mtu-of-9000">http://askubuntu.com/questions/279362/how-do-i-set-a-network-bridge-to-have-an-mtu-of-9000</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1399064">https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1399064</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        <span class="button previous">
+            <a href="https://smuth.me/posts/ssh-public-key-shenanigans/">
+                <span class="button__icon">←</span>
+                <span class="button__text">SSH public key shenanigans</span>
+            </a>
+        </span>
+        
+        
+        <span class="button next">
+            <a href="https://smuth.me/posts/freebsd-upgrading-php55-to-56/">
+                <span class="button__text">Upgrading from PHP 5.5 to 5.6 on FreeBSD</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2021 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://smuth.me/assets/main.js"></script>
+<script src="https://smuth.me/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

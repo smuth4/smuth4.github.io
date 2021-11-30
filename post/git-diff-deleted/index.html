@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Finding the log for deleted files in git :: cat /dev/null &gt; /proc/mind</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Recently I came across a blog post explaining how to get the history of a deleted file: https://dzone.com/articles/git-getting-history-deleted, which pointed to yet another blog with the simple solution https://feeding.cloud.geek.nz/posts/querying-deleted-content-in-git/:
+git log -- deleted_file.txt However, neither explained exactly why this works, and I got interested. -- is normally the convention that means &amp;ldquo;pass everything after this into the program as a literal string. For example, if for some crazy reason you had a file named -h (which is perfectly legal), rm -h would just bring up the man page, while rm -- -h would work as expected (as would rm ." />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/post/git-diff-deleted/" />
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css">
+
+  <link rel="stylesheet" href="/assets/blue.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="/img/favicon/blue.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Finding the log for deleted files in git">
+<meta property="og:description" content="Recently I came across a blog post explaining how to get the history of a deleted file: https://dzone.com/articles/git-getting-history-deleted, which pointed to yet another blog with the simple solution https://feeding.cloud.geek.nz/posts/querying-deleted-content-in-git/:
+git log -- deleted_file.txt However, neither explained exactly why this works, and I got interested. -- is normally the convention that means &amp;ldquo;pass everything after this into the program as a literal string. For example, if for some crazy reason you had a file named -h (which is perfectly legal), rm -h would just bring up the man page, while rm -- -h would work as expected (as would rm ." />
+<meta property="og:url" content="/post/git-diff-deleted/" />
+<meta property="og:site_name" content="cat /dev/null &gt; /proc/mind" />
+
+  
+    <meta property="og:image" content="/img/favicon/blue.png">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2019-08-05 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="blue">
+
+
+<div class="container headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    Terminal
+  </div>
+</a>
+
+    </div>
+    
+  </div>
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="/post/git-diff-deleted/">Finding the log for deleted files in git</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2019-08-05
+        
+      </span>
+    
+    
+    
+  </div>
+
+  
+  <span class="post-tags">
+    
+    #<a href="/tags/terraform/">terraform</a>&nbsp;
+    
+    #<a href="/tags/powerdns/">powerdns</a>&nbsp;
+    
+  </span>
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <p>Recently I came across a blog post explaining how to get the history of a deleted file: <a href="https://dzone.com/articles/git-getting-history-deleted">https://dzone.com/articles/git-getting-history-deleted</a>, which pointed to yet another blog with the simple solution <a href="https://feeding.cloud.geek.nz/posts/querying-deleted-content-in-git/">https://feeding.cloud.geek.nz/posts/querying-deleted-content-in-git/</a>:</p>
+<pre tabindex="0"><code>git log -- deleted_file.txt
+</code></pre><p>However, neither explained exactly why this works, and I got interested. <code>--</code> is normally the convention that means &ldquo;pass everything after this into the program as a literal string. For example, if for some crazy reason you had a file named <code>-h</code> (which is perfectly legal), <code>rm -h</code> would just bring up the man page, while <code>rm -- -h</code> would work as expected (as would <code>rm ./-h</code>). However, this is just a convention and git might be free to ignore it.</p>
+<p>As the man page actually points out, git does indeed treat these differently:</p>
+<blockquote>
+<pre><code>  [--] &lt;path&gt;...
+      Show only commits that are enough to explain how the files that match the specified paths came to be. See
+      History Simplification below for details and other simplification modes.
+
+      Paths may need to be prefixed with -- to separate them from options or the revision range, when confusion
+      arises.
+</code></pre>
+</blockquote>
+<p>The short story, according to the <a href="https://www.git-scm.com/docs/git-log#_history_simplification">History Simplification section</a>, appears to be that the default behavior is able to accurately track changes across moves/renames, but they also needed a way to say &ldquo;track this exact path only&rdquo;.</p>
+
+      </div></div>
+
+  
+
+  
+
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2021 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

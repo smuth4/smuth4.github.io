@@ -1,178 +1,189 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="en">
 <head>
+  
+    <title>Upgrading from PHP 5.5 to 5.6 on FreeBSD :: cat /dev/null &gt; /proc/mind</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Recently PHP 5.5 got EOL&amp;rsquo;d, but PHP 5.6 will be supported for another two years. On Debian, this is a just a matter of upgrading the php5 package, but FreeBSD splits it out into two packages: php55 and php56, not to mention that extensions are also split out this way. The fact that I&amp;rsquo;ve installed php via ports also complicates things.
+Doing the deed This assumes portmaster is installed.
+Listing the installed php55 packages:" />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/post/freebsd-upgrading-php55-to-56/" />
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css">
+
+  <link rel="stylesheet" href="/assets/blue.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="/img/favicon/blue.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Upgrading from PHP 5.5 to 5.6 on FreeBSD">
+<meta property="og:description" content="Recently PHP 5.5 got EOL&amp;rsquo;d, but PHP 5.6 will be supported for another two years. On Debian, this is a just a matter of upgrading the php5 package, but FreeBSD splits it out into two packages: php55 and php56, not to mention that extensions are also split out this way. The fact that I&amp;rsquo;ve installed php via ports also complicates things.
+Doing the deed This assumes portmaster is installed.
+Listing the installed php55 packages:" />
+<meta property="og:url" content="/post/freebsd-upgrading-php55-to-56/" />
+<meta property="og:site_name" content="cat /dev/null &gt; /proc/mind" />
 
   
-  <meta charset="UTF-8">
-  <title>
-    Upgrading from PHP 5.5 to 5.6 on FreeBSD | cat /dev/null &gt; /proc/mind
-  </title>
+    <meta property="og:image" content="/img/favicon/blue.png">
+  
 
-  
-  <meta name="viewport" content="width=device-width,user-scalable=no,maximum-scale=1,initial-scale=1">
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
 
-  
-  <link rel="canonical" href="https://smuth.me/post/freebsd-upgrading-php55-to-56/"/>
 
-  
-  <link rel="stylesheet" href="/css/sanitize.css">
-  <link rel="stylesheet" href="/css/responsive.css">
-  <link rel="stylesheet" href="/css/highlight_monokai.css">
-  <link rel="stylesheet" href="/css/theme.css">
-  <link rel="stylesheet" href="/css/custom.css">
+  <meta property="article:published_time" content="2016-07-31 00:00:00 &#43;0000 UTC" />
 
-  
-  <link href="https://smuth.me/index.xml" rel="alternate" type="application/rss+xml" title="cat /dev/null &gt; /proc/mind" />
-  <link href="https://smuth.me/index.xml" rel="feed" type="application/rss+xml" title="cat /dev/null &gt; /proc/mind" />
 
-  
-  
+
+
+
+
+
+
+
+
+
 
 </head>
+<body class="blue">
 
-<body>
 
-<div class="container">
+<div class="container headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    Terminal
+  </div>
+</a>
+
+    </div>
+    
+  </div>
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="/post/freebsd-upgrading-php55-to-56/">Upgrading from PHP 5.5 to 5.6 on FreeBSD</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2016-07-31
+        
+      </span>
+    
+    
+    
+  </div>
 
   
-  <header role="banner">
-    <div class="row gutters">
-      <div id="site-title" class="col span_6">
-        <h1><a href="https://smuth.me/">cat /dev/null &gt; /proc/mind</a></h1>
-        <h2>Ain&#39;t the brightest bit in the byte.</h2>
-      </div>
-      <div id="social" class="col span_6">
-        <ul>
-          
-          
-          <li><a href="https://github.com/smuth4" target="_blank">GitHub</a></li>
-          
-        </ul>
-      </div>
-    </div>
-  </header>
+  <span class="post-tags">
+    
+    #<a href="/tags/freebsd/">freebsd</a>&nbsp;
+    
+    #<a href="/tags/php/">php</a>&nbsp;
+    
+  </span>
+  
+  
 
 
   
-  <main id="single" role="main">
-    <div class="article-header">
-      <h1>Upgrading from PHP 5.5 to 5.6 on FreeBSD</h1>
-      <div class="meta">
-        Jul 31, 2016 &nbsp;
-        
-          #<a href="/tags/freebsd">freebsd</a>&nbsp;
-        
-          #<a href="/tags/php">php</a>&nbsp;
-        
-      </div>
-    </div>
-    <article>
-      
 
-<p>Recently PHP 5.5 got <a href="http://php.net/supported-versions.php">EOL&rsquo;d</a>, but PHP 5.6 will be supported for another two years. On Debian, this is a just a matter of upgrading the php5 package, but FreeBSD splits it out into two packages: php55 and php56, not to mention that extensions are also split out this way. The fact that I&rsquo;ve installed php via ports also complicates things.</p>
-
-<h2 id="doing-the-deed">Doing the deed</h2>
-
+  <div class="post-content"><div>
+        <p>Recently PHP 5.5 got <a href="http://php.net/supported-versions.php">EOL&rsquo;d</a>, but PHP 5.6 will be supported for another two years. On Debian, this is a just a matter of upgrading the php5 package, but FreeBSD splits it out into two packages: php55 and php56, not to mention that extensions are also split out this way. The fact that I&rsquo;ve installed php via ports also complicates things.</p>
+<h2 id="doing-the-deed">Doing the deed<a href="#doing-the-deed" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
 <p>This assumes <a href="https://www.freebsd.org/cgi/man.cgi?query=portmaster&amp;apropos=0&amp;sektion=8&amp;manpath=FreeBSD+10.3-RELEASE+and+Ports&amp;arch=default&amp;format=html">portmaster</a> is installed.</p>
-
 <p>Listing the installed php55 packages:</p>
-
-<pre><code class="language-bash">$ pkg info | grep php55
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ pkg info | grep php55
 php55-5.5.38                   PHP Scripting Language
-php55-ctype-5.5.38             The ctype shared extension for php
+php55-ctype-5.5.38             The ctype shared extension <span style="color:#66d9ef">for</span> php
 etc...
-</code></pre>
-
-<p>Get the original ports path they were installed from (<a href="https://www.freebsd.org/cgi/man.cgi?query=pkg-query&amp;sektion=8">pkg query</a> is a fantastic command to have in your toolbelt), and convert any 5.5 refereces to 5.6:</p>
-
-<pre><code class="language-bash">$ pkg query &quot;%o&quot; $(pkg info | grep php55 | cut -f 1 -d ' ' | tr '\n' ' ') \
-  | sed 's/55/56/g'
+</code></pre></div><p>Get the original ports path they were installed from (<a href="https://www.freebsd.org/cgi/man.cgi?query=pkg-query&amp;sektion=8">pkg query</a> is a fantastic command to have in your toolbelt), and convert any 5.5 refereces to 5.6:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ pkg query <span style="color:#e6db74">&#34;%o&#34;</span> <span style="color:#66d9ef">$(</span>pkg info | grep php55 | cut -f <span style="color:#ae81ff">1</span> -d <span style="color:#e6db74">&#39; &#39;</span> | tr <span style="color:#e6db74">&#39;\n&#39;</span> <span style="color:#e6db74">&#39; &#39;</span><span style="color:#66d9ef">)</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  | sed <span style="color:#e6db74">&#39;s/55/56/g&#39;</span>
 lang/php56
 extproc/php56-ctype
 etc...
-</code></pre>
-
-<p>For the sake of brevity, I&rsquo;m going to place the list of packages into a temporary file</p>
-
-<pre><code class="language-bash">pkg query &quot;%o&quot; $(pkg info | grep php55 | cut -f 1 -d ' ' | tr '\n' ' ') \
-  | sed 's/55/56/g' &gt; /tmp/php56-packages.txt
-</code></pre>
-
-<p>I&rsquo;m pretty sure that all the packages I care about have 5.6 equivalents, but just to be sure, let&rsquo;s check that those directories exist in the ports directory:</p>
-
-<pre><code class="language-bash">while read d; do [[ -d /usr/local/&quot;$d&quot; ]] &amp;&amp; echo &quot;$d does not exist&quot;; done &lt; /tmp/php56-packages.txt
-</code></pre>
-
-<p>Copy over the ports&rsquo; options directory. (skip this step if you think any packages may need to be compiled differently):</p>
-
-<pre><code class="language-bash">mkdir -p /var/db/ports/lang_php56/ /var/db/ports/lang_php56-extensions/
+</code></pre></div><p>For the sake of brevity, I&rsquo;m going to place the list of packages into a temporary file</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">pkg query <span style="color:#e6db74">&#34;%o&#34;</span> <span style="color:#66d9ef">$(</span>pkg info | grep php55 | cut -f <span style="color:#ae81ff">1</span> -d <span style="color:#e6db74">&#39; &#39;</span> | tr <span style="color:#e6db74">&#39;\n&#39;</span> <span style="color:#e6db74">&#39; &#39;</span><span style="color:#66d9ef">)</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  | sed <span style="color:#e6db74">&#39;s/55/56/g&#39;</span> &gt; /tmp/php56-packages.txt
+</code></pre></div><p>I&rsquo;m pretty sure that all the packages I care about have 5.6 equivalents, but just to be sure, let&rsquo;s check that those directories exist in the ports directory:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#66d9ef">while</span> read d; <span style="color:#66d9ef">do</span> <span style="color:#f92672">[[</span> -d /usr/local/<span style="color:#e6db74">&#34;</span>$d<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span> <span style="color:#f92672">&amp;&amp;</span> echo <span style="color:#e6db74">&#34;</span>$d<span style="color:#e6db74"> does not exist&#34;</span>; <span style="color:#66d9ef">done</span> &lt; /tmp/php56-packages.txt
+</code></pre></div><p>Copy over the ports' options directory. (skip this step if you think any packages may need to be compiled differently):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">mkdir -p /var/db/ports/lang_php56/ /var/db/ports/lang_php56-extensions/
 cp /var/db/ports/lang_php55/options /var/db/ports/lang_php56/
 cp /var/db/ports/lang_php55-extensions/options /var/db/ports/lang_php56-extensions/
-</code></pre>
-
-<p>Now begins the actual changes!
+</code></pre></div><p>Now begins the actual changes!
 Build 5.6 over 5.5 with portmaster:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo portmaster -n -o /usr/ports/lang/php56 lang/php55
+</code></pre></div><p>Do a quick dry run with portmaster (if there are any new options that can be set, portmaster will open up a prompt):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">portmaster -n <span style="color:#66d9ef">$(</span>cat /tmp/php56-packages.txt | tr <span style="color:#e6db74">&#39;\n&#39;</span> <span style="color:#e6db74">&#39; &#39;</span><span style="color:#66d9ef">)</span>
+</code></pre></div><p>Install the other packages sequentially, in the same manner as the main php56 package:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">cat /tmp/php56-packages.txt | grep -v <span style="color:#e6db74">&#39;lang/php56$&#39;</span> | <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  <span style="color:#66d9ef">while</span> read p; <span style="color:#66d9ef">do</span> echo portmaster -D --no-confirm -o <span style="color:#e6db74">&#34;/usr/ports/</span>$p<span style="color:#e6db74">&#34;</span> <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>echo <span style="color:#e6db74">&#34;</span>$p<span style="color:#e6db74">&#34;</span> | sed <span style="color:#e6db74">&#39;s/56/55/g&#39;</span><span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>; <span style="color:#66d9ef">done</span>
+</code></pre></div><p>Restart any necessary daemons, and you&rsquo;re done! This was a learning process for me, I&rsquo;m sure this could be compressed into a nice script. Of course, if you need to upgrade many machines, or downtime is an issue, building packages from the ports system (possible with portmaster&rsquo;s <code>-g</code> flag), and then installing them wholesale would cut down on the amount of time spent compiling everything.</p>
 
-<pre><code class="language-bash">sudo portmaster -n -o /usr/ports/lang/php56 lang/php55
-</code></pre>
-
-<p>Do a quick dry run with portmaster (if there are any new options that can be set, portmaster will open up a prompt):</p>
-
-<pre><code class="language-bash">portmaster -n $(cat /tmp/php56-packages.txt | tr '\n' ' ')
-</code></pre>
-
-<p>Install the other packages sequentially, in the same manner as the main php56 package:</p>
-
-<pre><code class="language-bash">cat /tmp/php56-packages.txt | grep -v 'lang/php56$' | \
-  while read p; do echo portmaster -D --no-confirm -o &quot;/usr/ports/$p&quot; &quot;$(echo &quot;$p&quot; | sed 's/56/55/g')&quot;; done
-</code></pre>
-
-<p>Restart any necessary daemons, and you&rsquo;re done! This was a learning process for me, I&rsquo;m sure this could be compressed into a nice script. Of course, if you need to upgrade many machines, or downtime is an issue, building packages from the ports system (possible with portmaster&rsquo;s <code>-g</code> flag), and then installing them wholesale would cut down on the amount of time spent compiling everything.</p>
-
-
-      
-      
-    </article>
-    
-
-    
-
-
-  </main>
-
-  <nav class="pagination-single">
-    
-      <span class="previous">&larr; <a href="https://smuth.me/post/powerdns-4-with-terraform/" rel="prev">Making Terraform work with PowerDNS 4</a></span>
-    
-    
-      <span class="next"><a href="https://smuth.me/post/proxmox-4-enabling-jumbo-frames/" rel="next">Enabling jumbo frames on Proxmox 4</a> &rarr;</span>
-    
-  </nav>
-
+      </div></div>
 
   
-  <footer role="contentinfo">
-    <div style="text-align:center;">
-      
-      
-    </div>
-  </footer>
 
+  
 
 </div>
 
-<script src="/js/highlight.pack.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+  </div>
 
-<script>
-	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-	ga('create', 'UA-80421871-1', 'auto');
-	ga('send', 'pageview');
-</script>
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2021 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
 
 </body>
 </html>
-

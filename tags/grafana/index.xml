@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>grafana on cat /dev/null &gt; /proc/mind</title>
+    <link>https://smuth.me/tags/grafana/</link>
+    <description>Recent content in grafana on cat /dev/null &gt; /proc/mind</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 29 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://smuth.me/tags/grafana/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Tracking Geo IP information with Vector, Loki and Grafana</title>
+      <link>https://smuth.me/posts/vector-loki-geoip/</link>
+      <pubDate>Mon, 29 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/posts/vector-loki-geoip/</guid>
+      <description>Normally my logging stack of choice is ELK, but recently I&amp;rsquo;ve been digging more into Loki, designed to be the logging equivalent of Prometheus. It&amp;rsquo;s been very interesting dealing with a low-cardinality log system after getting so used to ELK, but one feature I&amp;rsquo;ve definitely been missing is the ability to easily add GeoIP from arbitrary logs. There&amp;rsquo;s an open issue for adding it, but in the mean time one comment suggested using vector.</description>
+      <content>&lt;p&gt;Normally my logging stack of choice is &lt;a href=&#34;https://www.elastic.co/elasticsearch/&#34;&gt;ELK&lt;/a&gt;, but recently I&amp;rsquo;ve been digging more into &lt;a href=&#34;https://grafana.com/docs/loki/latest/&#34;&gt;Loki&lt;/a&gt;, designed to be the logging equivalent of Prometheus. It&amp;rsquo;s been very interesting dealing with a low-cardinality log system after getting so used to ELK, but one feature I&amp;rsquo;ve definitely been missing is the ability to easily add GeoIP from arbitrary logs. There&amp;rsquo;s an &lt;a href=&#34;https://github.com/grafana/loki/issues/2120&#34;&gt;open issue&lt;/a&gt; for adding it, but in the mean time one comment suggested using &lt;a href=&#34;https://vector.dev/&#34;&gt;vector&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In my case, the log lines I was interested looked like this:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;1637792122 I conn_pool_manager-&amp;gt;255.152.255.207: Handshake dropped: connection backoff.
+1637792123 I conn_pool_manager-&amp;gt;71.255.178.255: Handshake dropped: certificate rejected.
+1637792126 I conn_pool_manager-&amp;gt;94.255.255.178: Adding incoming connection: fd:2074.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The first step is to get them into loki with the information we need. &lt;a href=&#34;https://vector.dev/docs/reference/vrl/&#34;&gt;Vector&amp;rsquo;s remap language&lt;/a&gt; is extremely powerful and allows us to create this configuration:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Watch the log files&lt;/span&gt;
+[&lt;span style=&#34;color:#a6e22e&#34;&gt;sources&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;in&lt;/span&gt;]
+&lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;file&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#a6e22e&#34;&gt;include&lt;/span&gt; = [ &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/var/log/connections/*.log&amp;#34;&lt;/span&gt; ]
+&lt;span style=&#34;color:#a6e22e&#34;&gt;ignore_older_secs&lt;/span&gt; = &lt;span style=&#34;color:#ae81ff&#34;&gt;600&lt;/span&gt;
+&lt;span style=&#34;color:#a6e22e&#34;&gt;read_from&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;beginning&amp;#34;&lt;/span&gt;
+
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Parse log message, mainly to extract the original timestamp and IP address&lt;/span&gt;
+[&lt;span style=&#34;color:#a6e22e&#34;&gt;transforms&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;remap_conn_pool&lt;/span&gt;]
+&lt;span style=&#34;color:#a6e22e&#34;&gt;inputs&lt;/span&gt; = [ &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;in&amp;#34;&lt;/span&gt;]
+&lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;remap&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#a6e22e&#34;&gt;source&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&amp;#39;
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;  . |= parse_regex(.message, r&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;^(?&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;P&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;timestamp&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&amp;gt;\&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;d&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;+)\&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;W&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;(?&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;P&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;level&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&amp;gt;\&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;w&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;)\&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;Wconn_pool_manager-&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&amp;gt;(?&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;P&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;ip_address&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&amp;gt;&lt;/span&gt;[&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;\&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;d&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;\&lt;/span&gt;.]&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;+):(?&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;P&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;trailer&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&amp;gt;&lt;/span&gt;.&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;*)&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;) ??
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;       {&amp;#34;err&amp;#34;: &amp;#34;could not parse&amp;#34;}
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;  .timestamp = parse_timestamp(.timestamp, &amp;#34;%s&amp;#34;) ?? now()
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Use a locally downloaded MaxMind DB to generate GeoIP info&lt;/span&gt;
+[&lt;span style=&#34;color:#a6e22e&#34;&gt;transforms&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;geo_ip&lt;/span&gt;]
+&lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;geoip&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#a6e22e&#34;&gt;inputs&lt;/span&gt; = [ &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;remap_conn_pool&amp;#34;&lt;/span&gt; ]
+&lt;span style=&#34;color:#a6e22e&#34;&gt;database&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/etc/vector/GeoLite2-City.mmdb&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#a6e22e&#34;&gt;source&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;ip_address&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#a6e22e&#34;&gt;target&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;geoip&amp;#34;&lt;/span&gt;
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# For debugging purposes&lt;/span&gt;
+[&lt;span style=&#34;color:#a6e22e&#34;&gt;sinks&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;out&lt;/span&gt;]
+&lt;span style=&#34;color:#a6e22e&#34;&gt;inputs&lt;/span&gt; = [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;geo_ip&amp;#34;&lt;/span&gt;]
+&lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;console&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#a6e22e&#34;&gt;encoding&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;codec&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;json&amp;#34;&lt;/span&gt;
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Send output to loki&lt;/span&gt;
+[&lt;span style=&#34;color:#a6e22e&#34;&gt;sinks&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;loki&lt;/span&gt;]
+&lt;span style=&#34;color:#a6e22e&#34;&gt;inputs&lt;/span&gt; = [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;geo_ip&amp;#34;&lt;/span&gt;]
+&lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;loki&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#a6e22e&#34;&gt;endpoint&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://loki.smuth.me/&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#a6e22e&#34;&gt;encoding&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;codec&lt;/span&gt; = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;json&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#a6e22e&#34;&gt;labels&lt;/span&gt; = {&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;app&amp;#34;&lt;/span&gt;= &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;vector&amp;#34;&lt;/span&gt;}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now that the information is in Loki, we can use the &lt;a href=&#34;https://grafana.com/docs/grafana/latest/visualizations/geomap/&#34;&gt;Geomap panel&lt;/a&gt; to display the locations inside grafana. In this particular case, this query was all that was needed:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;count_over_time(
+  {app=&amp;quot;vector&amp;quot;}
+  | json geoip_longitude=&amp;quot;geoip.longitude&amp;quot;,geoip_latitude=&amp;quot;geoip.latitude&amp;quot;
+  | geoip_latitude != &amp;quot;&amp;quot;
+  [$__range])
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;This gets all JSON lines from logs created by the vector config with GeoIP information, filters for non-empty values, and counts each entry for the range provided. However, in order to make it more palatable for grafana, we need to apply some transforms to the data in grafana, namely labels-to-fields, merge, and then converting the lat and long from strings to numbers. &lt;a href=&#34;https://smuth.me/static/grafana/geoip-panel.json&#34;&gt;Here&lt;/a&gt; is an example panel JSON, to get started with.&lt;/p&gt;
+</content>
+    </item>
+    
+  </channel>
+</rss>

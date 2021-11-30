@@ -1,23 +1,51 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Archive on cat /dev/null &gt; /proc/mind</title>
+    <title>archive on cat /dev/null &gt; /proc/mind</title>
     <link>https://smuth.me/tags/archive/</link>
-    <description>Recent content in Archive on cat /dev/null &gt; /proc/mind</description>
+    <description>Recent content in archive on cat /dev/null &gt; /proc/mind</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 12 Aug 2014 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://smuth.me/tags/archive/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Tue, 12 Aug 2014 00:00:00 +0000</lastBuildDate><atom:link href="https://smuth.me/tags/archive/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Using Heritrix to archive sites to a directory structure</title>
-      <link>https://smuth.me/post/using-heretrix-to-archive-sites-to-a-directory-structure/</link>
+      <link>https://smuth.me/posts/using-heretrix-to-archive-sites-to-a-directory-structure/</link>
       <pubDate>Tue, 12 Aug 2014 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/using-heretrix-to-archive-sites-to-a-directory-structure/</guid>
+      <guid>https://smuth.me/posts/using-heretrix-to-archive-sites-to-a-directory-structure/</guid>
       <description>So I one day I found myself in the market for a good web archiver. Specifically, there were some interesting open directories I wanted to mirror. My ideal solution would be a web front end around wget, but a little bit of research and testing showed that such an architecture would be too simplistic for the level of detail I wanted. There were a couple spider frameworks I tried out, like scrapy, but I wasn&#39;t enthusiastic about the prospect of trying to roll my own solution, when I knew sites like the Internet Archive had the exact kind of thing I had in mind, and they use the Heritrix engine archive their material.</description>
+      <content>&lt;div class=&#34;document&#34;&gt;
+
+
+&lt;!-- title: Using Heritrix to archive sites to a directory structure --&gt;
+&lt;!-- slug: using-heritrix-to-archive-sites-to-a-directory-structure --&gt;
+&lt;!-- date: 2014-08-12 11:47:27 UTC-04:00 --&gt;
+&lt;!-- tags: heritrix archive --&gt;
+&lt;!-- link: --&gt;
+&lt;!-- description: --&gt;
+&lt;!-- type: text --&gt;
+&lt;p&gt;So I one day I found myself in the market for a good web archiver. Specifically, there were some interesting open directories I wanted to mirror. My ideal solution would be a web front end around &lt;a class=&#34;reference external&#34; href=&#34;http://www.gnu.org/software/wget/manual/wget.html&#34;&gt;wget&lt;/a&gt;, but a little bit of research and testing showed that such an architecture would be too simplistic for the level of detail I wanted. There were a couple spider frameworks I tried out, like &lt;a class=&#34;reference external&#34; href=&#34;http://scrapy.org/&#34;&gt;scrapy&lt;/a&gt;, but I wasn&#39;t enthusiastic about the prospect of trying to roll my own solution, when I knew sites like the &lt;a class=&#34;reference external&#34; href=&#34;http://archive.org&#34;&gt;Internet Archive&lt;/a&gt; had the exact kind of thing I had in mind, and they use the &lt;a class=&#34;reference external&#34; href=&#34;https://webarchive.jira.com/wiki/display/Heritrix/Heritrix&#34;&gt;Heritrix&lt;/a&gt; engine archive their material. The &lt;a class=&#34;reference external&#34; href=&#34;http://en.wikipedia.org/wiki/Heritrix&#34;&gt;Heritrix Wikipedia page&lt;/a&gt; mentions that it can output in the same directory format as wget (perfect!), but there&#39;s no citation for that, and the Heretrix documentation is unorganized, to say the least.&lt;/p&gt;
+&lt;div class=&#34;section&#34; id=&#34;setting-it-up&#34;&gt;
+&lt;h2&gt;Setting it up&lt;/h2&gt;
+&lt;div class=&#34;section&#34; id=&#34;software&#34;&gt;
+&lt;h3&gt;Software&lt;/h3&gt;
+&lt;p&gt;I used Heritrix 3.2.0, the most recent stable version, for this project.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section&#34; id=&#34;steps&#34;&gt;
+&lt;h3&gt;Steps&lt;/h3&gt;
+&lt;p&gt;This is not going to be a full tutorial on how to use Heritrix. Be sure to read the &lt;a class=&#34;reference external&#34; href=&#34;https://webarchive.jira.com/wiki/display/Heritrix/Heritrix#Heritrix-Documentation&#34;&gt;documentation&lt;/a&gt;, and to read the default job configuration file before starting a large job.&lt;/p&gt;
+&lt;p&gt;Install Heritrix as per the instructions and get it started. Navigate to the web interface and create a new job with the standard configuration.&lt;/p&gt;
+&lt;p&gt;Next we want to edit the disposition chain, which starts at line 335 in my default configuration. The first bean defined should be the &lt;tt class=&#34;docutils literal&#34;&gt;warcWriter&lt;/tt&gt;, which, obviously, writes out scraped content to WARC files. WARC files are perfect for preserving websites exactly how they were accessed, but are a little too clumsy to be convenient.&lt;/p&gt;
+&lt;p&gt;After the WARC bean, add the follow code:&lt;/p&gt;
+&lt;pre class=&#34;code xml literal-block&#34;&gt;
+&lt;span class=&#34;name tag&#34;&gt;&amp;lt;bean&lt;/span&gt; &lt;span class=&#34;name attribute&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;literal string&#34;&gt;&amp;quot;mirrorWriter&amp;quot;&lt;/span&gt; &lt;span class=&#34;name attribute&#34;&gt;class=&lt;/span&gt;&lt;span class=&#34;literal string&#34;&gt;&amp;quot;org.archive.modules.writer.MirrorWriterProcessor&amp;quot;&lt;/span&gt;&lt;span class=&#34;name tag&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;name tag&#34;&gt;&amp;lt;/bean&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Then, in the &lt;tt class=&#34;docutils literal&#34;&gt;dispositionProcessors&lt;/tt&gt; bean, remove the line &lt;tt class=&#34;docutils literal&#34;&gt;&amp;lt;ref &lt;span class=&#34;pre&#34;&gt;bean=&amp;quot;warcWriter&amp;quot;/&amp;gt;&lt;/span&gt;&lt;/tt&gt; from the the &lt;tt class=&#34;docutils literal&#34;&gt;processors&lt;/tt&gt; list, and add &lt;tt class=&#34;docutils literal&#34;&gt;&amp;lt;ref &lt;span class=&#34;pre&#34;&gt;bean=&amp;quot;mirrorWriter&amp;quot;/&amp;gt;&lt;/span&gt;&lt;/tt&gt;.&lt;/p&gt;
+&lt;p&gt;That&#39;s pretty much all that&#39;s needed to get started. There are more parameters that can be tweaked, which can be found in the &lt;a class=&#34;reference external&#34; href=&#34;http://builds.archive.org/javadoc/heritrix-3.2.0/org/archive/modules/writer/MirrorWriterProcessor.html&#34;&gt;3.2.0 Javadoc&lt;/a&gt;, but the defaults are not anything surprising.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;</content>
     </item>
     
   </channel>

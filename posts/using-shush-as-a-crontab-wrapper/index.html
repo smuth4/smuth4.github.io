@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Using shush as a crontab wrapper :: cat /dev/null &gt; /proc/mind</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Cron is a great tool for linux servers, but it&#39;s a very limited in it&#39;s capabilities (since it follows the Unix philosophy), so when I started to run up against those limits, I began doing all sorts of bash trickery to accomplish what I needed to happen, but that swiftly started giving me even more problem. At work, I use the Jenkins CI tool as a cron replacement (great tool, allows for distributed runs, queuing tasks, emails on failure, etc), but it seemed rather heavy weight for a homelab." />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://smuth.me/posts/using-shush-as-a-crontab-wrapper/" />
+
+
+
+
+<link rel="stylesheet" href="https://smuth.me/assets/style.css">
+
+  <link rel="stylesheet" href="https://smuth.me/assets/blue.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://smuth.me/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://smuth.me/img/favicon/blue.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Using shush as a crontab wrapper">
+<meta property="og:description" content="Cron is a great tool for linux servers, but it&#39;s a very limited in it&#39;s capabilities (since it follows the Unix philosophy), so when I started to run up against those limits, I began doing all sorts of bash trickery to accomplish what I needed to happen, but that swiftly started giving me even more problem. At work, I use the Jenkins CI tool as a cron replacement (great tool, allows for distributed runs, queuing tasks, emails on failure, etc), but it seemed rather heavy weight for a homelab." />
+<meta property="og:url" content="https://smuth.me/posts/using-shush-as-a-crontab-wrapper/" />
+<meta property="og:site_name" content="cat /dev/null &gt; /proc/mind" />
+
+  
+    <meta property="og:image" content="https://smuth.me/img/favicon/blue.png">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2015-04-11 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="blue">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    cat /dev/null &gt; /proc/mind
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="https://github.com/smuth4">Github</a></li>
+        
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="https://github.com/smuth4">Github</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://smuth.me/posts/using-shush-as-a-crontab-wrapper/">Using shush as a crontab wrapper</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2015-04-11
+        
+      </span>
+    
+    
+    
+  </div>
+
+  
+  <span class="post-tags">
+    
+    #<a href="https://smuth.me/tags/cron/">cron</a>&nbsp;
+    
+  </span>
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <div class="document">
+
+
+<!-- title: Using shush as a crontab wrapper -->
+<!-- slug: using-shush-as-a-crontab-wrapper -->
+<!-- date: 2015-04-11 15:24:09 UTC-04:00 -->
+<!-- tags: cron -->
+<!-- category: -->
+<!-- link: -->
+<!-- description: -->
+<!-- type: text -->
+<p><a class="reference external" href="http://linux.die.net/man/1/crontab">Cron</a> is a great tool for linux servers, but it's a very limited in it's capabilities (since it follows the Unix philosophy), so when I started to run up against those limits, I began doing all sorts of bash trickery to accomplish what I needed to happen, but that swiftly started giving me even more problem. At work, I use the <a class="reference external" href="https://jenkins-ci.org/">Jenkins CI</a> tool as a cron replacement (great tool, allows for distributed runs, queuing tasks, emails on failure, etc), but it seemed rather heavy weight for a homelab. Thankfully, there are a lot of cron wrappers/replacements out there, but I settled on <a class="reference external" href="http://web.taranis.org/shush/">shush</a>, a neat little wrapper script for cron.</p>
+<!-- TEASER_END -->
+<p>There are a couple reasons I like it:</p>
+<ul class="simple">
+<li>The ability to manually run scripts under shush before adding them to cron</li>
+<li>Automatic crontab management</li>
+<li>Simple C binary, very few dependencies</li>
+<li>Text based config file</li>
+<li>Locking and timeout handling</li>
+</ul>
+<p>Basically how it works is that there's a designated directory that holds all the shush configuration files. These files can be named anything, although I usually have them be extensionless for simplicity. You can then run any of these files with <tt class="docutils literal">shush <span class="pre">-c</span> &lt;directory&gt; &lt;config_file_name&gt;</tt>. If you use the default directory of <tt class="docutils literal"><span class="pre">$HOME/.shush/</span></tt>, you can just run <tt class="docutils literal">shush &lt;config_file_name&gt;</tt>. However, in order to have the config file run regularly, you need to set the <tt class="docutils literal">schedule</tt> setting, and run <tt class="docutils literal">shush <span class="pre">-c</span> &lt;directory&gt; <span class="pre">-u</span></tt> to update the crontab file.</p>
+<p>The <a class="reference external" href="http://web.taranis.org/shush/shush.1.html">man page</a> has some more documentation, but I'll at least break down the example config file to make it more understandable.</p>
+<p>Set the command <tt class="docutils literal">shush <span class="pre">-c</span> /etc/shush <span class="pre">-u</span></tt> to run every day at 9 PM:</p>
+<pre class="code literal-block">
+command=shush -c /etc/shush -u
+schedule=0 9 * * *
+</pre>
+<p>Use a lockfile. If a lockfile already exists, send an email to root and root-logs, then abort the job:</p>
+<pre class="code literal-block">
+lock=notify=root root-logs,abort
+</pre>
+<p>Send out an email notification if the script is still running after 5 minutes, but keep the script alive:</p>
+<pre class="code literal-block">
+timeout=5m,notify=root root-logs
+</pre>
+<p>Print stderr output first, use the <tt class="docutils literal">text</tt> format, and set the email subject:</p>
+<pre class="code literal-block">
+stderr=first
+format=text
+Subject=Crontab Daily Update
+</pre>
+<p>Always send an email to root-logs:</p>
+<pre class="code literal-block">
+[logs]
+to=root-logs
+</pre>
+<p>If one of the various failure conditions applies, send an email to root:</p>
+<pre class="code literal-block">
+[readers]
+if=$exit != 0 || $outlines != 1 || $errsize &gt; 0 || U
+to=root
+format=rich
+</pre>
+<p>Shush is a very powerful tool, and I'm very happy with the ways that I've been able to implement it in my homelab. However, it can be a bit confusing for a beginner, and the regexp matching features leave much to be desired. With the intention of fixing things up, I've create a repository at <a class="reference external" href="https://github.com/smuth4/shush">https://github.com/smuth4/shush</a>, which I can hopefully use to clean up things, and get the project active again. Feel free to compile, try out and maybe even contribute to this neat little tool!</p>
+</div>
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        <span class="button previous">
+            <a href="https://smuth.me/posts/blog/">
+                <span class="button__icon">←</span>
+                <span class="button__text">Picking a blogging platform.</span>
+            </a>
+        </span>
+        
+        
+        <span class="button next">
+            <a href="https://smuth.me/posts/flashing-lsi-sas-9211-8i-with-efi/">
+                <span class="button__text">Flashing LSI SAS 9211-8i with EFI</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2021 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://smuth.me/assets/main.js"></script>
+<script src="https://smuth.me/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

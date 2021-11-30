@@ -1,162 +1,631 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on cat /dev/null &gt; /proc/mind</title>
-    <link>https://smuth.me/post/</link>
+    <link>/post/</link>
     <description>Recent content in Posts on cat /dev/null &gt; /proc/mind</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 11 Oct 2018 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://smuth.me/post/index.xml" rel="self" type="application/rss+xml" />
-    
+    <lastBuildDate>Mon, 05 Aug 2019 00:00:00 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Finding the log for deleted files in git</title>
+      <link>/post/git-diff-deleted/</link>
+      <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/git-diff-deleted/</guid>
+      <description>Recently I came across a blog post explaining how to get the history of a deleted file: https://dzone.com/articles/git-getting-history-deleted, which pointed to yet another blog with the simple solution https://feeding.cloud.geek.nz/posts/querying-deleted-content-in-git/:
+git log -- deleted_file.txt However, neither explained exactly why this works, and I got interested. -- is normally the convention that means &amp;ldquo;pass everything after this into the program as a literal string. For example, if for some crazy reason you had a file named -h (which is perfectly legal), rm -h would just bring up the man page, while rm -- -h would work as expected (as would rm .</description>
+      <content>&lt;p&gt;Recently I came across a blog post explaining how to get the history of a deleted file: &lt;a href=&#34;https://dzone.com/articles/git-getting-history-deleted&#34;&gt;https://dzone.com/articles/git-getting-history-deleted&lt;/a&gt;, which pointed to yet another blog with the simple solution &lt;a href=&#34;https://feeding.cloud.geek.nz/posts/querying-deleted-content-in-git/&#34;&gt;https://feeding.cloud.geek.nz/posts/querying-deleted-content-in-git/&lt;/a&gt;:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;git log -- deleted_file.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;However, neither explained exactly why this works, and I got interested. &lt;code&gt;--&lt;/code&gt; is normally the convention that means &amp;ldquo;pass everything after this into the program as a literal string. For example, if for some crazy reason you had a file named &lt;code&gt;-h&lt;/code&gt; (which is perfectly legal), &lt;code&gt;rm -h&lt;/code&gt; would just bring up the man page, while &lt;code&gt;rm -- -h&lt;/code&gt; would work as expected (as would &lt;code&gt;rm ./-h&lt;/code&gt;). However, this is just a convention and git might be free to ignore it.&lt;/p&gt;
+&lt;p&gt;As the man page actually points out, git does indeed treat these differently:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;pre&gt;&lt;code&gt;  [--] &amp;lt;path&amp;gt;...
+      Show only commits that are enough to explain how the files that match the specified paths came to be. See
+      History Simplification below for details and other simplification modes.
+
+      Paths may need to be prefixed with -- to separate them from options or the revision range, when confusion
+      arises.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;The short story, according to the &lt;a href=&#34;https://www.git-scm.com/docs/git-log#_history_simplification&#34;&gt;History Simplification section&lt;/a&gt;, appears to be that the default behavior is able to accurately track changes across moves/renames, but they also needed a way to say &amp;ldquo;track this exact path only&amp;rdquo;.&lt;/p&gt;
+</content>
+    </item>
     
     <item>
       <title>Enabling NFS mounts in Proxmox 5.2 LXC containers</title>
-      <link>https://smuth.me/post/enabling-nfs-proxmox-lxc/</link>
+      <link>/post/enabling-nfs-proxmox-lxc/</link>
       <pubDate>Thu, 11 Oct 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/enabling-nfs-proxmox-lxc/</guid>
-      <description>Normally, Proxmox doesn&amp;rsquo;t allow mounting NFS mounts directly in containers due to security concerns. In the past it was possible to modify apparmor profiles directly in order to allow it, as seen here and here. However, as of this commit, that method is no longer an option, due to the apparmor profiles now being generated dynamically when the containers are started (you can view these profiles at /var/lib/lxc/${CID}/apparmor/lxc-${CID}_&amp;lt;-var-lib-lxc&amp;gt;). Instead, modifying apparmor directly is no longer necessary, as you can now add the undocumented feature setting to the pct.</description>
+      <guid>/post/enabling-nfs-proxmox-lxc/</guid>
+      <description>Edit: This post has been made obsolete in recent releases, which allow enabling these flags via both the web UI and the pct CLI tool.
+Normally, Proxmox doesn&amp;rsquo;t allow mounting NFS mounts directly in containers due to security concerns. In the past it was possible to modify apparmor profiles directly in order to allow it, as seen here and here. However, as of this commit, that method is no longer an option, due to the apparmor profiles now being generated dynamically when the containers are started (you can view these profiles at /var/lib/lxc/${CID}/apparmor/lxc-${CID}_&amp;lt;-var-lib-lxc&amp;gt;).</description>
+      <content>&lt;p&gt;Edit: This post has been made obsolete in recent releases, which allow enabling these flags via both the web UI and the &lt;code&gt;pct&lt;/code&gt; CLI tool.&lt;/p&gt;
+&lt;p&gt;Normally, Proxmox doesn&amp;rsquo;t allow mounting NFS mounts directly in containers due to security concerns. In the past it was possible to modify apparmor profiles directly in order to allow it, as seen &lt;a href=&#34;https://forum.proxmox.com/threads/lxc-nfs.23763/&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;https://www.svennd.be/mount-nfs-lxc-proxmox/&#34;&gt;here&lt;/a&gt;. However, as of &lt;a href=&#34;https://git.proxmox.com/?p=pve-container.git;a=commit;h=5a63f1c5d3b995dd682a70e7fbd1364240e09278&#34;&gt;this commit&lt;/a&gt;, that method is no longer an option, due to the apparmor profiles now being generated dynamically when the containers are started (you can view these profiles at &lt;code&gt;/var/lib/lxc/${CID}/apparmor/lxc-${CID}_&amp;lt;-var-lib-lxc&amp;gt;&lt;/code&gt;). Instead, modifying apparmor directly is no longer necessary, as you can now add the undocumented &lt;code&gt;feature&lt;/code&gt; setting to the &lt;a href=&#34;https://pve.proxmox.com/wiki/Manual:_pct.conf&#34;&gt;pct.conf&lt;/a&gt; files for individual containers. For instance:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;features: mount=nfs
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;allows NFS mounting for the specified container, although a restart will be necessary for the setting to take effect. You can verify this by running &lt;code&gt;grep nfs /var/lib/lxc/${CID}/apparmor/lxc-${CID}_\&amp;lt;-var-lib-lxc\&amp;gt;&lt;/code&gt;, which return a line like &lt;code&gt;mount fstype=nfs&lt;/code&gt;. Other filesystems can also be allowed by separating the different types with semicolons.&lt;/p&gt;
+&lt;p&gt;This change was released in version 2.0-28 of the pve-container package, so it&amp;rsquo;s easy tell if you are affected:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;$ dpkg -s pve-container | grep &#39;^Version:&#39;
+Version: 2.0-28
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Since this change only applies on container start-up, it&amp;rsquo;s possible to upgrade the package first without impacting any running containers.&lt;/p&gt;
+</content>
     </item>
     
     <item>
       <title>SSH public key shenanigans</title>
-      <link>https://smuth.me/post/ssh-public-key-shenanigans/</link>
+      <link>/post/ssh-public-key-shenanigans/</link>
       <pubDate>Wed, 19 Oct 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/ssh-public-key-shenanigans/</guid>
+      <guid>/post/ssh-public-key-shenanigans/</guid>
       <description>A fun little fact I discovered about SSH: when you specify a private key to use, it checks ${key}.pub for hints about how to parse the private key, without warning. Under normal operations this is never a problem, but you need to replace a private key in-place, and don&amp;rsquo;t update the .pub file, authentication will fail:
 $ ls -la ssh.key ssh.key.pub $ ssh user@host echo ping user@host&amp;#39;s password: ^C $ mv ssh.</description>
+      <content>&lt;p&gt;A fun little fact I discovered about SSH: when you specify a private key to use, it checks ${key}.pub for hints about how to parse the private key, without warning. Under normal operations this is never a problem, but you need to replace a private key in-place, and don&amp;rsquo;t update the .pub file, authentication will fail:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-diff&#34; data-lang=&#34;diff&#34;&gt;$ ls -la
+ssh.key ssh.key.pub
+$ ssh user@host echo ping
+user@host&amp;#39;s password: ^C
+$ mv ssh.key.pub ssh.key.pub.bak
+$ ssh user@host echo ping
+Last login: Tue Oct 19
+ping
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This can be partially seen in the output of the ssh client&amp;rsquo;s &lt;code&gt;-vvv&lt;/code&gt; option. On the left is with the public key preset, on the right is without:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-diff&#34; data-lang=&#34;diff&#34;&gt;debug1: identity file ./ssh.key type 2                   | debug1: identity file ./ssh.key type -1
+...
+debug2: dh_gen_key: priv key bits set: 131/256           | debug2: dh_gen_key: priv key bits set: 125/256
+debug2: bits set: 529/1024                               | debug2: bits set: 532/1024
+...
+debug2: bits set: 512/1024                               | debug2: bits set: 482/1024
+...
+debug2: key: ./ssh.key (0x7fdea492cb30)                  | debug2: key: ./ssh.key ((nil))
+...
+debug3: send_pubkey_test                                 | debug1: read PEM private key done: type DSA
+                                                         &amp;gt; debug3: sign_and_send_pubkey
+debug2: we sent a publickey packet, wait for reply         debug2: we sent a publickey packet, wait for reply
+debug3: Wrote 528 bytes for a total of 1653              | debug3: Wrote 592 bytes for a total of 1717
+debug1: Authentications that can continue: publickey,pas | debug1: Authentication succeeded (publickey).
+debug2: we did not send a packet, disable method         | debug2: fd 5 setting O_NONBLOCK
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Interestingly, I wasn&amp;rsquo;t able to find any official documentation that mentions this, and only figured it out after resorting to &lt;code&gt;strace&lt;/code&gt;.&lt;/p&gt;
+</content>
     </item>
     
     <item>
       <title>Enabling jumbo frames on Proxmox 4</title>
-      <link>https://smuth.me/post/proxmox-4-enabling-jumbo-frames/</link>
+      <link>/post/proxmox-4-enabling-jumbo-frames/</link>
       <pubDate>Sun, 02 Oct 2016 15:58:01 +0000</pubDate>
       
-      <guid>https://smuth.me/post/proxmox-4-enabling-jumbo-frames/</guid>
+      <guid>/post/proxmox-4-enabling-jumbo-frames/</guid>
       <description>While turning on jumbo frames on a basic interface is straightforward (ip link set eth0 mtu 9000), Proxmox&amp;rsquo;s use of bridges to connect VMs makes things much more interesting. To start with, all interfaces connected to the bridge must have their MTUs upgraded first, otherwise it will give you an unhelpful error. Note that interfaces connected to the bridge include those of running containers/VMs.1
-# ip a | grep mtu 1: lo: &amp;lt;LOOPBACK,UP,LOWER_UP&amp;gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1 2: eth0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc mq master vmbr0 state UP group default qlen 1000 3: vmbr0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc noqueue state UP group default qlen 1000 4: veth102i0@if7: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc noqueue master vmbr0 state UP group default qlen 1000 # ip link set dev vmbr0 mtu 9000 RTNETLINK answers: Invalid argument # ip link set dev eth0 mtu 9000 # ip link set dev veth102i0 mtu 9000 # ip link set dev vmbr0 mtu 9000  Note that setting the MTU on vmbr0 is technically unnecessary, since bridges inherit the smallest MTU of the slaved devices2.</description>
+# ip a | grep mtu 1: lo: &amp;lt;LOOPBACK,UP,LOWER_UP&amp;gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1 2: eth0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc mq master vmbr0 state UP group default qlen 1000 3: vmbr0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc noqueue state UP group default qlen 1000 4: veth102i0@if7: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc noqueue master vmbr0 state UP group default qlen 1000 # ip link set dev vmbr0 mtu 9000 RTNETLINK answers: Invalid argument # ip link set dev eth0 mtu 9000 # ip link set dev veth102i0 mtu 9000 # ip link set dev vmbr0 mtu 9000 Note that setting the MTU on vmbr0 is technically unnecessary, since bridges inherit the smallest MTU of the slaved devices2.</description>
+      <content>&lt;p&gt;While turning on &lt;a href=&#34;https://en.wikipedia.org/wiki/Jumbo_frame&#34;&gt;jumbo frames&lt;/a&gt; on a basic interface is straightforward (&lt;code&gt;ip link set eth0 mtu 9000&lt;/code&gt;), &lt;a href=&#34;https://www.proxmox.com/&#34;&gt;Proxmox&amp;rsquo;s&lt;/a&gt; use of bridges to connect VMs makes things much more interesting. To start with, all interfaces connected to the bridge must have their MTUs upgraded first, otherwise it will give you an unhelpful error. Note that interfaces connected to the bridge include those of running containers/VMs.&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;# ip a | grep mtu
+1: lo: &amp;lt;LOOPBACK,UP,LOWER_UP&amp;gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1
+2: eth0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc mq master vmbr0 state UP group default qlen 1000
+3: vmbr0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc noqueue state UP group default qlen 1000
+4: veth102i0@if7: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc noqueue master vmbr0 state UP group default qlen 1000
+# ip link set dev vmbr0 mtu 9000
+RTNETLINK answers: Invalid argument
+# ip link set dev eth0 mtu 9000
+# ip link set dev veth102i0 mtu 9000
+# ip link set dev vmbr0 mtu 9000
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Note that setting the MTU on vmbr0 is technically unnecessary, since bridges inherit the smallest MTU of the slaved devices&lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;p&gt;However, this only enables it temporarily. The jumbo frames will be lost at the next reboot. To fix this, ideally we could simply define the MTU via the &lt;code&gt;/etc/network/interfaces&lt;/code&gt; file. However, due to a series of bugs, I was not able to get this working, even with the &lt;code&gt;post-up&lt;/code&gt; option.&lt;sup id=&#34;fnref:3&#34;&gt;&lt;a href=&#34;#fn:3&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;3&lt;/a&gt;&lt;/sup&gt;&lt;sup id=&#34;fnref:4&#34;&gt;&lt;a href=&#34;#fn:4&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;4&lt;/a&gt;&lt;/sup&gt; My (hacky) solution was to write a simple script that goes through and raises the MTU for each interface assigned to a bridge, and run it every 5 minutes via cron.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/bin/bash
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;intf&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$1&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
+mtu&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$2&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[[&lt;/span&gt; -z &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$intf&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;||&lt;/span&gt; -z &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$mtu&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;]]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
+  echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Usage: &lt;/span&gt;$0&lt;span style=&#34;color:#e6db74&#34;&gt; interface mtu&amp;#34;&lt;/span&gt;
+  exit &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
+        
+&lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; lower in /sys/devices/virtual/net/&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;intf&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;/lower_*; &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt;
+  child_intf&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;basename &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$lower&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; | sed &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;s/lower_//&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[[&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;cat &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$lower&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;/mtu&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; -lt &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$mtu&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;]]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
+    ip link set &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$child_intf&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; mtu &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$mtu&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;done&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Saving this to /usr/local/bin/br_mtu and running it as &lt;code&gt;/usr/local/bin/br_mtu vmbr0 9000&lt;/code&gt; takes care of the host, and we can test that out with ping:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;$ ping -c 5 -M do -s 8000 192.168.1.1
+PING 192.168.1.1 (192.168.1.1) 8000(8028) bytes of data.
+8008 bytes from 192.168.1.1: icmp_seq=1 ttl=64 time=1.42 ms
+8008 bytes from 192.168.1.1: icmp_seq=2 ttl=64 time=1.42 ms
+8008 bytes from 192.168.1.1: icmp_seq=3 ttl=64 time=1.43 ms
+8008 bytes from 192.168.1.1: icmp_seq=4 ttl=64 time=1.51 ms
+8008 bytes from 192.168.1.1: icmp_seq=5 ttl=64 time=1.45 ms
+
+--- 192.168.1.1 ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4057ms
+rtt min/avg/max/mdev = 1.425/1.449/1.512/0.058 ms
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;(Note that the network stack all the way to the target host will need to have jumbo frames enabling for this to work)&lt;/p&gt;
+&lt;p&gt;However, the containers/VMs will still need to be told to use jumbo frames on their internal interfaces. As long as it&amp;rsquo;s enabled on the host, you should be able to simply follow your OS&amp;rsquo;s instructions for doing so.&lt;/p&gt;
+&lt;p&gt;A word of warning: On one of my hosts, after a reboot while testing some of these changes, containers with &amp;ldquo;Start at boot&amp;rdquo; set to yes were unreachable, and I had to delete and re-add the interfaces for them to work correctly again. This is probably due to all the changes I was making, and not a direct result of changing the MTU.&lt;/p&gt;
+&lt;h3 id=&#34;sources&#34;&gt;Sources&lt;/h3&gt;
+&lt;section class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34; role=&#34;doc-endnote&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://joshua.hoblitt.com/rtfm/2014/05/dynamically_changing_the_mtu_of_a_linux_bridge_interface/&#34;&gt;https://joshua.hoblitt.com/rtfm/2014/05/dynamically_changing_the_mtu_of_a_linux_bridge_interface/&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:2&#34; role=&#34;doc-endnote&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://lists.linuxfoundation.org/pipermail/bridge/2007-August/005488.html&#34;&gt;https://lists.linuxfoundation.org/pipermail/bridge/2007-August/005488.html&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:3&#34; role=&#34;doc-endnote&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;http://askubuntu.com/questions/279362/how-do-i-set-a-network-bridge-to-have-an-mtu-of-9000&#34;&gt;http://askubuntu.com/questions/279362/how-do-i-set-a-network-bridge-to-have-an-mtu-of-9000&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:3&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:4&#34; role=&#34;doc-endnote&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1399064&#34;&gt;https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1399064&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:4&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/section&gt;
+</content>
     </item>
     
     <item>
       <title>Upgrading from PHP 5.5 to 5.6 on FreeBSD</title>
-      <link>https://smuth.me/post/freebsd-upgrading-php55-to-56/</link>
+      <link>/post/freebsd-upgrading-php55-to-56/</link>
       <pubDate>Sun, 31 Jul 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/freebsd-upgrading-php55-to-56/</guid>
+      <guid>/post/freebsd-upgrading-php55-to-56/</guid>
       <description>Recently PHP 5.5 got EOL&amp;rsquo;d, but PHP 5.6 will be supported for another two years. On Debian, this is a just a matter of upgrading the php5 package, but FreeBSD splits it out into two packages: php55 and php56, not to mention that extensions are also split out this way. The fact that I&amp;rsquo;ve installed php via ports also complicates things.
-Doing the deed This assumes portmaster is installed.</description>
+Doing the deed This assumes portmaster is installed.
+Listing the installed php55 packages:</description>
+      <content>&lt;p&gt;Recently PHP 5.5 got &lt;a href=&#34;http://php.net/supported-versions.php&#34;&gt;EOL&amp;rsquo;d&lt;/a&gt;, but PHP 5.6 will be supported for another two years. On Debian, this is a just a matter of upgrading the php5 package, but FreeBSD splits it out into two packages: php55 and php56, not to mention that extensions are also split out this way. The fact that I&amp;rsquo;ve installed php via ports also complicates things.&lt;/p&gt;
+&lt;h2 id=&#34;doing-the-deed&#34;&gt;Doing the deed&lt;/h2&gt;
+&lt;p&gt;This assumes &lt;a href=&#34;https://www.freebsd.org/cgi/man.cgi?query=portmaster&amp;amp;apropos=0&amp;amp;sektion=8&amp;amp;manpath=FreeBSD+10.3-RELEASE+and+Ports&amp;amp;arch=default&amp;amp;format=html&#34;&gt;portmaster&lt;/a&gt; is installed.&lt;/p&gt;
+&lt;p&gt;Listing the installed php55 packages:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ pkg info | grep php55
+php55-5.5.38                   PHP Scripting Language
+php55-ctype-5.5.38             The ctype shared extension &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; php
+etc...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Get the original ports path they were installed from (&lt;a href=&#34;https://www.freebsd.org/cgi/man.cgi?query=pkg-query&amp;amp;sektion=8&#34;&gt;pkg query&lt;/a&gt; is a fantastic command to have in your toolbelt), and convert any 5.5 refereces to 5.6:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ pkg query &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;%o&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;pkg info | grep php55 | cut -f &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; -d &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt; | tr &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;\n&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;  | sed &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;s/55/56/g&amp;#39;&lt;/span&gt;
+lang/php56
+extproc/php56-ctype
+etc...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;For the sake of brevity, I&amp;rsquo;m going to place the list of packages into a temporary file&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;pkg query &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;%o&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;pkg info | grep php55 | cut -f &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; -d &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt; | tr &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;\n&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;  | sed &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;s/55/56/g&amp;#39;&lt;/span&gt; &amp;gt; /tmp/php56-packages.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;I&amp;rsquo;m pretty sure that all the packages I care about have 5.6 equivalents, but just to be sure, let&amp;rsquo;s check that those directories exist in the ports directory:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;while&lt;/span&gt; read d; &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[[&lt;/span&gt; -d /usr/local/&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$d&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;]]&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$d&lt;span style=&#34;color:#e6db74&#34;&gt; does not exist&amp;#34;&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;done&lt;/span&gt; &amp;lt; /tmp/php56-packages.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Copy over the ports&#39; options directory. (skip this step if you think any packages may need to be compiled differently):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;mkdir -p /var/db/ports/lang_php56/ /var/db/ports/lang_php56-extensions/
+cp /var/db/ports/lang_php55/options /var/db/ports/lang_php56/
+cp /var/db/ports/lang_php55-extensions/options /var/db/ports/lang_php56-extensions/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now begins the actual changes!
+Build 5.6 over 5.5 with portmaster:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;sudo portmaster -n -o /usr/ports/lang/php56 lang/php55
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Do a quick dry run with portmaster (if there are any new options that can be set, portmaster will open up a prompt):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;portmaster -n &lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;cat /tmp/php56-packages.txt | tr &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;\n&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Install the other packages sequentially, in the same manner as the main php56 package:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;cat /tmp/php56-packages.txt | grep -v &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;lang/php56$&amp;#39;&lt;/span&gt; | &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;while&lt;/span&gt; read p; &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt; echo portmaster -D --no-confirm -o &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/usr/ports/&lt;/span&gt;$p&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$p&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; | sed &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;s/56/55/g&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;done&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Restart any necessary daemons, and you&amp;rsquo;re done! This was a learning process for me, I&amp;rsquo;m sure this could be compressed into a nice script. Of course, if you need to upgrade many machines, or downtime is an issue, building packages from the ports system (possible with portmaster&amp;rsquo;s &lt;code&gt;-g&lt;/code&gt; flag), and then installing them wholesale would cut down on the amount of time spent compiling everything.&lt;/p&gt;
+</content>
     </item>
     
     <item>
       <title>Making Terraform work with PowerDNS 4</title>
-      <link>https://smuth.me/post/powerdns-4-with-terraform/</link>
+      <link>/post/powerdns-4-with-terraform/</link>
       <pubDate>Sun, 01 May 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/powerdns-4-with-terraform/</guid>
+      <guid>/post/powerdns-4-with-terraform/</guid>
       <description>Edit: This post has been made obsolete by a pull request I opened in the terraform repository: https://github.com/hashicorp/terraform/pull/7819
 I&amp;rsquo;ve really enjoyed using PowerDNS as my DNS server at home. Most people only think of BIND and dnsmasq when it comes to DNS, while ignoring this stable, scalable, secure database-backed offering that powers some really large deployments. But enough proselytizing! I&amp;rsquo;m in the middle of trying to migrate my infrastructure to be controlled via Terraform (mostly).</description>
+      <content>&lt;p&gt;Edit: This post has been made obsolete by a pull request I opened in the terraform repository: &lt;a href=&#34;https://github.com/hashicorp/terraform/pull/7819&#34;&gt;https://github.com/hashicorp/terraform/pull/7819&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;ve really enjoyed using &lt;a href=&#34;https://www.powerdns.com/&#34;&gt;PowerDNS&lt;/a&gt; as my DNS server at home. Most people only think of &lt;a href=&#34;https://www.isc.org/downloads/bind/&#34;&gt;BIND&lt;/a&gt; and &lt;a href=&#34;http://www.thekelleys.org.uk/dnsmasq/doc.html&#34;&gt;dnsmasq&lt;/a&gt; when it comes to DNS, while ignoring this stable, scalable, secure database-backed offering that powers some really large deployments. But enough proselytizing! I&amp;rsquo;m in the middle of trying to migrate my infrastructure to be controlled via &lt;a href=&#34;https://www.terraform.io/&#34;&gt;Terraform&lt;/a&gt; (mostly). I figure this will help me consolidate and track most of my VPSs and the like.&lt;/p&gt;
+&lt;h2 id=&#34;the-problem&#34;&gt;The problem&lt;/h2&gt;
+&lt;p&gt;PowerDNS has a nice HTTP/JSON API that can be used, but it changed URL locations in version 4, from &lt;code&gt;/&lt;/code&gt; to &lt;code&gt;/api/v1/&lt;/code&gt;, which makes any Terraform changes return &lt;code&gt;powerdns_record.dns: Failed to create PowerDNS Record: Error creating record set: exmaple.com:::A, reason: &amp;quot;Not Found&amp;quot;&lt;/code&gt;, which isn&amp;rsquo;t exactly helpful (for the record, that&amp;rsquo;s the error message returned by the API whenever a bad URL is requested).&lt;/p&gt;
+&lt;h2 id=&#34;the-solution&#34;&gt;The solution&lt;/h2&gt;
+&lt;p&gt;Unfortunately there&amp;rsquo;s no easy fix, short of breaking compatibility for one thing or another. However, what I decided to do was to use &lt;a href=&#34;https://www.nginx.com/resources/wiki/&#34;&gt;nginx&lt;/a&gt; as a reverse proxy for the API. My configuration looks like this:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;server {
+    listen 8000;
+    server_name _;
+
+    location /api/v1/ {
+        proxy_pass http://localhost:8081/;
+    }
+
+    location / {
+        proxy_pass http://localhost:8081/api/v1/;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;This lets us use both the new and old locations simultaneously. I&amp;rsquo;m sure this can be done in Apache as well, but wasn&amp;rsquo;t up for installing it just to test something so simple.&lt;/p&gt;
+</content>
     </item>
     
     <item>
       <title>Picking a blogging platform.</title>
-      <link>https://smuth.me/post/blog/</link>
+      <link>/post/blog/</link>
       <pubDate>Sun, 24 Apr 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/blog/</guid>
-      <description>I&amp;rsquo;ve been bouncing around between picking a blog platform, and realized I should really settle down and stick with one. This is mostly a page to track my decision-making, and isn&amp;rsquo;t meant to be an objective comparison of different platforms. The one thing I&amp;rdquo;ll be limiting myself to is static site generators. They&amp;rsquo;re light, easy to write to, and I can keep my blog in source control.
+      <guid>/post/blog/</guid>
+      <description>I&amp;rsquo;ve been bouncing around between picking a blog platform, and realized I should really settle down and stick with one. This is mostly a page to track my decision-making, and isn&amp;rsquo;t meant to be an objective comparison of different platforms. The one thing I&#39;&amp;rsquo;ll be limiting myself to is static site generators. They&amp;rsquo;re light, easy to write to, and I can keep my blog in source control.
 The markup language I&amp;rsquo;d really rather avoid having to learn a wholle new markup, so that effectively limits me to either Markdown or ReST.</description>
+      <content>&lt;p&gt;I&amp;rsquo;ve been bouncing around between picking a blog platform, and realized I should really settle down and stick with one. This is mostly a page to track my decision-making, and isn&amp;rsquo;t meant to be an objective comparison of different platforms. The one thing I&#39;&amp;rsquo;ll be limiting myself to is static site generators. They&amp;rsquo;re light, easy to write to, and I can keep my blog in source control.&lt;/p&gt;
+&lt;h2 id=&#34;the-markup-language&#34;&gt;The markup language&lt;/h2&gt;
+&lt;p&gt;I&amp;rsquo;d really rather avoid having to learn a wholle new markup, so that effectively limits me to either Markdown or ReST. While I really like the expressiveness of ReST, I don&amp;rsquo;t think I&amp;rsquo;ll be needing the advanced feautures enough to merit having to deal with the syntax.&lt;/p&gt;
+&lt;h2 id=&#34;the-tools-language&#34;&gt;The tool&amp;rsquo;s language&lt;/h2&gt;
+&lt;p&gt;Meh, I really don&amp;rsquo;t care. As long it takes less than 30 seconds to build the site, that&amp;rsquo;s good enough for me.&lt;/p&gt;
+&lt;h2 id=&#34;templating&#34;&gt;Templating&lt;/h2&gt;
+&lt;p&gt;It would be nice if it had a minimal black on white theme available, but I&amp;rsquo;m not really averse to creating my own.&lt;/p&gt;
+&lt;h2 id=&#34;hosting&#34;&gt;Hosting&lt;/h2&gt;
+&lt;p&gt;I&amp;rsquo;ll be most likely hosting this on github pages. Integration with that would be a bonus, but I&amp;rsquo;m not going to specifically check for that.&lt;/p&gt;
+&lt;h2 id=&#34;candidates&#34;&gt;Candidates&lt;/h2&gt;
+&lt;p&gt;A list of platforms that might meet my needs:&lt;/p&gt;
+&lt;h3 id=&#34;nikolahttpsgetnikolacom&#34;&gt;&lt;a href=&#34;https://getnikola.com/&#34;&gt;Nikola&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;My previous platform. I thinks it&amp;rsquo;s a great product, but it just didn&amp;rsquo;t strike the right chord.&lt;/p&gt;
+&lt;h3 id=&#34;jekyllhttpsjekyllrbcom&#34;&gt;&lt;a href=&#34;https://jekyllrb.com/&#34;&gt;Jekyll&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;By far and away the most popular static site generator. However, the YY/MM/DD/ folder structure it enforces irks me much more than it should.&lt;/p&gt;
+&lt;h3 id=&#34;hugohttpsgohugoio&#34;&gt;&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;The strongest contender so far. Simple and does what I need.&lt;/p&gt;
+&lt;h2 id=&#34;my-decision&#34;&gt;My decision&lt;/h2&gt;
+&lt;p&gt;I decided to go with Hugo. It&amp;rsquo;s written in Go, the new hotness, doesn&amp;rsquo;t force a directory structure on me, and has a really nice &lt;a href=&#34;http://themes.gohugo.io/&#34;&gt;selection of themes&lt;/a&gt; I can use (I&amp;rsquo;m using &lt;a href=&#34;http://themes.gohugo.io/angels-ladder/&#34;&gt;angels-ladder&lt;/a&gt; currently.&lt;/p&gt;
+</content>
     </item>
     
     <item>
       <title>Using shush as a crontab wrapper</title>
-      <link>https://smuth.me/post/using-shush-as-a-crontab-wrapper/</link>
+      <link>/post/using-shush-as-a-crontab-wrapper/</link>
       <pubDate>Sat, 11 Apr 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/using-shush-as-a-crontab-wrapper/</guid>
+      <guid>/post/using-shush-as-a-crontab-wrapper/</guid>
       <description>Cron is a great tool for linux servers, but it&#39;s a very limited in it&#39;s capabilities (since it follows the Unix philosophy), so when I started to run up against those limits, I began doing all sorts of bash trickery to accomplish what I needed to happen, but that swiftly started giving me even more problem. At work, I use the Jenkins CI tool as a cron replacement (great tool, allows for distributed runs, queuing tasks, emails on failure, etc), but it seemed rather heavy weight for a homelab.</description>
+      <content>&lt;div class=&#34;document&#34;&gt;
+
+
+&lt;!-- title: Using shush as a crontab wrapper --&gt;
+&lt;!-- slug: using-shush-as-a-crontab-wrapper --&gt;
+&lt;!-- date: 2015-04-11 15:24:09 UTC-04:00 --&gt;
+&lt;!-- tags: cron --&gt;
+&lt;!-- category: --&gt;
+&lt;!-- link: --&gt;
+&lt;!-- description: --&gt;
+&lt;!-- type: text --&gt;
+&lt;p&gt;&lt;a class=&#34;reference external&#34; href=&#34;http://linux.die.net/man/1/crontab&#34;&gt;Cron&lt;/a&gt; is a great tool for linux servers, but it&#39;s a very limited in it&#39;s capabilities (since it follows the Unix philosophy), so when I started to run up against those limits, I began doing all sorts of bash trickery to accomplish what I needed to happen, but that swiftly started giving me even more problem. At work, I use the &lt;a class=&#34;reference external&#34; href=&#34;https://jenkins-ci.org/&#34;&gt;Jenkins CI&lt;/a&gt; tool as a cron replacement (great tool, allows for distributed runs, queuing tasks, emails on failure, etc), but it seemed rather heavy weight for a homelab. Thankfully, there are a lot of cron wrappers/replacements out there, but I settled on &lt;a class=&#34;reference external&#34; href=&#34;http://web.taranis.org/shush/&#34;&gt;shush&lt;/a&gt;, a neat little wrapper script for cron.&lt;/p&gt;
+&lt;!-- TEASER_END --&gt;
+&lt;p&gt;There are a couple reasons I like it:&lt;/p&gt;
+&lt;ul class=&#34;simple&#34;&gt;
+&lt;li&gt;The ability to manually run scripts under shush before adding them to cron&lt;/li&gt;
+&lt;li&gt;Automatic crontab management&lt;/li&gt;
+&lt;li&gt;Simple C binary, very few dependencies&lt;/li&gt;
+&lt;li&gt;Text based config file&lt;/li&gt;
+&lt;li&gt;Locking and timeout handling&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Basically how it works is that there&#39;s a designated directory that holds all the shush configuration files. These files can be named anything, although I usually have them be extensionless for simplicity. You can then run any of these files with &lt;tt class=&#34;docutils literal&#34;&gt;shush &lt;span class=&#34;pre&#34;&gt;-c&lt;/span&gt; &amp;lt;directory&amp;gt; &amp;lt;config_file_name&amp;gt;&lt;/tt&gt;. If you use the default directory of &lt;tt class=&#34;docutils literal&#34;&gt;&lt;span class=&#34;pre&#34;&gt;$HOME/.shush/&lt;/span&gt;&lt;/tt&gt;, you can just run &lt;tt class=&#34;docutils literal&#34;&gt;shush &amp;lt;config_file_name&amp;gt;&lt;/tt&gt;. However, in order to have the config file run regularly, you need to set the &lt;tt class=&#34;docutils literal&#34;&gt;schedule&lt;/tt&gt; setting, and run &lt;tt class=&#34;docutils literal&#34;&gt;shush &lt;span class=&#34;pre&#34;&gt;-c&lt;/span&gt; &amp;lt;directory&amp;gt; &lt;span class=&#34;pre&#34;&gt;-u&lt;/span&gt;&lt;/tt&gt; to update the crontab file.&lt;/p&gt;
+&lt;p&gt;The &lt;a class=&#34;reference external&#34; href=&#34;http://web.taranis.org/shush/shush.1.html&#34;&gt;man page&lt;/a&gt; has some more documentation, but I&#39;ll at least break down the example config file to make it more understandable.&lt;/p&gt;
+&lt;p&gt;Set the command &lt;tt class=&#34;docutils literal&#34;&gt;shush &lt;span class=&#34;pre&#34;&gt;-c&lt;/span&gt; /etc/shush &lt;span class=&#34;pre&#34;&gt;-u&lt;/span&gt;&lt;/tt&gt; to run every day at 9 PM:&lt;/p&gt;
+&lt;pre class=&#34;code literal-block&#34;&gt;
+command=shush -c /etc/shush -u
+schedule=0 9 * * *
+&lt;/pre&gt;
+&lt;p&gt;Use a lockfile. If a lockfile already exists, send an email to root and root-logs, then abort the job:&lt;/p&gt;
+&lt;pre class=&#34;code literal-block&#34;&gt;
+lock=notify=root root-logs,abort
+&lt;/pre&gt;
+&lt;p&gt;Send out an email notification if the script is still running after 5 minutes, but keep the script alive:&lt;/p&gt;
+&lt;pre class=&#34;code literal-block&#34;&gt;
+timeout=5m,notify=root root-logs
+&lt;/pre&gt;
+&lt;p&gt;Print stderr output first, use the &lt;tt class=&#34;docutils literal&#34;&gt;text&lt;/tt&gt; format, and set the email subject:&lt;/p&gt;
+&lt;pre class=&#34;code literal-block&#34;&gt;
+stderr=first
+format=text
+Subject=Crontab Daily Update
+&lt;/pre&gt;
+&lt;p&gt;Always send an email to root-logs:&lt;/p&gt;
+&lt;pre class=&#34;code literal-block&#34;&gt;
+[logs]
+to=root-logs
+&lt;/pre&gt;
+&lt;p&gt;If one of the various failure conditions applies, send an email to root:&lt;/p&gt;
+&lt;pre class=&#34;code literal-block&#34;&gt;
+[readers]
+if=$exit != 0 || $outlines != 1 || $errsize &amp;gt; 0 || U
+to=root
+format=rich
+&lt;/pre&gt;
+&lt;p&gt;Shush is a very powerful tool, and I&#39;m very happy with the ways that I&#39;ve been able to implement it in my homelab. However, it can be a bit confusing for a beginner, and the regexp matching features leave much to be desired. With the intention of fixing things up, I&#39;ve create a repository at &lt;a class=&#34;reference external&#34; href=&#34;https://github.com/smuth4/shush&#34;&gt;https://github.com/smuth4/shush&lt;/a&gt;, which I can hopefully use to clean up things, and get the project active again. Feel free to compile, try out and maybe even contribute to this neat little tool!&lt;/p&gt;
+&lt;/div&gt;</content>
     </item>
     
     <item>
       <title>Flashing LSI SAS 9211-8i with EFI</title>
-      <link>https://smuth.me/post/flashing-lsi-sas-9211-8i-with-efi/</link>
+      <link>/post/flashing-lsi-sas-9211-8i-with-efi/</link>
       <pubDate>Sun, 08 Feb 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/flashing-lsi-sas-9211-8i-with-efi/</guid>
+      <guid>/post/flashing-lsi-sas-9211-8i-with-efi/</guid>
       <description>I recently went on an upgrade crusade to my homelab, and as part of that, upgraded FreeNAS to 9.3. When I did, there was a non-urgent alert about a driver mismatch for my LSI HBA (FreeNAS expected 16, LSI had 12). Thus, I decided to upgrade the firmware.
 Directions This assumes that your server can boot directly into an EFI shell. It might require a Shell.efi for some motherboards, but I can&#39;t tell you much more than that, as it boots straight to EFI on mine.</description>
+      <content>&lt;div class=&#34;document&#34;&gt;
+
+
+&lt;!-- title: Flashing LSI SAS 9211-8i with EFI --&gt;
+&lt;!-- slug: flashing-lsi-sas-9211-8i-with-efi --&gt;
+&lt;!-- date: 2015-02-08 15:00:17 UTC-05:00 --&gt;
+&lt;!-- tags: storage,firmare --&gt;
+&lt;!-- category: --&gt;
+&lt;!-- link: --&gt;
+&lt;!-- description: --&gt;
+&lt;!-- type: text --&gt;
+&lt;p&gt;I recently went on an upgrade crusade to my homelab, and as part of that, upgraded FreeNAS to 9.3. When I did, there was a non-urgent alert about a driver mismatch for my LSI HBA (FreeNAS expected 16, LSI had 12). Thus, I decided to upgrade the firmware.&lt;/p&gt;
+&lt;div class=&#34;section&#34; id=&#34;directions&#34;&gt;
+&lt;h2&gt;Directions&lt;/h2&gt;
+&lt;p&gt;This assumes that your server can boot directly into an EFI shell. It might require a Shell.efi for some motherboards, but I can&#39;t tell you much more than that, as it boots straight to EFI on mine. I&#39;m going to be flashing mine to IT mode (so it passes the disks through directly to ZFS), but the steps to upgrading the firmware in IR mode is very similar.&lt;/p&gt;
+&lt;p&gt;To do this, you&#39;re going to need a USB drive (formatted with something like &lt;a class=&#34;reference external&#34; href=&#34;http://rufus.akeo.ie/&#34;&gt;Rufus&lt;/a&gt;) and 3 files:&lt;/p&gt;
+&lt;ul class=&#34;simple&#34;&gt;
+&lt;li&gt;sas2flash.efi - The executable that will be doing the flashing&lt;/li&gt;
+&lt;li&gt;mptsas2.rom - The BIOS ROM&lt;/li&gt;
+&lt;li&gt;2118it.bin/2118ir.bin - The firmware binary&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;All three of these files can be found on &lt;a class=&#34;reference external&#34; href=&#34;http://www.lsi.com&#34;&gt;LSI&#39;s website&lt;/a&gt;. The two downloads you need are Installer_PXX_for_UEFI and 9211-8i_Package_PXX_IR_IT_Firmware_BIOS_for_MSDOS_Windows, where XX is the version you want. If you need an older version like I did, you can find them through the &lt;a class=&#34;reference external&#34; href=&#34;http://www.lsi.com/support/pages/download-search.aspx&#34;&gt;download search page&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Now open up Installer_PXX_for_UEFI.zip, find sas2flash_efi_ebc_rel/sas2flash.efi, and put that on the USB drive. Similarly, open up 9211-8i_Package_PXX_IR_IT_Firmware_BIOS_for_MSDOS_Windows.zip, extract Firmware/HBA_9211_8i_IT/2118it.bin and sasbios_rel/mptsas2.rom, and put those on the USB drive as well.&lt;/p&gt;
+&lt;p&gt;Alright, now that we have our files, we can boot into the EFI shell.&lt;/p&gt;
+&lt;p&gt;Verify you&#39;re in the USB root directory with &lt;tt class=&#34;docutils literal&#34;&gt;ls&lt;/tt&gt;. If not, try &lt;tt class=&#34;docutils literal&#34;&gt;map&lt;/tt&gt; to list the devices, &lt;tt class=&#34;docutils literal&#34;&gt;mount &amp;lt;device&amp;gt;&lt;/tt&gt; and then &lt;tt class=&#34;docutils literal&#34;&gt;&amp;lt;device&amp;gt;:&lt;/tt&gt; to mount and enter the USB.&lt;/p&gt;
+&lt;div class=&#34;admonition note&#34;&gt;
+&lt;p class=&#34;first admonition-title&#34;&gt;Note&lt;/p&gt;
+&lt;p class=&#34;last&#34;&gt;For this next step, apparenlty it&#39;s possible to upgrade multiple cards at once. I prefer the slow but safe way, since there&#39;s a (slim) chance of bricking a card, and flashed each card one at a time, manually pulling them in and out.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Verify we can see the hardware, and that it&#39;s a version we want to update:&lt;/p&gt;
+&lt;pre class=&#34;literal-block&#34;&gt;
+sas2flash.efi -listall
+&lt;/pre&gt;
+&lt;p&gt;First we erase the old firmware:&lt;/p&gt;
+&lt;pre class=&#34;literal-block&#34;&gt;
+sas2flash.efi -o -e 6
+&lt;/pre&gt;
+&lt;p&gt;Then we install the new one:&lt;/p&gt;
+&lt;pre class=&#34;literal-block&#34;&gt;
+sas2flash.efi -o -f 2118it.bin -b mptsas2.rom
+&lt;/pre&gt;
+&lt;p&gt;And Bob&#39;s your uncle! Enjoy your new and exciting passthrough disk I/O.&lt;/p&gt;
+&lt;p&gt;Useful links:&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;reference external&#34; href=&#34;http://digitalcardboard.com/blog/2014/07/09/flashing-it-firmware-to-the-lsi-sas-9211-8i-hba-2014-efi-recipe/&#34;&gt;http://digitalcardboard.com/blog/2014/07/09/flashing-it-firmware-to-the-lsi-sas-9211-8i-hba-2014-efi-recipe/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;reference external&#34; href=&#34;http://brycv.com/blog/2012/flashing-it-firmware-to-lsi-sas9211-8i/&#34;&gt;http://brycv.com/blog/2012/flashing-it-firmware-to-lsi-sas9211-8i/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;reference external&#34; href=&#34;http://linustechtips.com/main/topic/104425-flashing-an-lsi-9211-8i-raid-card-to-it-mode-for-zfssoftware-raid-tutorial/&#34;&gt;http://linustechtips.com/main/topic/104425-flashing-an-lsi-9211-8i-raid-card-to-it-mode-for-zfssoftware-raid-tutorial/&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;</content>
     </item>
     
     <item>
       <title>Using Heritrix to archive sites to a directory structure</title>
-      <link>https://smuth.me/post/using-heretrix-to-archive-sites-to-a-directory-structure/</link>
+      <link>/post/using-heretrix-to-archive-sites-to-a-directory-structure/</link>
       <pubDate>Tue, 12 Aug 2014 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/using-heretrix-to-archive-sites-to-a-directory-structure/</guid>
+      <guid>/post/using-heretrix-to-archive-sites-to-a-directory-structure/</guid>
       <description>So I one day I found myself in the market for a good web archiver. Specifically, there were some interesting open directories I wanted to mirror. My ideal solution would be a web front end around wget, but a little bit of research and testing showed that such an architecture would be too simplistic for the level of detail I wanted. There were a couple spider frameworks I tried out, like scrapy, but I wasn&#39;t enthusiastic about the prospect of trying to roll my own solution, when I knew sites like the Internet Archive had the exact kind of thing I had in mind, and they use the Heritrix engine archive their material.</description>
+      <content>&lt;div class=&#34;document&#34;&gt;
+
+
+&lt;!-- title: Using Heritrix to archive sites to a directory structure --&gt;
+&lt;!-- slug: using-heritrix-to-archive-sites-to-a-directory-structure --&gt;
+&lt;!-- date: 2014-08-12 11:47:27 UTC-04:00 --&gt;
+&lt;!-- tags: heritrix archive --&gt;
+&lt;!-- link: --&gt;
+&lt;!-- description: --&gt;
+&lt;!-- type: text --&gt;
+&lt;p&gt;So I one day I found myself in the market for a good web archiver. Specifically, there were some interesting open directories I wanted to mirror. My ideal solution would be a web front end around &lt;a class=&#34;reference external&#34; href=&#34;http://www.gnu.org/software/wget/manual/wget.html&#34;&gt;wget&lt;/a&gt;, but a little bit of research and testing showed that such an architecture would be too simplistic for the level of detail I wanted. There were a couple spider frameworks I tried out, like &lt;a class=&#34;reference external&#34; href=&#34;http://scrapy.org/&#34;&gt;scrapy&lt;/a&gt;, but I wasn&#39;t enthusiastic about the prospect of trying to roll my own solution, when I knew sites like the &lt;a class=&#34;reference external&#34; href=&#34;http://archive.org&#34;&gt;Internet Archive&lt;/a&gt; had the exact kind of thing I had in mind, and they use the &lt;a class=&#34;reference external&#34; href=&#34;https://webarchive.jira.com/wiki/display/Heritrix/Heritrix&#34;&gt;Heritrix&lt;/a&gt; engine archive their material. The &lt;a class=&#34;reference external&#34; href=&#34;http://en.wikipedia.org/wiki/Heritrix&#34;&gt;Heritrix Wikipedia page&lt;/a&gt; mentions that it can output in the same directory format as wget (perfect!), but there&#39;s no citation for that, and the Heretrix documentation is unorganized, to say the least.&lt;/p&gt;
+&lt;div class=&#34;section&#34; id=&#34;setting-it-up&#34;&gt;
+&lt;h2&gt;Setting it up&lt;/h2&gt;
+&lt;div class=&#34;section&#34; id=&#34;software&#34;&gt;
+&lt;h3&gt;Software&lt;/h3&gt;
+&lt;p&gt;I used Heritrix 3.2.0, the most recent stable version, for this project.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section&#34; id=&#34;steps&#34;&gt;
+&lt;h3&gt;Steps&lt;/h3&gt;
+&lt;p&gt;This is not going to be a full tutorial on how to use Heritrix. Be sure to read the &lt;a class=&#34;reference external&#34; href=&#34;https://webarchive.jira.com/wiki/display/Heritrix/Heritrix#Heritrix-Documentation&#34;&gt;documentation&lt;/a&gt;, and to read the default job configuration file before starting a large job.&lt;/p&gt;
+&lt;p&gt;Install Heritrix as per the instructions and get it started. Navigate to the web interface and create a new job with the standard configuration.&lt;/p&gt;
+&lt;p&gt;Next we want to edit the disposition chain, which starts at line 335 in my default configuration. The first bean defined should be the &lt;tt class=&#34;docutils literal&#34;&gt;warcWriter&lt;/tt&gt;, which, obviously, writes out scraped content to WARC files. WARC files are perfect for preserving websites exactly how they were accessed, but are a little too clumsy to be convenient.&lt;/p&gt;
+&lt;p&gt;After the WARC bean, add the follow code:&lt;/p&gt;
+&lt;pre class=&#34;code xml literal-block&#34;&gt;
+&lt;span class=&#34;name tag&#34;&gt;&amp;lt;bean&lt;/span&gt; &lt;span class=&#34;name attribute&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;literal string&#34;&gt;&amp;quot;mirrorWriter&amp;quot;&lt;/span&gt; &lt;span class=&#34;name attribute&#34;&gt;class=&lt;/span&gt;&lt;span class=&#34;literal string&#34;&gt;&amp;quot;org.archive.modules.writer.MirrorWriterProcessor&amp;quot;&lt;/span&gt;&lt;span class=&#34;name tag&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;name tag&#34;&gt;&amp;lt;/bean&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;Then, in the &lt;tt class=&#34;docutils literal&#34;&gt;dispositionProcessors&lt;/tt&gt; bean, remove the line &lt;tt class=&#34;docutils literal&#34;&gt;&amp;lt;ref &lt;span class=&#34;pre&#34;&gt;bean=&amp;quot;warcWriter&amp;quot;/&amp;gt;&lt;/span&gt;&lt;/tt&gt; from the the &lt;tt class=&#34;docutils literal&#34;&gt;processors&lt;/tt&gt; list, and add &lt;tt class=&#34;docutils literal&#34;&gt;&amp;lt;ref &lt;span class=&#34;pre&#34;&gt;bean=&amp;quot;mirrorWriter&amp;quot;/&amp;gt;&lt;/span&gt;&lt;/tt&gt;.&lt;/p&gt;
+&lt;p&gt;That&#39;s pretty much all that&#39;s needed to get started. There are more parameters that can be tweaked, which can be found in the &lt;a class=&#34;reference external&#34; href=&#34;http://builds.archive.org/javadoc/heritrix-3.2.0/org/archive/modules/writer/MirrorWriterProcessor.html&#34;&gt;3.2.0 Javadoc&lt;/a&gt;, but the defaults are not anything surprising.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;</content>
     </item>
     
     <item>
       <title>Check_mk and FreeNAS, Pt. 3</title>
-      <link>https://smuth.me/post/check_mk-and-freenas-pt-3/</link>
+      <link>/post/check_mk-and-freenas-pt-3/</link>
       <pubDate>Thu, 10 Jul 2014 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/check_mk-and-freenas-pt-3/</guid>
+      <guid>/post/check_mk-and-freenas-pt-3/</guid>
       <description>A continuation of Check_mk and FreeNAS, Pt. 2
 Now that we have all our smart data nicely set up, let&#39;s see if we can&#39;t get some stats on I/O speed. I&#39;m pretty sure FreeNAS is supposed to have a I/O section in its &amp;quot;Reports&amp;quot; section, but for whatever reason, it&#39;s not in my install, and I&#39;d like to have the data in Nagios in any case.
 Just like with the SMART data, we&#39;re going to write a small script that the check_mk agent can use.</description>
+      <content>&lt;div class=&#34;document&#34;&gt;
+
+
+&lt;!-- title: Check_mk and FreeNAS, Pt. 3 --&gt;
+&lt;!-- slug: check_mk-and-freenas-pt-3 --&gt;
+&lt;!-- date: 2014-07-10 11:44:19 UTC-04:00 --&gt;
+&lt;!-- tags: check_mk,FreeNAS,monitoring --&gt;
+&lt;!-- link: --&gt;
+&lt;!-- description: --&gt;
+&lt;!-- type: text --&gt;
+&lt;p&gt;A continuation of Check_mk and FreeNAS, Pt. 2&lt;/p&gt;
+&lt;p&gt;Now that we have all our smart data nicely set up, let&#39;s see if we can&#39;t get some stats on I/O speed. I&#39;m pretty sure FreeNAS is supposed to have a I/O section in its &amp;quot;Reports&amp;quot; section, but for whatever reason, it&#39;s not in my install, and I&#39;d like to have the data in Nagios in any case.&lt;/p&gt;
+&lt;p&gt;Just like with the SMART data, we&#39;re going to write a small script that the check_mk agent can use. Unlike the SMART script, getting IO stats is incredibly easy.&lt;/p&gt;
+&lt;p&gt;Yep, that&#39;s all it is. We&#39;re only really interesting in the drives being used in ZFS, but you could open it up to all drives if you wanted to.&lt;/p&gt;
+&lt;p&gt;Next up is to let check_mk be able to recognize the agent&#39;s output. The check script that I use can be found &lt;a class=&#34;reference external&#34; href=&#34;/check_mk_freenas_iostat/iostat&#34;&gt;here&lt;/a&gt;. It should be placed in the &amp;quot;checks/&amp;quot; directory of your check_mk install.&lt;/p&gt;
+&lt;p&gt;I also created a quick template for pnp4nagios, found &lt;a class=&#34;reference external&#34; href=&#34;/check_mk_freenas_iostat/check_mk-iostat.php&#34;&gt;here&lt;/a&gt;, which should be placed in the &amp;quot;templates/&amp;quot; directory.&lt;/p&gt;
+&lt;p&gt;After all this, we&#39;ve finally got a solid set up for tracking disks in FreeNAS. For each disk, there will be three associated services: SMART data, temperature (taken from the SMART data), and iostat data.&lt;/p&gt;
+&lt;/div&gt;</content>
     </item>
     
     <item>
       <title>Check_mk and FreeNAS, Pt. 2</title>
-      <link>https://smuth.me/post/check_mk-and-freenas-pt-2/</link>
+      <link>/post/check_mk-and-freenas-pt-2/</link>
       <pubDate>Fri, 25 Apr 2014 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/check_mk-and-freenas-pt-2/</guid>
+      <guid>/post/check_mk-and-freenas-pt-2/</guid>
       <description>A continuation of Check_mk and FreeNAS, Pt. 1.
 So I&#39;ve got my check_mk on set up on my NAS, and it&#39;s monitoring stuff beautifully. However, it&#39;s not monitoring something very near and dear to my heart for this server: S.M.A.R.T. data. FreeNAS comes with smartctl, and there&#39;s already S.M.A.R.T. data plugins for the linux agents, so I figured this wouldn&#39;t be a big deal. And I was right! All I had to do was add the following script to my plugins/ folder for check_mk to find, and the server picked it up automatically.</description>
+      <content>&lt;div class=&#34;document&#34;&gt;
+
+
+&lt;!-- title: Check_mk and FreeNAS, Pt. 2 --&gt;
+&lt;!-- slug: check_mk-and-freenas-pt-2 --&gt;
+&lt;!-- date: 2014/04/25 11:22:01 --&gt;
+&lt;!-- tags: check_mk,FreeNAS,monitoring --&gt;
+&lt;!-- link: --&gt;
+&lt;!-- description: --&gt;
+&lt;!-- type: text --&gt;
+&lt;p&gt;A continuation of Check_mk and FreeNAS, Pt. 1.&lt;/p&gt;
+&lt;p&gt;So I&#39;ve got my check_mk on set up on my NAS, and it&#39;s monitoring stuff beautifully. However, it&#39;s not monitoring something very near and dear to my heart for this server: S.M.A.R.T. data. FreeNAS comes with smartctl, and there&#39;s already S.M.A.R.T. data plugins for the linux agents, so I figured this wouldn&#39;t be a big deal. And I was right! All I had to do was add the following script to my plugins/ folder for check_mk to find, and the server picked it up automatically.&lt;/p&gt;
+&lt;div class=&#34;admonition note&#34;&gt;
+&lt;p class=&#34;first admonition-title&#34;&gt;Note&lt;/p&gt;
+&lt;p class=&#34;last&#34;&gt;The linux script has a lot fancier checking for edge cases. I figured FreeNAS would be homogeneous enough that it wouldn&#39;t be worth converting all those edge cases, so this is a very simple script, shared on a &amp;quot;works for me&amp;quot; basis.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;</content>
     </item>
     
     <item>
       <title>Check_mk and FreeNAS</title>
-      <link>https://smuth.me/post/check_mk-and-freenas/</link>
+      <link>/post/check_mk-and-freenas/</link>
       <pubDate>Sun, 23 Feb 2014 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/check_mk-and-freenas/</guid>
+      <guid>/post/check_mk-and-freenas/</guid>
       <description>Note
 Software involved:
 FreeNAS 9.2.0 OMD 1.10 (check_mk 1.2.2p3)   FreeNAS is great, and the web interface makes it easy and simple to understand my NAS&#39;s overall structure. However, my favored method of monitoring in my homelab is OMD with Check_mk, while FreeNAS prefers a self-contained collectd solution. We&#39;re in luck however, in that FreeNAS is heavily based on FreeBSD, which check_mk happens to have a plugin for, so it shouldn&#39;t be too hard to set things up the way I like them.</description>
+      <content>&lt;div class=&#34;document&#34;&gt;
+
+
+&lt;!-- title: Check_mk and FreeNAS --&gt;
+&lt;!-- slug: check_mk-and-freenas --&gt;
+&lt;!-- date: 2014/02/23 15:56:35 --&gt;
+&lt;!-- tags: FreeNAS, python, check_mk --&gt;
+&lt;!-- link: --&gt;
+&lt;!-- description: --&gt;
+&lt;!-- type: text --&gt;
+&lt;div class=&#34;admonition note&#34;&gt;
+&lt;p class=&#34;first admonition-title&#34;&gt;Note&lt;/p&gt;
+&lt;p&gt;Software involved:&lt;/p&gt;
+&lt;ul class=&#34;last simple&#34;&gt;
+&lt;li&gt;FreeNAS 9.2.0&lt;/li&gt;
+&lt;li&gt;OMD 1.10 (check_mk 1.2.2p3)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;p&gt;FreeNAS is great, and the web interface makes it easy and simple to understand my NAS&#39;s overall structure. However, my favored method of monitoring in my homelab is OMD with Check_mk, while FreeNAS prefers a self-contained collectd solution. We&#39;re in luck however, in that FreeNAS is heavily based on FreeBSD, which check_mk happens to have a plugin for, so it shouldn&#39;t be too hard to set things up the way I like them. There are two possible ways to do this:&lt;/p&gt;
+&lt;ul class=&#34;simple&#34;&gt;
+&lt;li&gt;Enable inetd and point it to the check_mk_agent&lt;/li&gt;
+&lt;li&gt;Call check_mk_agent over ssh through as shown in the &lt;a class=&#34;reference external&#34; href=&#34;http://mathias-kettner.com/checkmk_datasource_programs.html&#34;&gt;datasource programs&lt;/a&gt; documentation&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I decided to go the second way, as I prefer to avoid making manual changes to FreeNAS if I can avoid it.&lt;/p&gt;
+&lt;p&gt;If you do decided to go the inetd route, &lt;a class=&#34;reference external&#34; href=&#34;http://forums.freenas.org/index.php?threads/activation-of-inetd-server.3926/&#34;&gt;this thread&lt;/a&gt; may come in useful.&lt;/p&gt;
+&lt;div class=&#34;section&#34; id=&#34;agent-setup&#34;&gt;
+&lt;h2&gt;Agent Setup&lt;/h2&gt;
+&lt;p&gt;The first thing we need to do is set up a user with a home directory where we can store the check_mk_agent program. If you already have a non-root user set up for yourself (which is good practice), that will work perfectly fine (they may need root access to collect certain data points). If you want to be more secure, you can set up a check_mk-only user, and limit it to just the agent command, which I will explain below.&lt;/p&gt;
+&lt;p&gt;Once the user is set up with a writeable home directory, it&#39;s as simple as copying check_mk_agent.freebsd into the home directory. Run it once or twice to make sure it&#39;s collecting data correctly.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section&#34; id=&#34;check-mk-setup&#34;&gt;
+&lt;h2&gt;Check_mk setup&lt;/h2&gt;
+&lt;p&gt;From here it&#39;s basically following the instructions on the &lt;a class=&#34;reference external&#34; href=&#34;http://mathias-kettner.com/checkmk_datasource_programs.html&#34;&gt;datasource programs&lt;/a&gt; documentation link. Here&#39;s a quick overview of the steps involved:&lt;/p&gt;
+&lt;ol class=&#34;arabic&#34;&gt;
+&lt;li&gt;&lt;p class=&#34;first&#34;&gt;Add datasource programs configuration entry to main.mk. It will looks something like this:&lt;/p&gt;
+&lt;pre class=&#34;code python literal-block&#34;&gt;
+&lt;span class=&#34;name&#34;&gt;datasource_programs&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;punctuation&#34;&gt;[&lt;/span&gt;
+  &lt;span class=&#34;punctuation&#34;&gt;(&lt;/span&gt; &lt;span class=&#34;literal string double&#34;&gt;&amp;quot;ssh -l omd_user &amp;lt;IP&amp;gt; check_mk_agent&amp;quot;&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;punctuation&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;literal string single&#34;&gt;&#39;ssh&#39;&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;],&lt;/span&gt; &lt;span class=&#34;name&#34;&gt;ALL_HOSTS&lt;/span&gt; &lt;span class=&#34;punctuation&#34;&gt;),&lt;/span&gt;
+&lt;span class=&#34;punctuation&#34;&gt;]&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class=&#34;first&#34;&gt;Set up password-less key authentication ssh access for omd_user to FreeNAS&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class=&#34;first&#34;&gt;(Optional) Limit omd_user to onyl check_mk_agent command by placing command=&amp;quot;check_mk_agent&amp;quot;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class=&#34;first&#34;&gt;Add ssh tag to FreeNAS host, through WATO or configuration files&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class=&#34;first&#34;&gt;Enjoy the pretty graphs and trends!&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section&#34; id=&#34;tweaks&#34;&gt;
+&lt;h2&gt;Tweaks&lt;/h2&gt;
+&lt;p&gt;So we&#39;ve got everything set up, but not everything is perfect.&lt;/p&gt;
+&lt;div class=&#34;section&#34; id=&#34;network&#34;&gt;
+&lt;h3&gt;Network&lt;/h3&gt;
+&lt;p&gt;The first thing that I noticed was missing was a network interface counter. check_mk_agent was outputting a &#39;netctr&#39; section, which seemed to have all the necessary information, but it wasn&#39;t being recognized in check-mk inventory, as it&#39;s been superseeded by lnx_if. It&#39;s possible to re-enable netctr, but not on a per-host basis.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;</content>
     </item>
     
     <item>
       <title>BASH Documentation</title>
-      <link>https://smuth.me/post/bash-documentation/</link>
+      <link>/post/bash-documentation/</link>
       <pubDate>Mon, 13 Jan 2014 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/bash-documentation/</guid>
+      <guid>/post/bash-documentation/</guid>
       <description>One of the things that always bothers me is lack of proper documentation. Now, I&amp;rsquo;m lazy just like everyone else, but if I&amp;rsquo;m going to document something, I prefer to do it properly and keep it up to date. I&amp;rsquo;ve inhierited a nice suite of bash scripts, which aren&amp;rsquo;t really complicated, but they all have the same copy &amp;amp; pasted header that&amp;rsquo;s dated from 2003. Not exactly helpful.
 So while I have a wiki that explains how some of the processes work on a higher level, it would be nice to have clean documentation in my bash scripts.</description>
+      <content>&lt;p&gt;One of the things that always bothers me is lack of proper documentation. Now, I&amp;rsquo;m lazy just like everyone else, but if I&amp;rsquo;m going to document something, I prefer to do it properly and keep it up to date. I&amp;rsquo;ve inhierited a nice suite of bash scripts, which aren&amp;rsquo;t really complicated, but they all have the same copy &amp;amp; pasted header that&amp;rsquo;s dated from 2003. Not exactly helpful.&lt;/p&gt;
+&lt;p&gt;So while I have a wiki that explains how some of the processes work on a higher level, it would be nice to have clean documentation in my bash scripts. Ideally, it would be embeddable, exportable and human readable. Basically, I shouldn&amp;rsquo;t have to maintain two files, I should be able to paste it somewhere else if need be, and I should be able to maintain it without any external tools whatsoever, if I wanted to.&lt;/p&gt;
+&lt;p&gt;Here are a list of options I found while browsing around:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The old-fashioned embedded comments&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://launchpad.net/bashdoc&#34;&gt;bashdoc&lt;/a&gt; (awk + ReST structure via python&amp;rsquo;s docutils)&lt;/li&gt;
+&lt;li&gt;embedded Perl POD (via a &lt;a href=&#34;http://bahut.alma.ch/2007/08/embedding-documentation-in-shell-script_16.html&#34;&gt;heredoc hack&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://rfsber.home.xs4all.nl/Robo/robodoc.html&#34;&gt;ROBODoc&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Of these choices, POD seems a bit bloated to be inside a script, and ROBODoc looks way overblown for my simple needs, so I&amp;rsquo;ve decided to go with bashdoc. I&amp;rsquo;m already working with ReST, via this blog, and it fits pretty much all the criteria. Plus, it has few dependencies (awk, bash and python&amp;rsquo;s docutils) and doesn&amp;rsquo;t require a package for itself, so I wouldn&amp;rsquo;t feel bad about setting this up on production servers (although I should really set it up as a git hook in the script repo or something). However, documentation for bashdoc is quite limited (irony at it&amp;rsquo;s finest). The best way to figure out what is going on is to read lib/basic.awk, and the docutils source code, which isn&amp;rsquo;t exactly everyone&amp;rsquo;s cup of tea. That said, it shouldn&amp;rsquo;t be too difficult to build a small template I can copy and paste everywhere, which will hoepfully be more useful than the current header.&lt;/p&gt;
+</content>
     </item>
     
     <item>
       <title>Fun with Basic PHP Optimization</title>
-      <link>https://smuth.me/post/basic-php-optimization/</link>
+      <link>/post/basic-php-optimization/</link>
       <pubDate>Thu, 09 Jan 2014 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/basic-php-optimization/</guid>
+      <guid>/post/basic-php-optimization/</guid>
       <description>A while ago I came across a full-featured PHP application for controlling a daemon. It worked well with a small data set, but quickly became laggy with a dataset numbering in the thousands. Admittedly, it really wasn&amp;rsquo;t built for that kind of load, so I removed it and controlled the daemon manually, which wasn&amp;rsquo;t a big deal.
 Then a while later, I came across a post by someone who managed to mitigate the problem by shifting a particularly expensive operation to an external python program.</description>
+      <content>&lt;p&gt;A while ago I came across a full-featured PHP application for controlling a daemon. It worked well with a small data set, but quickly became laggy with a dataset numbering in the thousands. Admittedly, it really wasn&amp;rsquo;t built for that kind of load, so I removed it and controlled the daemon manually, which wasn&amp;rsquo;t a big deal.&lt;/p&gt;
+&lt;p&gt;Then a while later, I came across a post by someone who managed to mitigate the problem by shifting a particularly expensive operation to an external python program. Obviously, this was not exactly the most elegant solution, so I decided to take a look at the problematic section of code.&lt;/p&gt;
+&lt;p&gt;It looked something like this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-php&#34; data-lang=&#34;php&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;?&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;php&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; ($i &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;; $i&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;count&lt;/span&gt;($req&lt;span style=&#34;color:#f92672&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;val&lt;/span&gt;); $i&lt;span style=&#34;color:#f92672&#34;&gt;+=&lt;/span&gt;$cnt) {
+  $output[$req&lt;span style=&#34;color:#f92672&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;val&lt;/span&gt;[$i]] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;array_slice&lt;/span&gt;($req&lt;span style=&#34;color:#f92672&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;val&lt;/span&gt;, $i&lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, $cnt&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;);
+}
+&lt;span style=&#34;color:#75715e&#34;&gt;?&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Looks pretty basic, right? It cycles through an array ($req) and splits it into a new dictionary ($output) based on a fixed length ($cnt). However, if we turn this into a generic big O structure, with the values borrowed from &lt;a href=&#34;http://stackoverflow.com/a/2484455&#34;&gt;this serverfault post&lt;/a&gt;, the problem quickly becomes apparent.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-php&#34; data-lang=&#34;php&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;?&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;php&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; ($i &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;; $i&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;O&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;n&lt;/span&gt;); $i&lt;span style=&#34;color:#f92672&#34;&gt;+=&lt;/span&gt;$cnt)
+  $output[$req&lt;span style=&#34;color:#f92672&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;val&lt;/span&gt;[$i]] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;O&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;n&lt;/span&gt;)
+&lt;span style=&#34;color:#75715e&#34;&gt;?&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Taking into account the for loop, this would appear to mean that the operation is O(2n&lt;!-- raw HTML omitted --&gt;2&lt;!-- raw HTML omitted --&gt;), in contrast to the very similar &lt;a href=&#34;http://www.php.net/manual/en/function.array-chunk.php&#34;&gt;array_chunk&lt;/a&gt; O(n) function. So how do we optimize this? The most important thing to do is make it so php can complete this in one loop over the array. Everything else will be a nice improvement, but when scaling, the big O is king.&lt;/p&gt;
+&lt;p&gt;Here&amp;rsquo;s the new code:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-php&#34; data-lang=&#34;php&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;?&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;php&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;foreach&lt;/span&gt;($req&lt;span style=&#34;color:#f92672&#34;&gt;-&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;val&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; $index&lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt;$value)
+{
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt;($index &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; $cnt &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;)
+  {
+    $current_index &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; $value;
+    $output[$current_index] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;array&lt;/span&gt;();
+  }
+  &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt;
+    $output[$current_index][] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; $value;
+}
+&lt;span style=&#34;color:#75715e&#34;&gt;?&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;We&amp;rsquo;ve dropped the for/count() loop in favor of foreach, and eliminated slicing in favor of appending to newly created elements. In a real world test, this cut down the response time of the module from 12s to 4s on average. A pretty big improvement for a pretty small change!&lt;/p&gt;
+</content>
     </item>
     
     <item>
       <title>Welcome to my blog</title>
-      <link>https://smuth.me/post/welcome-to-my-blog/</link>
+      <link>/post/welcome-to-my-blog/</link>
       <pubDate>Thu, 09 Jan 2014 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/welcome-to-my-blog/</guid>
+      <guid>/post/welcome-to-my-blog/</guid>
       <description>Hopefully I&amp;rsquo;ll be able to build this into a little repository of my tips, tricks and hacks as I navigate the strange and wonderful world of information technology. Maybe I&amp;rsquo;ll even improve my writing, or help someone out with an obscure problem. The possibilities are endless! (For specific definitions of endless.)</description>
+      <content>&lt;p&gt;Hopefully I&amp;rsquo;ll be able to build this into a little repository of my tips, tricks and hacks as I navigate the strange and wonderful world of information technology. Maybe I&amp;rsquo;ll even improve my writing, or help someone out with an obscure problem. The possibilities are endless! (For specific definitions of endless.)&lt;/p&gt;
+</content>
     </item>
     
   </channel>

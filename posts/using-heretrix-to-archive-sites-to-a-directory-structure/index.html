@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Using Heritrix to archive sites to a directory structure :: cat /dev/null &gt; /proc/mind</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="So I one day I found myself in the market for a good web archiver. Specifically, there were some interesting open directories I wanted to mirror. My ideal solution would be a web front end around wget, but a little bit of research and testing showed that such an architecture would be too simplistic for the level of detail I wanted. There were a couple spider frameworks I tried out, like scrapy, but I wasn&#39;t enthusiastic about the prospect of trying to roll my own solution, when I knew sites like the Internet Archive had the exact kind of thing I had in mind, and they use the Heritrix engine archive their material." />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://smuth.me/posts/using-heretrix-to-archive-sites-to-a-directory-structure/" />
+
+
+
+
+<link rel="stylesheet" href="https://smuth.me/assets/style.css">
+
+  <link rel="stylesheet" href="https://smuth.me/assets/blue.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://smuth.me/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://smuth.me/img/favicon/blue.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Using Heritrix to archive sites to a directory structure">
+<meta property="og:description" content="So I one day I found myself in the market for a good web archiver. Specifically, there were some interesting open directories I wanted to mirror. My ideal solution would be a web front end around wget, but a little bit of research and testing showed that such an architecture would be too simplistic for the level of detail I wanted. There were a couple spider frameworks I tried out, like scrapy, but I wasn&#39;t enthusiastic about the prospect of trying to roll my own solution, when I knew sites like the Internet Archive had the exact kind of thing I had in mind, and they use the Heritrix engine archive their material." />
+<meta property="og:url" content="https://smuth.me/posts/using-heretrix-to-archive-sites-to-a-directory-structure/" />
+<meta property="og:site_name" content="cat /dev/null &gt; /proc/mind" />
+
+  
+    <meta property="og:image" content="https://smuth.me/img/favicon/blue.png">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2014-08-12 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="blue">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    cat /dev/null &gt; /proc/mind
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="https://github.com/smuth4">Github</a></li>
+        
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="https://github.com/smuth4">Github</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://smuth.me/posts/using-heretrix-to-archive-sites-to-a-directory-structure/">Using Heritrix to archive sites to a directory structure</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2014-08-12
+        
+      </span>
+    
+    
+    
+  </div>
+
+  
+  <span class="post-tags">
+    
+    #<a href="https://smuth.me/tags/heritrix/">heritrix</a>&nbsp;
+    
+    #<a href="https://smuth.me/tags/archive/">archive</a>&nbsp;
+    
+  </span>
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <div class="document">
+
+
+<!-- title: Using Heritrix to archive sites to a directory structure -->
+<!-- slug: using-heritrix-to-archive-sites-to-a-directory-structure -->
+<!-- date: 2014-08-12 11:47:27 UTC-04:00 -->
+<!-- tags: heritrix archive -->
+<!-- link: -->
+<!-- description: -->
+<!-- type: text -->
+<p>So I one day I found myself in the market for a good web archiver. Specifically, there were some interesting open directories I wanted to mirror. My ideal solution would be a web front end around <a class="reference external" href="http://www.gnu.org/software/wget/manual/wget.html">wget</a>, but a little bit of research and testing showed that such an architecture would be too simplistic for the level of detail I wanted. There were a couple spider frameworks I tried out, like <a class="reference external" href="http://scrapy.org/">scrapy</a>, but I wasn't enthusiastic about the prospect of trying to roll my own solution, when I knew sites like the <a class="reference external" href="http://archive.org">Internet Archive</a> had the exact kind of thing I had in mind, and they use the <a class="reference external" href="https://webarchive.jira.com/wiki/display/Heritrix/Heritrix">Heritrix</a> engine archive their material. The <a class="reference external" href="http://en.wikipedia.org/wiki/Heritrix">Heritrix Wikipedia page</a> mentions that it can output in the same directory format as wget (perfect!), but there's no citation for that, and the Heretrix documentation is unorganized, to say the least.</p>
+<div class="section" id="setting-it-up">
+<h2>Setting it up</h2>
+<div class="section" id="software">
+<h3>Software</h3>
+<p>I used Heritrix 3.2.0, the most recent stable version, for this project.</p>
+</div>
+<div class="section" id="steps">
+<h3>Steps</h3>
+<p>This is not going to be a full tutorial on how to use Heritrix. Be sure to read the <a class="reference external" href="https://webarchive.jira.com/wiki/display/Heritrix/Heritrix#Heritrix-Documentation">documentation</a>, and to read the default job configuration file before starting a large job.</p>
+<p>Install Heritrix as per the instructions and get it started. Navigate to the web interface and create a new job with the standard configuration.</p>
+<p>Next we want to edit the disposition chain, which starts at line 335 in my default configuration. The first bean defined should be the <tt class="docutils literal">warcWriter</tt>, which, obviously, writes out scraped content to WARC files. WARC files are perfect for preserving websites exactly how they were accessed, but are a little too clumsy to be convenient.</p>
+<p>After the WARC bean, add the follow code:</p>
+<pre class="code xml literal-block">
+<span class="name tag">&lt;bean</span> <span class="name attribute">id=</span><span class="literal string">&quot;mirrorWriter&quot;</span> <span class="name attribute">class=</span><span class="literal string">&quot;org.archive.modules.writer.MirrorWriterProcessor&quot;</span><span class="name tag">&gt;</span>
+<span class="name tag">&lt;/bean&gt;</span>
+</pre>
+<p>Then, in the <tt class="docutils literal">dispositionProcessors</tt> bean, remove the line <tt class="docutils literal">&lt;ref <span class="pre">bean=&quot;warcWriter&quot;/&gt;</span></tt> from the the <tt class="docutils literal">processors</tt> list, and add <tt class="docutils literal">&lt;ref <span class="pre">bean=&quot;mirrorWriter&quot;/&gt;</span></tt>.</p>
+<p>That's pretty much all that's needed to get started. There are more parameters that can be tweaked, which can be found in the <a class="reference external" href="http://builds.archive.org/javadoc/heritrix-3.2.0/org/archive/modules/writer/MirrorWriterProcessor.html">3.2.0 Javadoc</a>, but the defaults are not anything surprising.</p>
+</div>
+</div>
+</div>
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        <span class="button previous">
+            <a href="https://smuth.me/posts/flashing-lsi-sas-9211-8i-with-efi/">
+                <span class="button__icon">←</span>
+                <span class="button__text">Flashing LSI SAS 9211-8i with EFI</span>
+            </a>
+        </span>
+        
+        
+        <span class="button next">
+            <a href="https://smuth.me/posts/check_mk-and-freenas-pt-3/">
+                <span class="button__text">Check_mk and FreeNAS, Pt. 3</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2021 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://smuth.me/assets/main.js"></script>
+<script src="https://smuth.me/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

@@ -1,46 +1,137 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Check_mk on cat /dev/null &gt; /proc/mind</title>
+    <title>check_mk on cat /dev/null &gt; /proc/mind</title>
     <link>https://smuth.me/tags/check_mk/</link>
-    <description>Recent content in Check_mk on cat /dev/null &gt; /proc/mind</description>
+    <description>Recent content in check_mk on cat /dev/null &gt; /proc/mind</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 10 Jul 2014 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://smuth.me/tags/check_mk/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Thu, 10 Jul 2014 00:00:00 +0000</lastBuildDate><atom:link href="https://smuth.me/tags/check_mk/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Check_mk and FreeNAS, Pt. 3</title>
-      <link>https://smuth.me/post/check_mk-and-freenas-pt-3/</link>
+      <link>https://smuth.me/posts/check_mk-and-freenas-pt-3/</link>
       <pubDate>Thu, 10 Jul 2014 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/check_mk-and-freenas-pt-3/</guid>
+      <guid>https://smuth.me/posts/check_mk-and-freenas-pt-3/</guid>
       <description>A continuation of Check_mk and FreeNAS, Pt. 2
 Now that we have all our smart data nicely set up, let&#39;s see if we can&#39;t get some stats on I/O speed. I&#39;m pretty sure FreeNAS is supposed to have a I/O section in its &amp;quot;Reports&amp;quot; section, but for whatever reason, it&#39;s not in my install, and I&#39;d like to have the data in Nagios in any case.
 Just like with the SMART data, we&#39;re going to write a small script that the check_mk agent can use.</description>
+      <content>&lt;div class=&#34;document&#34;&gt;
+
+
+&lt;!-- title: Check_mk and FreeNAS, Pt. 3 --&gt;
+&lt;!-- slug: check_mk-and-freenas-pt-3 --&gt;
+&lt;!-- date: 2014-07-10 11:44:19 UTC-04:00 --&gt;
+&lt;!-- tags: check_mk,FreeNAS,monitoring --&gt;
+&lt;!-- link: --&gt;
+&lt;!-- description: --&gt;
+&lt;!-- type: text --&gt;
+&lt;p&gt;A continuation of Check_mk and FreeNAS, Pt. 2&lt;/p&gt;
+&lt;p&gt;Now that we have all our smart data nicely set up, let&#39;s see if we can&#39;t get some stats on I/O speed. I&#39;m pretty sure FreeNAS is supposed to have a I/O section in its &amp;quot;Reports&amp;quot; section, but for whatever reason, it&#39;s not in my install, and I&#39;d like to have the data in Nagios in any case.&lt;/p&gt;
+&lt;p&gt;Just like with the SMART data, we&#39;re going to write a small script that the check_mk agent can use. Unlike the SMART script, getting IO stats is incredibly easy.&lt;/p&gt;
+&lt;p&gt;Yep, that&#39;s all it is. We&#39;re only really interesting in the drives being used in ZFS, but you could open it up to all drives if you wanted to.&lt;/p&gt;
+&lt;p&gt;Next up is to let check_mk be able to recognize the agent&#39;s output. The check script that I use can be found &lt;a class=&#34;reference external&#34; href=&#34;https://smuth.me/check_mk_freenas_iostat/iostat&#34;&gt;here&lt;/a&gt;. It should be placed in the &amp;quot;checks/&amp;quot; directory of your check_mk install.&lt;/p&gt;
+&lt;p&gt;I also created a quick template for pnp4nagios, found &lt;a class=&#34;reference external&#34; href=&#34;https://smuth.me/check_mk_freenas_iostat/check_mk-iostat.php&#34;&gt;here&lt;/a&gt;, which should be placed in the &amp;quot;templates/&amp;quot; directory.&lt;/p&gt;
+&lt;p&gt;After all this, we&#39;ve finally got a solid set up for tracking disks in FreeNAS. For each disk, there will be three associated services: SMART data, temperature (taken from the SMART data), and iostat data.&lt;/p&gt;
+&lt;/div&gt;</content>
     </item>
     
     <item>
       <title>Check_mk and FreeNAS, Pt. 2</title>
-      <link>https://smuth.me/post/check_mk-and-freenas-pt-2/</link>
+      <link>https://smuth.me/posts/check_mk-and-freenas-pt-2/</link>
       <pubDate>Fri, 25 Apr 2014 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/check_mk-and-freenas-pt-2/</guid>
+      <guid>https://smuth.me/posts/check_mk-and-freenas-pt-2/</guid>
       <description>A continuation of Check_mk and FreeNAS, Pt. 1.
 So I&#39;ve got my check_mk on set up on my NAS, and it&#39;s monitoring stuff beautifully. However, it&#39;s not monitoring something very near and dear to my heart for this server: S.M.A.R.T. data. FreeNAS comes with smartctl, and there&#39;s already S.M.A.R.T. data plugins for the linux agents, so I figured this wouldn&#39;t be a big deal. And I was right! All I had to do was add the following script to my plugins/ folder for check_mk to find, and the server picked it up automatically.</description>
+      <content>&lt;div class=&#34;document&#34;&gt;
+
+
+&lt;!-- title: Check_mk and FreeNAS, Pt. 2 --&gt;
+&lt;!-- slug: check_mk-and-freenas-pt-2 --&gt;
+&lt;!-- date: 2014/04/25 11:22:01 --&gt;
+&lt;!-- tags: check_mk,FreeNAS,monitoring --&gt;
+&lt;!-- link: --&gt;
+&lt;!-- description: --&gt;
+&lt;!-- type: text --&gt;
+&lt;p&gt;A continuation of Check_mk and FreeNAS, Pt. 1.&lt;/p&gt;
+&lt;p&gt;So I&#39;ve got my check_mk on set up on my NAS, and it&#39;s monitoring stuff beautifully. However, it&#39;s not monitoring something very near and dear to my heart for this server: S.M.A.R.T. data. FreeNAS comes with smartctl, and there&#39;s already S.M.A.R.T. data plugins for the linux agents, so I figured this wouldn&#39;t be a big deal. And I was right! All I had to do was add the following script to my plugins/ folder for check_mk to find, and the server picked it up automatically.&lt;/p&gt;
+&lt;div class=&#34;admonition note&#34;&gt;
+&lt;p class=&#34;first admonition-title&#34;&gt;Note&lt;/p&gt;
+&lt;p class=&#34;last&#34;&gt;The linux script has a lot fancier checking for edge cases. I figured FreeNAS would be homogeneous enough that it wouldn&#39;t be worth converting all those edge cases, so this is a very simple script, shared on a &amp;quot;works for me&amp;quot; basis.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;</content>
     </item>
     
     <item>
       <title>Check_mk and FreeNAS</title>
-      <link>https://smuth.me/post/check_mk-and-freenas/</link>
+      <link>https://smuth.me/posts/check_mk-and-freenas/</link>
       <pubDate>Sun, 23 Feb 2014 00:00:00 +0000</pubDate>
       
-      <guid>https://smuth.me/post/check_mk-and-freenas/</guid>
+      <guid>https://smuth.me/posts/check_mk-and-freenas/</guid>
       <description>Note
 Software involved:
 FreeNAS 9.2.0 OMD 1.10 (check_mk 1.2.2p3)   FreeNAS is great, and the web interface makes it easy and simple to understand my NAS&#39;s overall structure. However, my favored method of monitoring in my homelab is OMD with Check_mk, while FreeNAS prefers a self-contained collectd solution. We&#39;re in luck however, in that FreeNAS is heavily based on FreeBSD, which check_mk happens to have a plugin for, so it shouldn&#39;t be too hard to set things up the way I like them.</description>
+      <content>&lt;div class=&#34;document&#34;&gt;
+
+
+&lt;!-- title: Check_mk and FreeNAS --&gt;
+&lt;!-- slug: check_mk-and-freenas --&gt;
+&lt;!-- date: 2014/02/23 15:56:35 --&gt;
+&lt;!-- tags: FreeNAS, python, check_mk --&gt;
+&lt;!-- link: --&gt;
+&lt;!-- description: --&gt;
+&lt;!-- type: text --&gt;
+&lt;div class=&#34;admonition note&#34;&gt;
+&lt;p class=&#34;first admonition-title&#34;&gt;Note&lt;/p&gt;
+&lt;p&gt;Software involved:&lt;/p&gt;
+&lt;ul class=&#34;last simple&#34;&gt;
+&lt;li&gt;FreeNAS 9.2.0&lt;/li&gt;
+&lt;li&gt;OMD 1.10 (check_mk 1.2.2p3)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;p&gt;FreeNAS is great, and the web interface makes it easy and simple to understand my NAS&#39;s overall structure. However, my favored method of monitoring in my homelab is OMD with Check_mk, while FreeNAS prefers a self-contained collectd solution. We&#39;re in luck however, in that FreeNAS is heavily based on FreeBSD, which check_mk happens to have a plugin for, so it shouldn&#39;t be too hard to set things up the way I like them. There are two possible ways to do this:&lt;/p&gt;
+&lt;ul class=&#34;simple&#34;&gt;
+&lt;li&gt;Enable inetd and point it to the check_mk_agent&lt;/li&gt;
+&lt;li&gt;Call check_mk_agent over ssh through as shown in the &lt;a class=&#34;reference external&#34; href=&#34;http://mathias-kettner.com/checkmk_datasource_programs.html&#34;&gt;datasource programs&lt;/a&gt; documentation&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I decided to go the second way, as I prefer to avoid making manual changes to FreeNAS if I can avoid it.&lt;/p&gt;
+&lt;p&gt;If you do decided to go the inetd route, &lt;a class=&#34;reference external&#34; href=&#34;http://forums.freenas.org/index.php?threads/activation-of-inetd-server.3926/&#34;&gt;this thread&lt;/a&gt; may come in useful.&lt;/p&gt;
+&lt;div class=&#34;section&#34; id=&#34;agent-setup&#34;&gt;
+&lt;h2&gt;Agent Setup&lt;/h2&gt;
+&lt;p&gt;The first thing we need to do is set up a user with a home directory where we can store the check_mk_agent program. If you already have a non-root user set up for yourself (which is good practice), that will work perfectly fine (they may need root access to collect certain data points). If you want to be more secure, you can set up a check_mk-only user, and limit it to just the agent command, which I will explain below.&lt;/p&gt;
+&lt;p&gt;Once the user is set up with a writeable home directory, it&#39;s as simple as copying check_mk_agent.freebsd into the home directory. Run it once or twice to make sure it&#39;s collecting data correctly.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section&#34; id=&#34;check-mk-setup&#34;&gt;
+&lt;h2&gt;Check_mk setup&lt;/h2&gt;
+&lt;p&gt;From here it&#39;s basically following the instructions on the &lt;a class=&#34;reference external&#34; href=&#34;http://mathias-kettner.com/checkmk_datasource_programs.html&#34;&gt;datasource programs&lt;/a&gt; documentation link. Here&#39;s a quick overview of the steps involved:&lt;/p&gt;
+&lt;ol class=&#34;arabic&#34;&gt;
+&lt;li&gt;&lt;p class=&#34;first&#34;&gt;Add datasource programs configuration entry to main.mk. It will looks something like this:&lt;/p&gt;
+&lt;pre class=&#34;code python literal-block&#34;&gt;
+&lt;span class=&#34;name&#34;&gt;datasource_programs&lt;/span&gt; &lt;span class=&#34;operator&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;punctuation&#34;&gt;[&lt;/span&gt;
+  &lt;span class=&#34;punctuation&#34;&gt;(&lt;/span&gt; &lt;span class=&#34;literal string double&#34;&gt;&amp;quot;ssh -l omd_user &amp;lt;IP&amp;gt; check_mk_agent&amp;quot;&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;punctuation&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;literal string single&#34;&gt;&#39;ssh&#39;&lt;/span&gt;&lt;span class=&#34;punctuation&#34;&gt;],&lt;/span&gt; &lt;span class=&#34;name&#34;&gt;ALL_HOSTS&lt;/span&gt; &lt;span class=&#34;punctuation&#34;&gt;),&lt;/span&gt;
+&lt;span class=&#34;punctuation&#34;&gt;]&lt;/span&gt;
+&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class=&#34;first&#34;&gt;Set up password-less key authentication ssh access for omd_user to FreeNAS&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class=&#34;first&#34;&gt;(Optional) Limit omd_user to onyl check_mk_agent command by placing command=&amp;quot;check_mk_agent&amp;quot;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class=&#34;first&#34;&gt;Add ssh tag to FreeNAS host, through WATO or configuration files&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class=&#34;first&#34;&gt;Enjoy the pretty graphs and trends!&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class=&#34;section&#34; id=&#34;tweaks&#34;&gt;
+&lt;h2&gt;Tweaks&lt;/h2&gt;
+&lt;p&gt;So we&#39;ve got everything set up, but not everything is perfect.&lt;/p&gt;
+&lt;div class=&#34;section&#34; id=&#34;network&#34;&gt;
+&lt;h3&gt;Network&lt;/h3&gt;
+&lt;p&gt;The first thing that I noticed was missing was a network interface counter. check_mk_agent was outputting a &#39;netctr&#39; section, which seemed to have all the necessary information, but it wasn&#39;t being recognized in check-mk inventory, as it&#39;s been superseeded by lnx_if. It&#39;s possible to re-enable netctr, but not on a per-host basis.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;</content>
     </item>
     
   </channel>

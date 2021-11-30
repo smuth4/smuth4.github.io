@@ -1,0 +1,113 @@
+{
+  "id": 22,
+  "gridPos": {
+    "h": 8,
+    "w": 11,
+    "x": 0,
+    "y": 5
+  },
+  "type": "geomap",
+  "title": "GeoIP",
+  "transformations": [
+    {
+      "id": "labelsToFields",
+      "options": {}
+    },
+    {
+      "id": "merge",
+      "options": {}
+    },
+    {
+      "id": "convertFieldType",
+      "options": {
+        "conversions": [
+          {
+            "destinationType": "number",
+            "targetField": "geoip_latitude"
+          },
+          {
+            "destinationType": "number",
+            "targetField": "geoip_longitude"
+          }
+        ],
+        "fields": {}
+      }
+    }
+  ],
+  "datasource": "Loki",
+  "maxDataPoints": 600,
+  "fieldConfig": {
+    "defaults": {
+      "thresholds": {
+        "mode": "absolute",
+        "steps": [
+          {
+            "color": "green",
+            "value": null
+          },
+          {
+            "color": "red",
+            "value": 80
+          }
+        ]
+      },
+      "mappings": [],
+      "color": {
+        "mode": "thresholds"
+      }
+    },
+    "overrides": []
+  },
+  "options": {
+    "view": {
+      "id": "zero",
+      "lat": 0,
+      "lon": 0,
+      "zoom": 1
+    },
+    "basemap": {
+      "type": "default",
+      "config": {}
+    },
+    "layers": [
+      {
+        "config": {
+          "color": {
+            "fixed": "dark-green"
+          },
+          "fillOpacity": 0.7,
+          "shape": "circle",
+          "showLegend": false,
+          "size": {
+            "field": "Value #A",
+            "fixed": 5,
+            "max": 15,
+            "min": 2
+          }
+        },
+        "location": {
+          "latitude": "geoip_latitude",
+          "longitude": "geoip_longitude",
+          "mode": "coords"
+        },
+        "type": "markers"
+      }
+    ],
+    "controls": {
+      "showZoom": true,
+      "mouseWheelZoom": true,
+      "showAttribution": true,
+      "showScale": false,
+      "showDebug": false
+    }
+  },
+  "targets": [
+    {
+      "expr": "count_over_time(\n  {app=\"vector\"}\n  | json geoip_longitude=\"geoip.longitude\",geoip_latitude=\"geoip.latitude\"\n  | geoip_latitude != \"\"\n  [$__range])",
+      "instant": true,
+      "range": false,
+      "refId": "A"
+    }
+  ],
+  "transparent": true
+}

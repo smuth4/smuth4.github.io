@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Making Terraform work with PowerDNS 4 :: cat /dev/null &gt; /proc/mind</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Edit: This post has been made obsolete by a pull request I opened in the terraform repository: https://github.com/hashicorp/terraform/pull/7819
+I&amp;rsquo;ve really enjoyed using PowerDNS as my DNS server at home. Most people only think of BIND and dnsmasq when it comes to DNS, while ignoring this stable, scalable, secure database-backed offering that powers some really large deployments. But enough proselytizing! I&amp;rsquo;m in the middle of trying to migrate my infrastructure to be controlled via Terraform (mostly)." />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://smuth.me/posts/powerdns-4-with-terraform/" />
+
+
+
+
+<link rel="stylesheet" href="https://smuth.me/assets/style.css">
+
+  <link rel="stylesheet" href="https://smuth.me/assets/blue.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://smuth.me/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://smuth.me/img/favicon/blue.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Making Terraform work with PowerDNS 4">
+<meta property="og:description" content="Edit: This post has been made obsolete by a pull request I opened in the terraform repository: https://github.com/hashicorp/terraform/pull/7819
+I&amp;rsquo;ve really enjoyed using PowerDNS as my DNS server at home. Most people only think of BIND and dnsmasq when it comes to DNS, while ignoring this stable, scalable, secure database-backed offering that powers some really large deployments. But enough proselytizing! I&amp;rsquo;m in the middle of trying to migrate my infrastructure to be controlled via Terraform (mostly)." />
+<meta property="og:url" content="https://smuth.me/posts/powerdns-4-with-terraform/" />
+<meta property="og:site_name" content="cat /dev/null &gt; /proc/mind" />
+
+  
+    <meta property="og:image" content="https://smuth.me/img/favicon/blue.png">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2016-05-01 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="blue">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    cat /dev/null &gt; /proc/mind
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="https://github.com/smuth4">Github</a></li>
+        
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="https://github.com/smuth4">Github</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://smuth.me/posts/powerdns-4-with-terraform/">Making Terraform work with PowerDNS 4</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2016-05-01
+        
+      </span>
+    
+    
+    
+  </div>
+
+  
+  <span class="post-tags">
+    
+    #<a href="https://smuth.me/tags/terraform/">terraform</a>&nbsp;
+    
+    #<a href="https://smuth.me/tags/powerdns/">powerdns</a>&nbsp;
+    
+  </span>
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <p>Edit: This post has been made obsolete by a pull request I opened in the terraform repository: <a href="https://github.com/hashicorp/terraform/pull/7819">https://github.com/hashicorp/terraform/pull/7819</a></p>
+<p>I&rsquo;ve really enjoyed using <a href="https://www.powerdns.com/">PowerDNS</a> as my DNS server at home. Most people only think of <a href="https://www.isc.org/downloads/bind/">BIND</a> and <a href="http://www.thekelleys.org.uk/dnsmasq/doc.html">dnsmasq</a> when it comes to DNS, while ignoring this stable, scalable, secure database-backed offering that powers some really large deployments. But enough proselytizing! I&rsquo;m in the middle of trying to migrate my infrastructure to be controlled via <a href="https://www.terraform.io/">Terraform</a> (mostly). I figure this will help me consolidate and track most of my VPSs and the like.</p>
+<h2 id="the-problem">The problem<a href="#the-problem" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>PowerDNS has a nice HTTP/JSON API that can be used, but it changed URL locations in version 4, from <code>/</code> to <code>/api/v1/</code>, which makes any Terraform changes return <code>powerdns_record.dns: Failed to create PowerDNS Record: Error creating record set: exmaple.com:::A, reason: &quot;Not Found&quot;</code>, which isn&rsquo;t exactly helpful (for the record, that&rsquo;s the error message returned by the API whenever a bad URL is requested).</p>
+<h2 id="the-solution">The solution<a href="#the-solution" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Unfortunately there&rsquo;s no easy fix, short of breaking compatibility for one thing or another. However, what I decided to do was to use <a href="https://www.nginx.com/resources/wiki/">nginx</a> as a reverse proxy for the API. My configuration looks like this:</p>
+<pre tabindex="0"><code>server {
+    listen 8000;
+    server_name _;
+
+    location /api/v1/ {
+        proxy_pass http://localhost:8081/;
+    }
+
+    location / {
+        proxy_pass http://localhost:8081/api/v1/;
+    }
+}
+</code></pre><p>This lets us use both the new and old locations simultaneously. I&rsquo;m sure this can be done in Apache as well, but wasn&rsquo;t up for installing it just to test something so simple.</p>
+
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        <span class="button previous">
+            <a href="https://smuth.me/posts/freebsd-upgrading-php55-to-56/">
+                <span class="button__icon">←</span>
+                <span class="button__text">Upgrading from PHP 5.5 to 5.6 on FreeBSD</span>
+            </a>
+        </span>
+        
+        
+        <span class="button next">
+            <a href="https://smuth.me/posts/blog/">
+                <span class="button__text">Picking a blogging platform.</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2021 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://smuth.me/assets/main.js"></script>
+<script src="https://smuth.me/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

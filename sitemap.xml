@@ -1,235 +1,151 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
-  <url>
-    <loc>https://smuth.me/post/enabling-nfs-proxmox-lxc/</loc>
-    <lastmod>2018-10-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/post/ssh-public-key-shenanigans/</loc>
-    <lastmod>2016-10-19T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/post/proxmox-4-enabling-jumbo-frames/</loc>
-    <lastmod>2016-10-02T15:58:01+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/post/freebsd-upgrading-php55-to-56/</loc>
-    <lastmod>2016-07-31T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/post/powerdns-4-with-terraform/</loc>
-    <lastmod>2016-05-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/post/blog/</loc>
-    <lastmod>2016-04-24T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/post/using-shush-as-a-crontab-wrapper/</loc>
-    <lastmod>2015-04-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/post/flashing-lsi-sas-9211-8i-with-efi/</loc>
-    <lastmod>2015-02-08T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/post/using-heretrix-to-archive-sites-to-a-directory-structure/</loc>
-    <lastmod>2014-08-12T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/post/check_mk-and-freenas-pt-3/</loc>
-    <lastmod>2014-07-10T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/post/check_mk-and-freenas-pt-2/</loc>
-    <lastmod>2014-04-25T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/post/check_mk-and-freenas/</loc>
-    <lastmod>2014-02-23T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/post/bash-documentation/</loc>
-    <lastmod>2014-01-13T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/post/basic-php-optimization/</loc>
-    <lastmod>2014-01-09T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/post/welcome-to-my-blog/</loc>
-    <lastmod>2014-01-09T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/archive/</loc>
-    <lastmod>2014-08-12T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/bash/</loc>
-    <lastmod>2014-01-13T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/categories/</loc>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/check_mk/</loc>
-    <lastmod>2014-07-10T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/cron/</loc>
-    <lastmod>2015-04-11T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/firmware/</loc>
-    <lastmod>2015-02-08T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/freebsd/</loc>
-    <lastmod>2016-07-31T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/freenas/</loc>
-    <lastmod>2014-07-10T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/heritrix/</loc>
-    <lastmod>2014-08-12T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/lxc/</loc>
-    <lastmod>2018-10-11T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/monitoring/</loc>
-    <lastmod>2014-07-10T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/networking/</loc>
-    <lastmod>2016-10-02T15:58:01+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/nfs/</loc>
-    <lastmod>2018-10-11T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/php/</loc>
-    <lastmod>2016-07-31T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/post/</loc>
-    <lastmod>2018-10-11T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/powerdns/</loc>
-    <lastmod>2016-05-01T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/programming/</loc>
-    <lastmod>2014-01-09T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/proxmox/</loc>
-    <lastmod>2018-10-11T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/python/</loc>
-    <lastmod>2014-02-23T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/security/</loc>
-    <lastmod>2016-10-19T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/ssh/</loc>
-    <lastmod>2016-10-19T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/storage/</loc>
-    <lastmod>2015-02-08T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/</loc>
-    <lastmod>2014-08-12T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/technology/</loc>
-    <lastmod>2016-04-24T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://smuth.me/tags/terraform/</loc>
-    <lastmod>2016-05-01T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
   <url>
     <loc>https://smuth.me/</loc>
+    <lastmod>2021-11-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/grafana/</loc>
+    <lastmod>2021-11-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/loki/</loc>
+    <lastmod>2021-11-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/posts/</loc>
+    <lastmod>2021-11-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/</loc>
+    <lastmod>2021-11-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/posts/vector-loki-geoip/</loc>
+    <lastmod>2021-11-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/vector/</loc>
+    <lastmod>2021-11-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/gluster/</loc>
+    <lastmod>2020-08-02T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/posts/gluster-zero-byte-files/</loc>
+    <lastmod>2020-08-02T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/posts/git-diff-deleted/</loc>
+    <lastmod>2020-02-08T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/git/</loc>
+    <lastmod>2020-02-08T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/posts/enabling-nfs-proxmox-lxc/</loc>
     <lastmod>2018-10-11T00:00:00+00:00</lastmod>
-    <priority>0</priority>
+  </url><url>
+    <loc>https://smuth.me/tags/lxc/</loc>
+    <lastmod>2018-10-11T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/nfs/</loc>
+    <lastmod>2018-10-11T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/proxmox/</loc>
+    <lastmod>2018-10-11T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/security/</loc>
+    <lastmod>2016-10-19T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/ssh/</loc>
+    <lastmod>2016-10-19T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/posts/ssh-public-key-shenanigans/</loc>
+    <lastmod>2016-10-19T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/posts/proxmox-4-enabling-jumbo-frames/</loc>
+    <lastmod>2016-10-02T15:58:01+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/networking/</loc>
+    <lastmod>2016-10-02T15:58:01+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/freebsd/</loc>
+    <lastmod>2016-07-31T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/php/</loc>
+    <lastmod>2016-07-31T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/posts/freebsd-upgrading-php55-to-56/</loc>
+    <lastmod>2016-07-31T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/posts/powerdns-4-with-terraform/</loc>
+    <lastmod>2016-05-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/powerdns/</loc>
+    <lastmod>2016-05-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/terraform/</loc>
+    <lastmod>2016-05-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/posts/blog/</loc>
+    <lastmod>2016-04-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/technology/</loc>
+    <lastmod>2016-04-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/cron/</loc>
+    <lastmod>2015-04-11T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/posts/using-shush-as-a-crontab-wrapper/</loc>
+    <lastmod>2015-04-11T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/firmware/</loc>
+    <lastmod>2015-02-08T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/posts/flashing-lsi-sas-9211-8i-with-efi/</loc>
+    <lastmod>2015-02-08T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/storage/</loc>
+    <lastmod>2015-02-08T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/archive/</loc>
+    <lastmod>2014-08-12T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/heritrix/</loc>
+    <lastmod>2014-08-12T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/posts/using-heretrix-to-archive-sites-to-a-directory-structure/</loc>
+    <lastmod>2014-08-12T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/check_mk/</loc>
+    <lastmod>2014-07-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/posts/check_mk-and-freenas-pt-3/</loc>
+    <lastmod>2014-07-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/freenas/</loc>
+    <lastmod>2014-07-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/monitoring/</loc>
+    <lastmod>2014-07-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/posts/check_mk-and-freenas-pt-2/</loc>
+    <lastmod>2014-04-25T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/posts/check_mk-and-freenas/</loc>
+    <lastmod>2014-02-23T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/python/</loc>
+    <lastmod>2014-02-23T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/bash/</loc>
+    <lastmod>2014-01-13T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/posts/bash-documentation/</loc>
+    <lastmod>2014-01-13T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/posts/basic-php-optimization/</loc>
+    <lastmod>2014-01-09T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/tags/programming/</loc>
+    <lastmod>2014-01-09T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/posts/welcome-to-my-blog/</loc>
+    <lastmod>2014-01-09T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://smuth.me/categories/</loc>
   </url>
-  
 </urlset>

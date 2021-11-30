@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Enabling NFS mounts in Proxmox 5.2 LXC containers :: cat /dev/null &gt; /proc/mind</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Edit: This post has been made obsolete in recent releases, which allow enabling these flags via both the web UI and the pct CLI tool.
+Normally, Proxmox doesn&amp;rsquo;t allow mounting NFS mounts directly in containers due to security concerns. In the past it was possible to modify apparmor profiles directly in order to allow it, as seen here and here. However, as of this commit, that method is no longer an option, due to the apparmor profiles now being generated dynamically when the containers are started (you can view these profiles at /var/lib/lxc/${CID}/apparmor/lxc-${CID}_&amp;lt;-var-lib-lxc&amp;gt;)." />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://smuth.me/posts/enabling-nfs-proxmox-lxc/" />
+
+
+
+
+<link rel="stylesheet" href="https://smuth.me/assets/style.css">
+
+  <link rel="stylesheet" href="https://smuth.me/assets/blue.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://smuth.me/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://smuth.me/img/favicon/blue.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Enabling NFS mounts in Proxmox 5.2 LXC containers">
+<meta property="og:description" content="Edit: This post has been made obsolete in recent releases, which allow enabling these flags via both the web UI and the pct CLI tool.
+Normally, Proxmox doesn&amp;rsquo;t allow mounting NFS mounts directly in containers due to security concerns. In the past it was possible to modify apparmor profiles directly in order to allow it, as seen here and here. However, as of this commit, that method is no longer an option, due to the apparmor profiles now being generated dynamically when the containers are started (you can view these profiles at /var/lib/lxc/${CID}/apparmor/lxc-${CID}_&amp;lt;-var-lib-lxc&amp;gt;)." />
+<meta property="og:url" content="https://smuth.me/posts/enabling-nfs-proxmox-lxc/" />
+<meta property="og:site_name" content="cat /dev/null &gt; /proc/mind" />
+
+  
+    <meta property="og:image" content="https://smuth.me/img/favicon/blue.png">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2018-10-11 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="blue">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    cat /dev/null &gt; /proc/mind
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="https://github.com/smuth4">Github</a></li>
+        
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="https://github.com/smuth4">Github</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://smuth.me/posts/enabling-nfs-proxmox-lxc/">Enabling NFS mounts in Proxmox 5.2 LXC containers</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2018-10-11
+        
+      </span>
+    
+    
+    
+  </div>
+
+  
+  <span class="post-tags">
+    
+    #<a href="https://smuth.me/tags/lxc/">lxc</a>&nbsp;
+    
+    #<a href="https://smuth.me/tags/proxmox/">proxmox</a>&nbsp;
+    
+    #<a href="https://smuth.me/tags/nfs/">nfs</a>&nbsp;
+    
+  </span>
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <p>Edit: This post has been made obsolete in recent releases, which allow enabling these flags via both the web UI and the <code>pct</code> CLI tool.</p>
+<p>Normally, Proxmox doesn&rsquo;t allow mounting NFS mounts directly in containers due to security concerns. In the past it was possible to modify apparmor profiles directly in order to allow it, as seen <a href="https://forum.proxmox.com/threads/lxc-nfs.23763/">here</a> and <a href="https://www.svennd.be/mount-nfs-lxc-proxmox/">here</a>. However, as of <a href="https://git.proxmox.com/?p=pve-container.git;a=commit;h=5a63f1c5d3b995dd682a70e7fbd1364240e09278">this commit</a>, that method is no longer an option, due to the apparmor profiles now being generated dynamically when the containers are started (you can view these profiles at <code>/var/lib/lxc/${CID}/apparmor/lxc-${CID}_&lt;-var-lib-lxc&gt;</code>). Instead, modifying apparmor directly is no longer necessary, as you can now add the undocumented <code>feature</code> setting to the <a href="https://pve.proxmox.com/wiki/Manual:_pct.conf">pct.conf</a> files for individual containers. For instance:</p>
+<pre tabindex="0"><code>features: mount=nfs
+</code></pre><p>allows NFS mounting for the specified container, although a restart will be necessary for the setting to take effect. You can verify this by running <code>grep nfs /var/lib/lxc/${CID}/apparmor/lxc-${CID}_\&lt;-var-lib-lxc\&gt;</code>, which return a line like <code>mount fstype=nfs</code>. Other filesystems can also be allowed by separating the different types with semicolons.</p>
+<p>This change was released in version 2.0-28 of the pve-container package, so it&rsquo;s easy tell if you are affected:</p>
+<pre tabindex="0"><code>$ dpkg -s pve-container | grep '^Version:'
+Version: 2.0-28
+</code></pre><p>Since this change only applies on container start-up, it&rsquo;s possible to upgrade the package first without impacting any running containers.</p>
+
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        <span class="button previous">
+            <a href="https://smuth.me/posts/git-diff-deleted/">
+                <span class="button__icon">←</span>
+                <span class="button__text">Finding the log for deleted files in git</span>
+            </a>
+        </span>
+        
+        
+        <span class="button next">
+            <a href="https://smuth.me/posts/ssh-public-key-shenanigans/">
+                <span class="button__text">SSH public key shenanigans</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2021 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://smuth.me/assets/main.js"></script>
+<script src="https://smuth.me/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

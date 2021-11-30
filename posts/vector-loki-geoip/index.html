@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Tracking Geo IP information with Vector, Loki and Grafana :: cat /dev/null &gt; /proc/mind</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Normally my logging stack of choice is ELK, but recently I&amp;rsquo;ve been digging more into Loki, designed to be the logging equivalent of Prometheus. It&amp;rsquo;s been very interesting dealing with a low-cardinality log system after getting so used to ELK, but one feature I&amp;rsquo;ve definitely been missing is the ability to easily add GeoIP from arbitrary logs. There&amp;rsquo;s an open issue for adding it, but in the mean time one comment suggested using vector." />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://smuth.me/posts/vector-loki-geoip/" />
+
+
+
+
+<link rel="stylesheet" href="https://smuth.me/assets/style.css">
+
+  <link rel="stylesheet" href="https://smuth.me/assets/blue.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://smuth.me/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://smuth.me/img/favicon/blue.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Tracking Geo IP information with Vector, Loki and Grafana">
+<meta property="og:description" content="Normally my logging stack of choice is ELK, but recently I&amp;rsquo;ve been digging more into Loki, designed to be the logging equivalent of Prometheus. It&amp;rsquo;s been very interesting dealing with a low-cardinality log system after getting so used to ELK, but one feature I&amp;rsquo;ve definitely been missing is the ability to easily add GeoIP from arbitrary logs. There&amp;rsquo;s an open issue for adding it, but in the mean time one comment suggested using vector." />
+<meta property="og:url" content="https://smuth.me/posts/vector-loki-geoip/" />
+<meta property="og:site_name" content="cat /dev/null &gt; /proc/mind" />
+
+  
+    <meta property="og:image" content="https://smuth.me/img/favicon/blue.png">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2021-11-29 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="blue">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    cat /dev/null &gt; /proc/mind
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="https://github.com/smuth4">Github</a></li>
+        
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="https://github.com/smuth4">Github</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://smuth.me/posts/vector-loki-geoip/">Tracking Geo IP information with Vector, Loki and Grafana</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2021-11-29
+        
+      </span>
+    
+    
+    
+  </div>
+
+  
+  <span class="post-tags">
+    
+    #<a href="https://smuth.me/tags/vector/">vector</a>&nbsp;
+    
+    #<a href="https://smuth.me/tags/grafana/">grafana</a>&nbsp;
+    
+    #<a href="https://smuth.me/tags/loki/">loki</a>&nbsp;
+    
+  </span>
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <p>Normally my logging stack of choice is <a href="https://www.elastic.co/elasticsearch/">ELK</a>, but recently I&rsquo;ve been digging more into <a href="https://grafana.com/docs/loki/latest/">Loki</a>, designed to be the logging equivalent of Prometheus. It&rsquo;s been very interesting dealing with a low-cardinality log system after getting so used to ELK, but one feature I&rsquo;ve definitely been missing is the ability to easily add GeoIP from arbitrary logs. There&rsquo;s an <a href="https://github.com/grafana/loki/issues/2120">open issue</a> for adding it, but in the mean time one comment suggested using <a href="https://vector.dev/">vector</a>.</p>
+<p>In my case, the log lines I was interested looked like this:</p>
+<pre tabindex="0"><code>1637792122 I conn_pool_manager-&gt;255.152.255.207: Handshake dropped: connection backoff.
+1637792123 I conn_pool_manager-&gt;71.255.178.255: Handshake dropped: certificate rejected.
+1637792126 I conn_pool_manager-&gt;94.255.255.178: Adding incoming connection: fd:2074.
+</code></pre><p>The first step is to get them into loki with the information we need. <a href="https://vector.dev/docs/reference/vrl/">Vector&rsquo;s remap language</a> is extremely powerful and allows us to create this configuration:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml"><span style="color:#75715e"># Watch the log files</span>
+[<span style="color:#a6e22e">sources</span>.<span style="color:#a6e22e">in</span>]
+<span style="color:#a6e22e">type</span> = <span style="color:#e6db74">&#34;file&#34;</span>
+<span style="color:#a6e22e">include</span> = [ <span style="color:#e6db74">&#34;/var/log/connections/*.log&#34;</span> ]
+<span style="color:#a6e22e">ignore_older_secs</span> = <span style="color:#ae81ff">600</span>
+<span style="color:#a6e22e">read_from</span> = <span style="color:#e6db74">&#34;beginning&#34;</span>
+
+
+<span style="color:#75715e"># Parse log message, mainly to extract the original timestamp and IP address</span>
+[<span style="color:#a6e22e">transforms</span>.<span style="color:#a6e22e">remap_conn_pool</span>]
+<span style="color:#a6e22e">inputs</span> = [ <span style="color:#e6db74">&#34;in&#34;</span>]
+<span style="color:#a6e22e">type</span> = <span style="color:#e6db74">&#34;remap&#34;</span>
+<span style="color:#a6e22e">source</span> = <span style="color:#e6db74">&#39;&#39;&#39;
+</span><span style="color:#e6db74">  . |= parse_regex(.message, r&#39;</span><span style="color:#960050;background-color:#1e0010">^(?</span><span style="color:#a6e22e">P</span><span style="color:#960050;background-color:#1e0010">&lt;</span><span style="color:#a6e22e">timestamp</span><span style="color:#960050;background-color:#1e0010">&gt;\</span><span style="color:#a6e22e">d</span><span style="color:#960050;background-color:#1e0010">+)\</span><span style="color:#a6e22e">W</span><span style="color:#960050;background-color:#1e0010">(?</span><span style="color:#a6e22e">P</span><span style="color:#960050;background-color:#1e0010">&lt;</span><span style="color:#a6e22e">level</span><span style="color:#960050;background-color:#1e0010">&gt;\</span><span style="color:#a6e22e">w</span><span style="color:#960050;background-color:#1e0010">)\</span><span style="color:#a6e22e">Wconn_pool_manager-</span><span style="color:#960050;background-color:#1e0010">&gt;(?</span><span style="color:#a6e22e">P</span><span style="color:#960050;background-color:#1e0010">&lt;</span><span style="color:#a6e22e">ip_address</span><span style="color:#960050;background-color:#1e0010">&gt;</span>[<span style="color:#960050;background-color:#1e0010">\</span><span style="color:#a6e22e">d</span><span style="color:#960050;background-color:#1e0010">\</span>.]<span style="color:#960050;background-color:#1e0010">+):(?</span><span style="color:#a6e22e">P</span><span style="color:#960050;background-color:#1e0010">&lt;</span><span style="color:#a6e22e">trailer</span><span style="color:#960050;background-color:#1e0010">&gt;</span>.<span style="color:#960050;background-color:#1e0010">*)</span><span style="color:#e6db74">&#39;) ??
+</span><span style="color:#e6db74">       {&#34;err&#34;: &#34;could not parse&#34;}
+</span><span style="color:#e6db74">  .timestamp = parse_timestamp(.timestamp, &#34;%s&#34;) ?? now()
+</span><span style="color:#e6db74">&#39;&#39;&#39;</span>
+
+<span style="color:#75715e"># Use a locally downloaded MaxMind DB to generate GeoIP info</span>
+[<span style="color:#a6e22e">transforms</span>.<span style="color:#a6e22e">geo_ip</span>]
+<span style="color:#a6e22e">type</span> = <span style="color:#e6db74">&#34;geoip&#34;</span>
+<span style="color:#a6e22e">inputs</span> = [ <span style="color:#e6db74">&#34;remap_conn_pool&#34;</span> ]
+<span style="color:#a6e22e">database</span> = <span style="color:#e6db74">&#34;/etc/vector/GeoLite2-City.mmdb&#34;</span>
+<span style="color:#a6e22e">source</span> = <span style="color:#e6db74">&#34;ip_address&#34;</span>
+<span style="color:#a6e22e">target</span> = <span style="color:#e6db74">&#34;geoip&#34;</span>
+
+<span style="color:#75715e"># For debugging purposes</span>
+[<span style="color:#a6e22e">sinks</span>.<span style="color:#a6e22e">out</span>]
+<span style="color:#a6e22e">inputs</span> = [<span style="color:#e6db74">&#34;geo_ip&#34;</span>]
+<span style="color:#a6e22e">type</span> = <span style="color:#e6db74">&#34;console&#34;</span>
+<span style="color:#a6e22e">encoding</span>.<span style="color:#a6e22e">codec</span> = <span style="color:#e6db74">&#34;json&#34;</span>
+
+<span style="color:#75715e"># Send output to loki</span>
+[<span style="color:#a6e22e">sinks</span>.<span style="color:#a6e22e">loki</span>]
+<span style="color:#a6e22e">inputs</span> = [<span style="color:#e6db74">&#34;geo_ip&#34;</span>]
+<span style="color:#a6e22e">type</span> = <span style="color:#e6db74">&#34;loki&#34;</span>
+<span style="color:#a6e22e">endpoint</span> = <span style="color:#e6db74">&#34;https://loki.smuth.me/&#34;</span>
+<span style="color:#a6e22e">encoding</span>.<span style="color:#a6e22e">codec</span> = <span style="color:#e6db74">&#34;json&#34;</span>
+<span style="color:#a6e22e">labels</span> = {<span style="color:#e6db74">&#34;app&#34;</span>= <span style="color:#e6db74">&#34;vector&#34;</span>}
+</code></pre></div><p>Now that the information is in Loki, we can use the <a href="https://grafana.com/docs/grafana/latest/visualizations/geomap/">Geomap panel</a> to display the locations inside grafana. In this particular case, this query was all that was needed:</p>
+<pre tabindex="0"><code>count_over_time(
+  {app=&quot;vector&quot;}
+  | json geoip_longitude=&quot;geoip.longitude&quot;,geoip_latitude=&quot;geoip.latitude&quot;
+  | geoip_latitude != &quot;&quot;
+  [$__range])
+</code></pre><p>This gets all JSON lines from logs created by the vector config with GeoIP information, filters for non-empty values, and counts each entry for the range provided. However, in order to make it more palatable for grafana, we need to apply some transforms to the data in grafana, namely labels-to-fields, merge, and then converting the lat and long from strings to numbers. <a href="/static/grafana/geoip-panel.json">Here</a> is an example panel JSON, to get started with.</p>
+
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        
+        <span class="button next">
+            <a href="https://smuth.me/posts/gluster-zero-byte-files/">
+                <span class="button__text">What are those zero byte files on my glusterfs bricks?</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2021 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://smuth.me/assets/main.js"></script>
+<script src="https://smuth.me/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

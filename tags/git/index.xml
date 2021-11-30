@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>git on cat /dev/null &gt; /proc/mind</title>
+    <link>https://smuth.me/tags/git/</link>
+    <description>Recent content in git on cat /dev/null &gt; /proc/mind</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 08 Feb 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://smuth.me/tags/git/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Finding the log for deleted files in git</title>
+      <link>https://smuth.me/posts/git-diff-deleted/</link>
+      <pubDate>Sat, 08 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/posts/git-diff-deleted/</guid>
+      <description>Recently I came across a blog post explaining how to get the history of a deleted file: https://dzone.com/articles/git-getting-history-deleted, which pointed to yet another blog with the simple solution https://feeding.cloud.geek.nz/posts/querying-deleted-content-in-git/:
+git log -- deleted_file.txt However, neither explained exactly why this works, and I got interested. -- is normally the convention that means &amp;ldquo;pass everything after this into the program as a literal string. For example, if for some crazy reason you had a file named -h (which is perfectly legal), rm -h would just bring up the man page, while rm -- -h would work as expected (as would rm .</description>
+      <content>&lt;p&gt;Recently I came across a blog post explaining how to get the history of a deleted file: &lt;a href=&#34;https://dzone.com/articles/git-getting-history-deleted&#34;&gt;https://dzone.com/articles/git-getting-history-deleted&lt;/a&gt;, which pointed to yet another blog with the simple solution &lt;a href=&#34;https://feeding.cloud.geek.nz/posts/querying-deleted-content-in-git/&#34;&gt;https://feeding.cloud.geek.nz/posts/querying-deleted-content-in-git/&lt;/a&gt;:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;git log -- deleted_file.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;However, neither explained exactly why this works, and I got interested. &lt;code&gt;--&lt;/code&gt; is normally the convention that means &amp;ldquo;pass everything after this into the program as a literal string. For example, if for some crazy reason you had a file named &lt;code&gt;-h&lt;/code&gt; (which is perfectly legal), &lt;code&gt;rm -h&lt;/code&gt; would just bring up the man page, while &lt;code&gt;rm -- -h&lt;/code&gt; would work as expected (as would &lt;code&gt;rm ./-h&lt;/code&gt;). However, this is just a convention and git might be free to ignore it.&lt;/p&gt;
+&lt;p&gt;As the man page actually points out, git does indeed treat these differently:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[--] &amp;lt;path&amp;gt;...
+    Show only commits that are enough to explain how the files that match the specified paths came to be. See
+    History Simplification below for details and other simplification modes.
+
+    Paths may need to be prefixed with -- to separate them from options or the revision range, when confusion
+    arises.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The short story, according to the &lt;a href=&#34;https://www.git-scm.com/docs/git-log#_history_simplification&#34;&gt;History Simplification section&lt;/a&gt;, appears to be that the default behavior is able to accurately track changes across moves/renames, but they also needed a way to say &amp;ldquo;track this exact path only&amp;rdquo;.&lt;/p&gt;
+</content>
+    </item>
+    
+  </channel>
+</rss>
