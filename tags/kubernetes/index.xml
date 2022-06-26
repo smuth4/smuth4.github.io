@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>kubernetes on cat /dev/null &gt; /proc/mind</title>
+    <link>https://smuth.me/tags/kubernetes/</link>
+    <description>Recent content in kubernetes on cat /dev/null &gt; /proc/mind</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 20 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://smuth.me/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>&#39;Ghost&#39; changes in kubernetes&#39; server-side apply</title>
+      <link>https://smuth.me/posts/kubectl-server-side-diff/</link>
+      <pubDate>Sun, 20 Feb 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/posts/kubectl-server-side-diff/</guid>
+      <description>Starting in version 1.22, server-side apply has become officially &amp;ldquo;stable&amp;rdquo; in kubernetes, and in most is truly an upgrade from client-side applies. It respects fields that other server-side tools mark as controlled, and allows for applying larger and more complex objects.
+However, there are a couple &amp;ldquo;gotchas&amp;rdquo; to be aware of. Most are either big loud errors, or called out explicitly in the documentation, but one thing I can across while working with server-side apply diffs (N.</description>
+      <content>&lt;p&gt;Starting in version 1.22, &lt;a href=&#34;https://kubernetes.io/docs/reference/using-api/server-side-apply/&#34;&gt;server-side apply&lt;/a&gt; has become officially &amp;ldquo;stable&amp;rdquo; in kubernetes, and in most is truly an upgrade from client-side applies. It respects fields that other server-side tools mark as controlled, and allows for applying larger and more complex objects.&lt;/p&gt;
+&lt;p&gt;However, there are a couple &amp;ldquo;gotchas&amp;rdquo; to be aware of. Most are either big loud errors, or called out explicitly in the documentation, but one thing I can across while working with server-side apply diffs (N.B.: client-side diffs are also sent to the server in new versions of kubernetes, it&amp;rsquo;s a little confusing). Every time I went to apply a change, certain objects, particularly deployments, would have a timestamp in &lt;code&gt;metadata.managedFields&lt;/code&gt; which would always change even if nothing else did:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-diff&#34; data-lang=&#34;diff&#34;&gt;diff -u -N /tmp/LIVE-902559977/rbac.authorization.k8s.io.v1.ClusterRole..awx-operator /tmp/MERGED-2370271049/rbac.authorization.k8s.io.v1.ClusterRole..awx-operator
+&lt;span style=&#34;color:#f92672&#34;&gt;--- /tmp/LIVE-902559977/rbac.authorization.k8s.io.v1.ClusterRole..awx-operator  2022-02-20 17:25:02.204297070 -0500
+&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;+++ /tmp/MERGED-2370271049/rbac.authorization.k8s.io.v1.ClusterRole..awx-operator       2022-02-20 17:25:02.204297070 -0500
+&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;@@ -27,7 +27,7 @@
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;       f:rules: {}
+     manager: tanka
+     operation: Apply
+&lt;span style=&#34;color:#f92672&#34;&gt;-    time: &amp;#34;2022-02-20T21:55:47Z&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;+    time: &amp;#34;2022-02-20T22:25:02Z&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;&lt;/span&gt;   - apiVersion: rbac.authorization.k8s.io/v1
+     fieldsType: FieldsV1
+     fieldsV1:
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The tool I&amp;rsquo;m using is &lt;a href=&#34;https://tanka.dev/&#34;&gt;tanka&lt;/a&gt;, but the same thing shows up when manually diffing. Even switching back to client-side diffing didn&amp;rsquo;t reveal anything unexpected. After spending way too long staring at the generated YML against the live YAML, I found that most of these instances were due to kubernetes converting values, with some example as follows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;&#39;1024Mi&#39;&lt;/code&gt; -&amp;gt; &lt;code&gt;&#39;1Gi&#39;&lt;/code&gt;, in requests/limits.memory&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&#39;2000m&#39;&lt;/code&gt; -&amp;gt; &lt;code&gt;&#39;2&#39;&lt;/code&gt;, in requests/limits.cpu&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;There were also some fields that also were removed from the live objects when set to null (e.g. &lt;code&gt;spec.selector&lt;/code&gt; in services) which also caused the same timestamp change. In all these cases, the server-side apply was smart enough to determine that nothing actually changed, but since the fields were technically different between the new and live object, the timestamp was still updated.&lt;/p&gt;
+</content>
+    </item>
+    
+  </channel>
+</rss>

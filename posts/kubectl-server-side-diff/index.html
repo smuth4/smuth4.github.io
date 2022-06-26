@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>&#39;Ghost&#39; changes in kubernetes&#39; server-side apply :: cat /dev/null &gt; /proc/mind</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Starting in version 1.22, server-side apply has become officially &amp;ldquo;stable&amp;rdquo; in kubernetes, and in most is truly an upgrade from client-side applies. It respects fields that other server-side tools mark as controlled, and allows for applying larger and more complex objects.
+However, there are a couple &amp;ldquo;gotchas&amp;rdquo; to be aware of. Most are either big loud errors, or called out explicitly in the documentation, but one thing I can across while working with server-side apply diffs (N." />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://smuth.me/posts/kubectl-server-side-diff/" />
+
+
+
+
+<link rel="stylesheet" href="https://smuth.me/assets/style.css">
+
+  <link rel="stylesheet" href="https://smuth.me/assets/blue.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://smuth.me/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://smuth.me/img/favicon/blue.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="&#39;Ghost&#39; changes in kubernetes&#39; server-side apply">
+<meta property="og:description" content="Starting in version 1.22, server-side apply has become officially &amp;ldquo;stable&amp;rdquo; in kubernetes, and in most is truly an upgrade from client-side applies. It respects fields that other server-side tools mark as controlled, and allows for applying larger and more complex objects.
+However, there are a couple &amp;ldquo;gotchas&amp;rdquo; to be aware of. Most are either big loud errors, or called out explicitly in the documentation, but one thing I can across while working with server-side apply diffs (N." />
+<meta property="og:url" content="https://smuth.me/posts/kubectl-server-side-diff/" />
+<meta property="og:site_name" content="cat /dev/null &gt; /proc/mind" />
+
+  
+    <meta property="og:image" content="https://smuth.me/img/favicon/blue.png">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2022-02-20 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="blue">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    cat /dev/null &gt; /proc/mind
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="https://github.com/smuth4">Github</a></li>
+        
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="https://github.com/smuth4">Github</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://smuth.me/posts/kubectl-server-side-diff/">&lsquo;Ghost&rsquo; changes in kubernetes' server-side apply</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2022-02-20
+        
+      </span>
+    
+    
+    
+  </div>
+
+  
+  <span class="post-tags">
+    
+    #<a href="https://smuth.me/tags/kubernetes/">kubernetes</a>&nbsp;
+    
+  </span>
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <p>Starting in version 1.22, <a href="https://kubernetes.io/docs/reference/using-api/server-side-apply/">server-side apply</a> has become officially &ldquo;stable&rdquo; in kubernetes, and in most is truly an upgrade from client-side applies. It respects fields that other server-side tools mark as controlled, and allows for applying larger and more complex objects.</p>
+<p>However, there are a couple &ldquo;gotchas&rdquo; to be aware of. Most are either big loud errors, or called out explicitly in the documentation, but one thing I can across while working with server-side apply diffs (N.B.: client-side diffs are also sent to the server in new versions of kubernetes, it&rsquo;s a little confusing). Every time I went to apply a change, certain objects, particularly deployments, would have a timestamp in <code>metadata.managedFields</code> which would always change even if nothing else did:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-diff" data-lang="diff">diff -u -N /tmp/LIVE-902559977/rbac.authorization.k8s.io.v1.ClusterRole..awx-operator /tmp/MERGED-2370271049/rbac.authorization.k8s.io.v1.ClusterRole..awx-operator
+<span style="color:#f92672">--- /tmp/LIVE-902559977/rbac.authorization.k8s.io.v1.ClusterRole..awx-operator  2022-02-20 17:25:02.204297070 -0500
+</span><span style="color:#f92672"></span><span style="color:#a6e22e">+++ /tmp/MERGED-2370271049/rbac.authorization.k8s.io.v1.ClusterRole..awx-operator       2022-02-20 17:25:02.204297070 -0500
+</span><span style="color:#a6e22e"></span><span style="color:#75715e">@@ -27,7 +27,7 @@
+</span><span style="color:#75715e"></span>       f:rules: {}
+     manager: tanka
+     operation: Apply
+<span style="color:#f92672">-    time: &#34;2022-02-20T21:55:47Z&#34;
+</span><span style="color:#f92672"></span><span style="color:#a6e22e">+    time: &#34;2022-02-20T22:25:02Z&#34;
+</span><span style="color:#a6e22e"></span>   - apiVersion: rbac.authorization.k8s.io/v1
+     fieldsType: FieldsV1
+     fieldsV1:
+</code></pre></div><p>The tool I&rsquo;m using is <a href="https://tanka.dev/">tanka</a>, but the same thing shows up when manually diffing. Even switching back to client-side diffing didn&rsquo;t reveal anything unexpected. After spending way too long staring at the generated YML against the live YAML, I found that most of these instances were due to kubernetes converting values, with some example as follows:</p>
+<ul>
+<li><code>'1024Mi'</code> -&gt; <code>'1Gi'</code>, in requests/limits.memory</li>
+<li><code>'2000m'</code> -&gt; <code>'2'</code>, in requests/limits.cpu</li>
+</ul>
+<p>There were also some fields that also were removed from the live objects when set to null (e.g. <code>spec.selector</code> in services) which also caused the same timestamp change. In all these cases, the server-side apply was smart enough to determine that nothing actually changed, but since the fields were technically different between the new and live object, the timestamp was still updated.</p>
+
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        <span class="button previous">
+            <a href="https://smuth.me/posts/netbox-with-authentik/">
+                <span class="button__icon">←</span>
+                <span class="button__text">Integrating netbox with Authentik</span>
+            </a>
+        </span>
+        
+        
+        <span class="button next">
+            <a href="https://smuth.me/posts/vector-loki-geoip/">
+                <span class="button__text">Tracking Geo IP information with Vector, Loki and Grafana</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2022 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://smuth.me/assets/main.js"></script>
+<script src="https://smuth.me/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

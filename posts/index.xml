@@ -6,7 +6,105 @@
     <description>Recent content in Posts on cat /dev/null &gt; /proc/mind</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 29 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://smuth.me/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 25 Jun 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://smuth.me/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Integrating netbox with Authentik</title>
+      <link>https://smuth.me/posts/netbox-with-authentik/</link>
+      <pubDate>Sat, 25 Jun 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/posts/netbox-with-authentik/</guid>
+      <description>Netbox has support for SSO integration out of the box, however some extra work is required to make it work with authentik correctly.
+Setting up Authentik  In authentik, create an OAuth2/OpenID Provider (under Resources/Providers) with these settings:  Name: Netbox Signing Key: Select any available key   Take note of the client ID &amp;amp; secret for later usage Create an application with these settings:  Name: Netbox Slug: netbox-slug Provider: Netbox    Setting up Netbox Building the image This step is only required for docker.</description>
+      <content>&lt;p&gt;Netbox has support for SSO integration out of the box, however some extra work
+is required to make it work with authentik correctly.&lt;/p&gt;
+&lt;h2 id=&#34;setting-up-authentik&#34;&gt;Setting up Authentik&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;In authentik, create an OAuth2/OpenID Provider (under Resources/Providers) with these settings:
+&lt;ul&gt;
+&lt;li&gt;Name: Netbox&lt;/li&gt;
+&lt;li&gt;Signing Key: Select any available key&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Take note of the client ID &amp;amp; secret for later usage&lt;/li&gt;
+&lt;li&gt;Create an application with these settings:
+&lt;ul&gt;
+&lt;li&gt;Name: Netbox&lt;/li&gt;
+&lt;li&gt;Slug: netbox-slug&lt;/li&gt;
+&lt;li&gt;Provider: Netbox&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;setting-up-netbox&#34;&gt;Setting up Netbox&lt;/h2&gt;
+&lt;h3 id=&#34;building-the-image&#34;&gt;Building the image&lt;/h3&gt;
+&lt;p&gt;This step is only required for docker. Netbox comes with the SSO python package (&lt;code&gt;social-auth-core&lt;/code&gt;)
+pre-installed, however not all the optional depedencies are installed due to relying on libraries that
+may not be present&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;p&gt;Luckily the image is made to be easily extendable:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-Dockerfile&#34; data-lang=&#34;Dockerfile&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;FROM&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; netboxcommunity/netbox:v3.2.5&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;RUN&lt;/span&gt; /opt/netbox/venv/bin/python -m pip install --upgrade &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;social-auth-core[openidconnect]&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
+&lt;p&gt;For the python configuration file, we&amp;rsquo;ll combine the netbox documentation for
+connecting to Okta&lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt; with the generic OpenID connection backend&lt;sup id=&#34;fnref:3&#34;&gt;&lt;a href=&#34;#fn:3&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;3&lt;/a&gt;&lt;/sup&gt; from
+social-core&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;REMOTE_AUTH_BACKEND &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;social_core.backends.open_id_connect.OpenIdConnectAuth&amp;#39;&lt;/span&gt;
+SOCIAL_AUTH_OIDC_OIDC_ENDPOINT &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;https://authentik.company/application/o/netbox-slug/&amp;#39;&lt;/span&gt;
+SOCIAL_AUTH_OIDC_KEY &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;lt;ID from step 2&amp;gt;&amp;#39;&lt;/span&gt;
+SOCIAL_AUTH_OIDC_SECRET &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;lt;secret from step 2&amp;gt;&amp;#39;&lt;/span&gt;
+SOCIAL_AUTH_PROTECTED_USER_FIELDS &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;groups&amp;#39;&lt;/span&gt;]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If &lt;code&gt;groups&lt;/code&gt; is not set to be protected, you&amp;rsquo;ll receive a an error from Django about
+not being able to set a many-to-many field.&lt;/p&gt;
+&lt;h2 id=&#34;caveats&#34;&gt;Caveats&lt;/h2&gt;
+&lt;p&gt;Currently this setup does not handle groups or superuser status. If that functionality
+is required, an authentik LDAP outpost can be used instead.&lt;/p&gt;
+&lt;section class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34; role=&#34;doc-endnote&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/netbox-community/netbox/pull/8503&#34;&gt;https://github.com/netbox-community/netbox/pull/8503&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:2&#34; role=&#34;doc-endnote&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.netbox.dev/en/stable/administration/authentication/okta/&#34;&gt;https://docs.netbox.dev/en/stable/administration/authentication/okta/&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:3&#34; role=&#34;doc-endnote&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://python-social-auth.readthedocs.io/en/latest/backends/oidc.html&#34;&gt;https://python-social-auth.readthedocs.io/en/latest/backends/oidc.html&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:3&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/section&gt;
+</content>
+    </item>
+    
+    <item>
+      <title>&#39;Ghost&#39; changes in kubernetes&#39; server-side apply</title>
+      <link>https://smuth.me/posts/kubectl-server-side-diff/</link>
+      <pubDate>Sun, 20 Feb 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://smuth.me/posts/kubectl-server-side-diff/</guid>
+      <description>Starting in version 1.22, server-side apply has become officially &amp;ldquo;stable&amp;rdquo; in kubernetes, and in most is truly an upgrade from client-side applies. It respects fields that other server-side tools mark as controlled, and allows for applying larger and more complex objects.
+However, there are a couple &amp;ldquo;gotchas&amp;rdquo; to be aware of. Most are either big loud errors, or called out explicitly in the documentation, but one thing I can across while working with server-side apply diffs (N.</description>
+      <content>&lt;p&gt;Starting in version 1.22, &lt;a href=&#34;https://kubernetes.io/docs/reference/using-api/server-side-apply/&#34;&gt;server-side apply&lt;/a&gt; has become officially &amp;ldquo;stable&amp;rdquo; in kubernetes, and in most is truly an upgrade from client-side applies. It respects fields that other server-side tools mark as controlled, and allows for applying larger and more complex objects.&lt;/p&gt;
+&lt;p&gt;However, there are a couple &amp;ldquo;gotchas&amp;rdquo; to be aware of. Most are either big loud errors, or called out explicitly in the documentation, but one thing I can across while working with server-side apply diffs (N.B.: client-side diffs are also sent to the server in new versions of kubernetes, it&amp;rsquo;s a little confusing). Every time I went to apply a change, certain objects, particularly deployments, would have a timestamp in &lt;code&gt;metadata.managedFields&lt;/code&gt; which would always change even if nothing else did:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-diff&#34; data-lang=&#34;diff&#34;&gt;diff -u -N /tmp/LIVE-902559977/rbac.authorization.k8s.io.v1.ClusterRole..awx-operator /tmp/MERGED-2370271049/rbac.authorization.k8s.io.v1.ClusterRole..awx-operator
+&lt;span style=&#34;color:#f92672&#34;&gt;--- /tmp/LIVE-902559977/rbac.authorization.k8s.io.v1.ClusterRole..awx-operator  2022-02-20 17:25:02.204297070 -0500
+&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;+++ /tmp/MERGED-2370271049/rbac.authorization.k8s.io.v1.ClusterRole..awx-operator       2022-02-20 17:25:02.204297070 -0500
+&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;@@ -27,7 +27,7 @@
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;       f:rules: {}
+     manager: tanka
+     operation: Apply
+&lt;span style=&#34;color:#f92672&#34;&gt;-    time: &amp;#34;2022-02-20T21:55:47Z&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;+    time: &amp;#34;2022-02-20T22:25:02Z&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;&lt;/span&gt;   - apiVersion: rbac.authorization.k8s.io/v1
+     fieldsType: FieldsV1
+     fieldsV1:
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The tool I&amp;rsquo;m using is &lt;a href=&#34;https://tanka.dev/&#34;&gt;tanka&lt;/a&gt;, but the same thing shows up when manually diffing. Even switching back to client-side diffing didn&amp;rsquo;t reveal anything unexpected. After spending way too long staring at the generated YML against the live YAML, I found that most of these instances were due to kubernetes converting values, with some example as follows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;&#39;1024Mi&#39;&lt;/code&gt; -&amp;gt; &lt;code&gt;&#39;1Gi&#39;&lt;/code&gt;, in requests/limits.memory&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&#39;2000m&#39;&lt;/code&gt; -&amp;gt; &lt;code&gt;&#39;2&#39;&lt;/code&gt;, in requests/limits.cpu&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;There were also some fields that also were removed from the live objects when set to null (e.g. &lt;code&gt;spec.selector&lt;/code&gt; in services) which also caused the same timestamp change. In all these cases, the server-side apply was smart enough to determine that nothing actually changed, but since the fields were technically different between the new and live object, the timestamp was still updated.&lt;/p&gt;
+</content>
+    </item>
+    
     <item>
       <title>Tracking Geo IP information with Vector, Loki and Grafana</title>
       <link>https://smuth.me/posts/vector-loki-geoip/</link>
